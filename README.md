@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏛️ DigiCulture Care - Backend API Service (v3.0.0)
+### Platform Penyelamatan & Dokumentasi Warisan Budaya Sulawesi Tengah
 
-## Getting Started
+Proyek ini adalah **Backend Service & REST API** untuk platform **DigiCulture Care v3.0.0 (Enhanced Regional Edition)** yang dibangun menggunakan **Next.js 16 (App Router)**, **Prisma ORM (PostgreSQL Supabase)**, dan **Cloudinary CDN Storage**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📂 Peta Struktur Folder & File (Architecture Directory Tree)
+
+Struktur proyek ini telah disusun secara modular, rapi, dan mengikuti standar industri agar sangat mudah dipahami oleh pengembang **Frontend** maupun **Backend**:
+
+```
+DigitalBudaya/
+├── 📄 API_DOCUMENTATION.md    # 📖 Panduan Lengkap REST API untuk Developer Frontend
+├── 📄 README.md               # 📌 Dokumentasi Utama Proyek & Peta Folder
+├── 📄 .env                    # 🔒 Variabel Lingkungan (Supabase DB, Cloudinary, JWT)
+├── 📄 .env.example            # 📋 Template Variabel Lingkungan
+│
+├── 📁 app/                    # 🌐 Next.js App Router & API Endpoints
+│   ├── 📁 api/                # ⚡ REST API Handlers
+│   │   ├── 📁 analytics/      # GET /api/analytics (Metrik Statistik Regional Sulteng)
+│   │   ├── 📁 auth/           # /api/auth (Login, Register, Session Me, Logout)
+│   │   │   ├── 📁 login/      # POST /api/auth/login
+│   │   │   ├── 📁 me/         # GET /api/auth/me & POST /api/auth/logout
+│   │   │   └── 📁 register/   # POST /api/auth/register
+│   │   ├── 📁 reports/        # /api/reports (Katalog, Submission, Workflow State Machine)
+│   │   │   ├── 📁 [id]/       # GET, PATCH, DELETE /api/reports/[id]
+│   │   │   └── route.ts       # GET, POST /api/reports
+│   │   ├── 📁 upload/         # POST /api/upload (Media Upload Foto & Audio ke Cloudinary)
+│   │   └── 📁 users/          # /api/users (Superadmin User RBAC Management)
+│   │       ├── 📁 [id]/       # PATCH, DELETE /api/users/[id]
+│   │       └── route.ts       # GET /api/users
+│   ├── globals.css            # Styling Global
+│   ├── layout.tsx             # Root Layout
+│   └── page.tsx               # Dashboard Portal Status API Service Backend
+│
+├── 📁 lib/                    # 🛠️ Helper Utilities & Core Service Drivers
+│   ├── auth.ts                # 🔐 JWT Hashing, Password Compare (Bcrypt), & Session Extraction
+│   ├── cloudinary.ts          # ☁️ Driver SDK Cloudinary Photo & Audio Upload
+│   ├── prisma.ts              # 🗄️ Prisma Client Singleton Instance
+│   └── sultengLocations.ts    # 🗺️ Daftar 13 Kab/Kota & Validator GPS Bounds Sulteng
+│
+├── 📁 prisma/                 # 📊 Database Models & Migration Scripts
+│   ├── schema.prisma          # 📜 Model Data PostgreSQL Supabase (User & HeritageReport)
+│   └── seed.ts                # 🌱 Data Awal Sulteng (Pokekea, Tambi, Rampi & Akun Test)
+│
+└── 📁 public/                 # 🖼️ Asset Statis
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚡ Ringkasan REST API Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Method | Endpoint | Deskripsi | Akses Peran |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Pendaftaran mandiri Pelapor (Masyarakat) | Publik |
+| `POST` | `/api/auth/login` | Otentikasi Akun (Menerima JWT Token) | Publik |
+| `GET` | `/api/auth/me` | Cek profil sesi user terautentikasi | Logged In |
+| `GET` | `/api/reports` | Katalog Publik & Filter (Kabupaten/Status/Search) | Publik / All |
+| `POST` | `/api/reports` | Kirim laporan baru (Validasi GPS Bounds Sulteng) | Pelapor / Admin |
+| `GET` | `/api/reports/[id]` | Detail laporan spesifik | Publik / All |
+| `PATCH` | `/api/reports/[id]` | Update Workflow (`LAPORAN_MASUK` ➔ `DIPROSES` ➔ `SELESAI`) | Admin / Superadmin |
+| `DELETE` | `/api/reports/[id]` | Pembatalan / Penghapusan Laporan | Pelapor / Superadmin |
+| `POST` | `/api/upload` | Upload Foto Resolusi Tinggi & Audio ke Cloudinary | Logged In |
+| `GET` | `/api/users` | Daftar Pengguna & Filter Role (RBAC) | Superadmin |
+| `PATCH` | `/api/users/[id]` | Ubah Role Pengguna (`PELAPOR` ↔ `ADMIN` ↔ `SUPERADMIN`) | Superadmin |
+| `DELETE` | `/api/users/[id]` | Hapus Akun Pengguna | Superadmin |
+| `GET` | `/api/analytics` | Metrik Analitik Regional Sulawesi Tengah | Admin / Superadmin |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🔑 Akun Pengujian Bawaan (Seed Accounts)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Seluruh akun menggunakan password: `password123`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Superadmin**: `superadmin@digiculture.id`
+- **Admin (Konservator)**: `admin@digiculture.id`
+- **Pelapor (Masyarakat)**: `pelapor@digiculture.id`
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Cara Menjalankan Service
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Install Dependencies**: `npm install`
+2. **Jalankan Development Server**: `npm run dev`
+3. **Buka Service Portal**: `http://localhost:3000`

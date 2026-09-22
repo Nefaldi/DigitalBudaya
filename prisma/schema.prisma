@@ -1,0 +1,65 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  PELAPOR
+}
+
+enum KategoriPusaka {
+  BENDA
+  TAKBENDA
+}
+
+enum StatusPenyelamatan {
+  LAPORAN_MASUK
+  DIPROSES
+  SELESAI
+}
+
+model User {
+  id              String           @id @default(uuid())
+  nama            String
+  email           String           @unique
+  password        String
+  role            Role             @default(PELAPOR)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  laporanDikirim  HeritageReport[] @relation("PelaporHeritage")
+  laporanDiproses HeritageReport[] @relation("AdminHeritage")
+
+  @@index([role])
+}
+
+model HeritageReport {
+  id                 String             @id @default(uuid())
+  judulPusaka        String
+  kategori           KategoriPusaka     @default(BENDA)
+  lokasiSpesifik     String // Contoh: "Lembah Besoa, Poso"
+  kabupatenKota      String // Wilayah administratif di Sulteng
+  latitude           Float?
+  longitude          Float?
+  deskripsiKrisis    String             @db.Text
+  fotoKondisiAwal    String // URL Cloudinary foto awal
+  fotoDigitalisasi   String? // URL Cloudinary hasil digitalisasi/pemugaran
+  rekamanAudioUrl    String? // URL Cloudinary audio khusus warisan takbenda
+  catatanPenanganan  String?            @db.Text // Transkripsi / laporan lapangan
+  status             StatusPenyelamatan @default(LAPORAN_MASUK)
+  pelaporId          String
+  adminId            String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  pelapor            User               @relation("PelaporHeritage", fields: [pelaporId], references: [id], onDelete: Cascade)
+  admin              User?              @relation("AdminHeritage", fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([status, kabupatenKota])
+  @@index([kategori])
+}
