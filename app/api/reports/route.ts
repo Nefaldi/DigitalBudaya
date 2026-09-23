@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
         admin: { select: { id: true, nama: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
+      take: 100,
     });
 
     return NextResponse.json({ reports });
