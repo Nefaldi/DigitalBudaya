@@ -33,10 +33,11 @@ export async function POST(req: NextRequest) {
       url: result.secure_url,
       publicId: result.public_id,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Cloudinary upload error:', error);
+    const message = error instanceof Error ? error.message : 'Gagal mengunggah berkas ke Cloudinary. Pastikan CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, dan CLOUDINARY_API_SECRET telah diset di .env';
     return NextResponse.json(
-      { error: error.message || 'Gagal mengunggah berkas ke Cloudinary. Pastikan CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, dan CLOUDINARY_API_SECRET telah diset di .env' },
+      { error: message },
       { status: 500 }
     );
   }

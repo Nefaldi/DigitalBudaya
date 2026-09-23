@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 
 export default function ApiRootPage() {
   const apiInfo = {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
-import { Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const roleParam = searchParams.get('role');
 
-    const where: any = {};
+    const where: Prisma.UserWhereInput = {};
     if (roleParam && roleParam !== 'Semua') {
       where.role = roleParam as Role;
     }

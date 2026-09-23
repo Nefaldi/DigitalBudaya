@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
 import { isWithinSulteng } from '@/lib/sultengLocations';
-import { KategoriPusaka, StatusPenyelamatan } from '@prisma/client';
+import { Prisma, KategoriPusaka, StatusPenyelamatan } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const currentUser = getAuthenticatedUser(req);
 
     // Build filter criteria
-    const where: any = {};
+    const where: Prisma.HeritageReportWhereInput = {};
 
     if (myReports) {
       if (!currentUser) {

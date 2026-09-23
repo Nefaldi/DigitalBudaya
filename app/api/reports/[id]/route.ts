@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
 import { isWithinSulteng } from '@/lib/sultengLocations';
-import { StatusPenyelamatan, KategoriPusaka } from '@prisma/client';
+import { Prisma, StatusPenyelamatan, KategoriPusaka } from '@prisma/client';
 
 export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   try {
@@ -93,7 +93,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
     if (user.role === 'ADMIN' || user.role === 'SUPERADMIN') {
       const { status, fotoDigitalisasi, rekamanAudioUrl, catatanPenanganan } = body;
 
-      const dataToUpdate: any = {};
+      const dataToUpdate: Prisma.HeritageReportUncheckedUpdateInput = {};
 
       if (status) {
         // Workflow Validation: LAPORAN_MASUK -> DIPROSES -> SELESAI
