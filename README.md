@@ -28,9 +28,10 @@ Backend service ini dibangun menggunakan **Next.js 16 (App Router)**, **Prisma O
 
 Baru selesai melakukan `git clone`? Yuk, ikuti langkah-langkah mudah di bawah ini biar aplikasinya langsung jalan mulus di komputer lokal kamu:
 
-### 1. Masuk ke Folder Proyek
-Buka terminal dan arahkan ke direktori hasil clone:
+### 1. Clone Repositori & Masuk ke Folder Proyek
+Jika belum melakukan clone, jalankan perintah ini di terminal:
 ```bash
+git clone <URL_REPOSITORY_KAMU>
 cd DigitalBudaya
 ```
 
@@ -51,8 +52,9 @@ Buka file `.env` kamu dan sesuaikan nilainya dengan kredensial yang kamu miliki:
 DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
 
-# 2. Secret Key JWT (Bebas, gunakan string acak yang aman)
+# 2. Secret Key Autentikasi (Bisa gunakan JWT_SECRET atau AUTH_SECRET)
 JWT_SECRET="kunci-rahasia-jwt-kamu-di-sini-2026"
+AUTH_SECRET="kunci-rahasia-jwt-kamu-di-sini-2026"
 
 # 3. Kredensial Cloudinary (Untuk upload foto & audio)
 CLOUDINARY_CLOUD_NAME="nama_cloud_kamu"
@@ -61,7 +63,9 @@ CLOUDINARY_API_SECRET="api_secret_kamu"
 ```
 
 > [!TIP]
-> Kalau kamu pakai Supabase, gunakan connection string **Transaction Pooler (Port 6543)** untuk `DATABASE_URL` dan **Session Mode / Direct (Port 5432)** untuk `DIRECT_URL`.
+> **Catatan Penting Supabase:**
+> - Gunakan connection string **Transaction Pooler (Port 6543)** untuk `DATABASE_URL` dan **Session Mode / Direct (Port 5432)** untuk `DIRECT_URL`.
+> - **Jangan sertakan tanda kurung siku `[...]`** pada `[PASSWORD]` atau `[REF]` (tanda kurung siku hanya penanda placeholder).
 
 ### 4. Siapkan Database & Prisma Client
 Sinkronkan skema database dari file `prisma/schema.prisma` ke database kamu:
@@ -78,6 +82,7 @@ Biar database kamu gak kosong saat pengujian, jalankan perintah seeder ini untuk
 ```bash
 npm run seed
 ```
+> ℹ️ *Semua akun uji coba bawaan (`superadmin@digiculture.id`, `admin@digiculture.id`, `pelapor@digiculture.id`) menggunakan password default: **`password123`**.*
 
 ### 6. Jalankan Server Development! 🎉
 Semua sudah siap! Sekarang kamu tinggal menyalakan dev server:
