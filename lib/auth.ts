@@ -2,7 +2,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'digiculture-care-sulteng-secret-key-2026-super-secure';
+const JWT_SECRET =
+  process.env.JWT_SECRET ||
+  process.env.AUTH_SECRET ||
+  process.env.NEXTAUTH_SECRET ||
+  'digiculture-care-sulteng-secret-key-2026-super-secure';
 
 export interface UserTokenPayload {
   id: string;
