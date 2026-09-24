@@ -1,0 +1,770 @@
+/* ==============================================================================
+   DigiCulture Care Design System (v3.1.0)
+   Central Sulawesi Cultural Earth Palette & Mobile-First Responsive Engine
+   Theme: Terracotta Donggala, Lindu Forest Emerald, Sandstone Megalith
+   Canvas: Warm Soft Linen (Light) & Volcanic Basalt (Dark)
+   ============================================================================== */
+
+:root {
+  /* Tadulako Shield Megalith Palette (Light Mode - Harmonized with Official Logo #142948) */
+  --color-brand: #142948;             /* Authentic Logo Shield Navy */
+  --color-brand-hover: #0d1b30;
+  --color-brand-soft: #edf3fa;        /* Light Ice Slate Wash */
+
+  --color-terracotta: #8c351e;        /* Tenun Donggala Deep Rust */
+  --color-terracotta-hover: #732915;
+  --color-terracotta-soft: #f7ede8;
+  --color-emerald: #1e4030;           /* Lore Lindu Deep Conifer / Living Tradition */
+  --color-emerald-hover: #163024;
+  --color-emerald-soft: #edf6f0;
+  --color-sandstone: #9c6634;         /* Ancient Besoa Sandstone Ochre */
+  --color-sandstone-soft: #fbf5ee;
+
+  --color-canvas: #f8fafc;            /* Crisp Archival Slate White */
+  --color-card: #ffffff;              /* Pure Paper Surface */
+  --color-card-hover: #f1f5f9;
+  --color-subtle: #f1f5f9;
+  --color-border: #e2e8f0;            /* Fine Slate Mist Hairline */
+  --color-border-strong: #cbd5e1;
+
+  --color-text-primary: #0f172a;      /* Deep Obsidian Slate */
+  --color-text-secondary: #475569;    /* Weathered Mineral Slate */
+  --color-text-muted: #64748b;        /* Soft Slate */
+
+  --color-feature-band: #0c192c;      /* Deep Tadulako Shield Navy */
+  --color-feature-band-text: #f8fafc;
+
+  /* Semantic UI Tokens */
+  --bg-canvas: var(--color-canvas);
+  --bg-card: var(--color-card);
+  --bg-card-hover: var(--color-card-hover);
+  --bg-subtle: var(--color-subtle);
+  --bg-surface: var(--color-card);
+  --bg-glass: rgba(255, 255, 255, 0.92);
+
+  --border-hairline: var(--color-border);
+  --border-subtle: var(--color-border);
+  --border-strong: var(--color-border-strong);
+  --border-active: var(--color-brand);
+
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --text-accent: var(--color-brand);
+
+  --action-primary: var(--color-brand);
+  --action-primary-hover: var(--color-brand-hover);
+  --action-secondary: var(--color-subtle);
+  --action-secondary-text: var(--color-text-primary);
+  --action-emerald: var(--color-emerald);
+  --action-amber: var(--color-sandstone);
+
+  /* Status Tokens (Refined Archival Inks) */
+  --status-masuk: #8a2c24;            /* Muted Brick Red */
+  --status-masuk-bg: #faebea;
+  --status-masuk-border: #edd2cf;
+
+  --status-diproses: #8c6034;         /* Muted Warm Ochre */
+  --status-diproses-bg: #fcf6eb;
+  --status-diproses-border: #f2e2c6;
+
+  --status-selesai: #1e4030;          /* Muted Forest Olive */
+  --status-selesai-bg: #edf6f0;
+  --status-selesai-border: #c8e4d2;
+
+  --cat-benda: #142948;               /* Shield Navy */
+  --cat-benda-bg: #edf3fa;
+  --cat-benda-border: #cbd5e1;
+
+  --cat-takbenda: #1e4030;            /* Lindu Forest */
+  --cat-takbenda-bg: #edf6f0;
+  --cat-takbenda-border: #c8e4d2;
+
+  /* Typography */
+  --font-sans: var(--font-sans), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', monospace;
+
+  /* Spacing & Radii (Editorial Refined: 4px - 8px, No Cartoonish Pills) */
+  --max-width: 1200px;
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Mobile Touch Target Standards */
+  --touch-target: 44px;
+}
+
+[data-theme="dark"] {
+  /* Tadulako Shield Megalith Palette (Dark Mode - Derived from #142948) */
+  --color-brand: #5b8ec9;             /* Megalith Azure - Clear contrast on dark obsidian */
+  --color-brand-hover: #6ea0db;
+  --color-brand-soft: rgba(91, 142, 201, 0.14);
+
+  --color-terracotta: #b84c30;        /* Muted Terracotta Brick */
+  --color-terracotta-hover: #c95638;
+  --color-terracotta-soft: rgba(184, 76, 48, 0.14);
+  --color-emerald: #4e8268;           /* Muted Conifer Sage */
+  --color-emerald-hover: #5ea080;
+  --color-emerald-soft: rgba(78, 130, 104, 0.14);
+  --color-sandstone: #c49658;         /* Muted Amber Relic Stone */
+  --color-sandstone-soft: rgba(196, 150, 88, 0.14);
+
+  --color-canvas: #0c1421;            /* Deep Oceanic Obsidian Basalt */
+  --color-card: #131f32;              /* Carved Shield Navy Stone */
+  --color-card-hover: #19273e;
+  --color-subtle: #162338;
+  --color-border: #1e2f49;            /* Hairline Basalt Seam */
+  --color-border-strong: #2d4364;
+
+  --color-text-primary: #f8fafc;      /* Crisp Archival Ivory */
+  --color-text-secondary: #94a3b8;    /* Weathered Slate Frost */
+  --color-text-muted: #64748b;        /* Deep Slate Ash */
+
+  --color-feature-band: #070c14;      /* Deepest Midnight Trench */
+  --color-feature-band-text: #f8fafc;
+
+  /* Semantic UI Tokens */
+  --bg-canvas: var(--color-canvas);
+  --bg-card: var(--color-card);
+  --bg-card-hover: var(--color-card-hover);
+  --bg-subtle: var(--color-subtle);
+  --bg-surface: var(--color-card);
+  --bg-glass: rgba(19, 31, 50, 0.92);
+
+  --border-hairline: var(--color-border);
+  --border-subtle: var(--color-border);
+  --border-strong: var(--color-border-strong);
+  --border-active: var(--color-brand);
+
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --text-accent: var(--color-brand);
+
+  --action-primary: var(--color-brand);
+  --action-primary-hover: var(--color-brand-hover);
+  --action-secondary: var(--color-subtle);
+  --action-secondary-text: var(--color-text-primary);
+  --action-emerald: var(--color-emerald);
+  --action-amber: var(--color-sandstone);
+
+  /* Status Tokens (Dark Mode) */
+  --status-masuk: #c96559;
+  --status-masuk-bg: rgba(201, 101, 89, 0.12);
+  --status-masuk-border: rgba(201, 101, 89, 0.28);
+
+  --status-diproses: #c49658;
+  --status-diproses-bg: rgba(196, 150, 88, 0.12);
+  --status-diproses-border: rgba(196, 150, 88, 0.28);
+
+  --status-selesai: #4e8268;
+  --status-selesai-bg: rgba(78, 130, 104, 0.12);
+  --status-selesai-border: rgba(78, 130, 104, 0.28);
+
+  --cat-benda: #5b8ec9;
+  --cat-benda-bg: rgba(91, 142, 201, 0.12);
+  --cat-benda-border: rgba(91, 142, 201, 0.28);
+
+  --cat-takbenda: #4e8268;
+  --cat-takbenda-bg: rgba(78, 130, 104, 0.12);
+  --cat-takbenda-border: rgba(78, 130, 104, 0.28);
+}
+
+/* Global Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Custom Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+/* Typography (Mobile-First Scaled Scale) */
+h1, h2, h3, h4 {
+  color: var(--text-primary);
+  letter-spacing: -0.022em;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(1.85rem, 5.5vw, 3.1rem);
+  line-height: 1.15;
+  letter-spacing: -0.028em;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: clamp(1.4rem, 3.8vw, 2.15rem);
+  line-height: 1.2;
+  letter-spacing: -0.024em;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-weight: 540;
+}
+
+h4 {
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+p {
+  color: var(--text-secondary);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+/* Container (Mobile-First: 1rem on phones, 2rem on desktop) */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Mobile-First Grid System */
+.grid-cols-1 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.grid-cols-2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.grid-cols-3 { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+.grid-cols-4 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+
+/* 2-columns on mobile when specifically intended (e.g. 2x2 metric strips) */
+.grid-cols-2-mobile {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+  .grid-cols-2-mobile { gap: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+}
+
+/* Paper Card (Tactile Hairline Surface, No AI-Slop Shadows) */
+.paper-card, .stone-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .paper-card, .stone-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .paper-card:hover, .stone-card:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-card-hover);
+  }
+}
+
+/* Feature Band: Lindu Forest Canopy (Full Bleed on Desktop, Native Padding on Mobile) */
+.deep-lagoon-band {
+  background-color: var(--color-feature-band);
+  color: var(--color-feature-band-text);
+  padding: 2.75rem 0;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .deep-lagoon-band {
+    padding: 4.5rem 0;
+  }
+}
+
+.deep-lagoon-band h1,
+.deep-lagoon-band h2,
+.deep-lagoon-band h3,
+.deep-lagoon-band h4 {
+  color: #ffffff;
+}
+
+.deep-lagoon-band p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Buttons (Touch Target Ergonomics: Min-Height 44px) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--touch-target);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Primary CTA: Terracotta Donggala */
+.btn-primary {
+  background: var(--action-primary);
+  color: #ffffff !important;
+  border-color: transparent;
+}
+.btn-primary:hover {
+  background: var(--action-primary-hover);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary Button: Soft Neutral Sand */
+.btn-secondary {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  border: 1px solid var(--border-hairline);
+}
+.btn-secondary:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
+}
+
+/* Outline Button */
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-hairline);
+}
+.btn-outline:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-strong);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--status-masuk);
+  border: 1px solid var(--status-masuk-border);
+}
+.btn-danger:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  min-height: 48px;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+}
+
+/* Mobile Full-Width Utility */
+@media (max-width: 640px) {
+  .btn-mobile-block {
+    width: 100% !important;
+  }
+}
+
+/* Badges (Dignified Archival Indicators, Zero Candy/Pill AI Slop) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.74rem;
+  font-weight: 500;
+  border: 1px solid var(--border-hairline);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.badge-masuk {
+  background: var(--status-masuk-bg);
+  color: var(--status-masuk);
+  border-color: var(--status-masuk-border);
+}
+
+.badge-diproses {
+  background: var(--status-diproses-bg);
+  color: var(--status-diproses);
+  border-color: var(--status-diproses-border);
+}
+
+.badge-selesai {
+  background: var(--status-selesai-bg);
+  color: var(--status-selesai);
+  border-color: var(--status-selesai-border);
+}
+
+.badge-benda {
+  background: var(--cat-benda-bg);
+  color: var(--cat-benda);
+  border-color: var(--cat-benda-border);
+}
+
+.badge-takbenda {
+  background: var(--cat-takbenda-bg);
+  color: var(--cat-takbenda);
+  border-color: var(--cat-takbenda-border);
+}
+
+/* Form Controls (Mobile Safe: 16px font-size to prevent iOS zoom, 44px min-height) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  min-height: var(--touch-target);
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.95rem;
+  color: var(--text-primary);
+  font-size: 16px; /* Prevents auto-zoom on mobile safari/chrome */
+  font-family: var(--font-sans);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  .form-input, .form-select, .form-textarea {
+    font-size: 0.92rem;
+  }
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--action-primary);
+  box-shadow: 0 0 0 2px rgba(154, 52, 18, 0.15);
+}
+
+.form-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+/* Leaflet Theming & Touch Handling */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle) !important;
+  font-family: var(--font-sans) !important;
+}
+
+[data-theme="dark"] .leaflet-tile {
+  filter: brightness(0.65) invert(1) contrast(3) hue-rotate(200deg) saturate(0.35) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--bg-card) !important;
+}
+
+/* Responsive Structural Classes */
+.heritage-card-img {
+  transition: transform 0.25s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .paper-card:hover .heritage-card-img {
+    transform: scale(1.03);
+  }
+}
+
+/* Dossier Grid (Mobile: 1 column, Desktop: 2fr 1fr) */
+.dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .dossier-grid {
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Admin Workbench Row (Mobile: 1 column card, Desktop: thumbnail - details - actions) */
+.admin-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .admin-row {
+    grid-template-columns: 140px 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+  }
+}
+
+/* Report Dossier Row (Mobile: stacked, Desktop: 180px 1fr) */
+.report-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .report-row {
+    grid-template-columns: 180px 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Form Row (Mobile: 1 column, Desktop: multi-column) */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.form-row-2-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-row-2-1 {
+    grid-template-columns: 2fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+/* Analytics Row (Mobile: 1 col, Desktop: 1fr 1fr) */
+.analytics-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .analytics-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+.analytics-breakdown-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+}
+
+.analytics-breakdown-row .breakdown-bar {
+  grid-column: 1 / -1;
+  width: 100%;
+  order: 3;
+}
+
+.analytics-breakdown-row .breakdown-count {
+  order: 2;
+  text-align: right;
+}
+
+@media (min-width: 640px) {
+  .analytics-breakdown-row {
+    grid-template-columns: 200px 1fr 40px;
+    gap: 1rem;
+  }
+
+  .analytics-breakdown-row .breakdown-bar {
+    grid-column: auto;
+    order: 2;
+  }
+
+  .analytics-breakdown-row .breakdown-count {
+    order: 3;
+  }
+}
+
+.analytics-subgrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .analytics-subgrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktop vs Mobile Navigation Visibility */
+.desktop-nav {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktop-nav {
+    display: flex !important;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .mobile-menu-btn {
+    display: none !important;
+  }
+}
+
+/* Mobile Slide-Out Drawer Overlay */
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 19, 18, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.mobile-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(85vw, 320px);
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-hairline);
+  z-index: 1001;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+/* Logo Adaptive Theme Display */
+.logo-dark-variant {
+  display: none !important;
+}
+
+.logo-light-variant {
+  display: block !important;
+}
+
+[data-theme="dark"] .logo-dark-variant {
+  display: block !important;
+}
+
+[data-theme="dark"] .logo-light-variant {
+  display: none !important;
+}
