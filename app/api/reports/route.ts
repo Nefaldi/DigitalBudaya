@@ -42,10 +42,10 @@ export async function GET(req: NextRequest) {
 
     if (search) {
       where.OR = [
-        { judulPusaka: { contains: search } },
-        { lokasiSpesifik: { contains: search } },
-        { deskripsiKrisis: { contains: search } },
-        { kabupatenKota: { contains: search } },
+        { judulPusaka: { contains: search, mode: 'insensitive' } },
+        { lokasiSpesifik: { contains: search, mode: 'insensitive' } },
+        { deskripsiKrisis: { contains: search, mode: 'insensitive' } },
+        { kabupatenKota: { contains: search, mode: 'insensitive' } },
       ];
     }
 

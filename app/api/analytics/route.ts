@@ -10,39 +10,48 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Akses khusus Admin / Superadmin' }, { status: 403 });
     }
 
-    const totalReports = await prisma.heritageReport.count();
+    const [statusGroup, kategoriGroup, kabupatenGroup, totalUsers] = await Promise.all([
+      prisma.heritageReport.groupBy({
+        by: ['status'],
+        _count: { _all: true },
+      }),
+      prisma.heritageReport.groupBy({
+        by: ['kategori'],
+        _count: { _all: true },
+      }),
+      prisma.heritageReport.groupBy({
+        by: ['kabupatenKota'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+      }),
+      prisma.user.count(),
+    ]);
 
-    const laporanMasukCount = await prisma.heritageReport.count({
-      where: { status: StatusPenyelamatan.LAPORAN_MASUK },
-    });
+    let totalReports = 0;
+    let laporanMasukCount = 0;
+    let diprosesCount = 0;
+    let selesaiCount = 0;
 
-    const diprosesCount = await prisma.heritageReport.count({
-      where: { status: StatusPenyelamatan.DIPROSES },
-    });
+    for (const item of statusGroup) {
+      const count = item._count._all;
+      totalReports += count;
+      if (item.status === StatusPenyelamatan.LAPORAN_MASUK) laporanMasukCount = count;
+      else if (item.status === StatusPenyelamatan.DIPROSES) diprosesCount = count;
+      else if (item.status === StatusPenyelamatan.SELESAI) selesaiCount = count;
+    }
 
-    const selesaiCount = await prisma.heritageReport.count({
-      where: { status: StatusPenyelamatan.SELESAI },
-    });
-
-    const bendaCount = await prisma.heritageReport.count({
-      where: { kategori: KategoriPusaka.BENDA },
-    });
-
-    const takbendaCount = await prisma.heritageReport.count({
-      where: { kategori: KategoriPusaka.TAKBENDA },
-    });
-
-    const kabupatenGroup = await prisma.heritageReport.groupBy({
-      by: ['kabupatenKota'],
-      _count: { id: true },
-    });
+    let bendaCount = 0;
+    let takbendaCount = 0;
+    for (const item of kategoriGroup) {
+      const count = item._count._all;
+      if (item.kategori === KategoriPusaka.BENDA) bendaCount = count;
+      else if (item.kategori === KategoriPusaka.TAKBENDA) takbendaCount = count;
+    }
 
     const kabupatenBreakdown = kabupatenGroup.map((item) => ({
       kabupatenKota: item.kabupatenKota,
       count: item._count.id,
     }));
-
-    const totalUsers = await prisma.user.count();
 
     return NextResponse.json({
       analytics: {
