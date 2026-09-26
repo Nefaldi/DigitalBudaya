@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 import WorkflowStepper from '@/components/WorkflowStepper';
+import ImageCompressorUpload from '@/components/ImageCompressorUpload';
+import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import { UserSession } from '@/types';
 import {
   FilePlus,
@@ -18,6 +20,8 @@ import {
   MapPin,
   Loader2,
   Lock,
+  Edit3,
+  X,
 } from 'lucide-react';
 
 export default function PelaporDashboardPage() {
@@ -25,6 +29,17 @@ export default function PelaporDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserSession | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingReport, setEditingReport] = useState<HeritageReportItem | null>(null);
+  const [editJudul, setEditJudul] = useState('');
+  const [editKategori, setEditKategori] = useState<'BENDA' | 'TAKBENDA'>('BENDA');
+  const [editKabupaten, setEditKabupaten] = useState('');
+  const [editLokasi, setEditLokasi] = useState('');
+  const [editDeskripsi, setEditDeskripsi] = useState('');
+  const [editFoto, setEditFoto] = useState('');
+  const [editLat, setEditLat] = useState<number | null>(null);
+  const [editLng, setEditLng] = useState<number | null>(null);
+  const [updatingReport, setUpdatingReport] = useState(false);
+  const [editError, setEditError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -82,6 +97,57 @@ export default function PelaporDashboardPage() {
       alert('Terjadi kesalahan saat menghapus laporan');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const openEditModal = (report: HeritageReportItem) => {
+    setEditingReport(report);
+    setEditJudul(report.judulPusaka);
+    setEditKategori(report.kategori);
+    setEditKabupaten(report.kabupatenKota);
+    setEditLokasi(report.lokasiSpesifik);
+    setEditDeskripsi(report.deskripsiKrisis);
+    setEditFoto(report.fotoKondisiAwal);
+    setEditLat(report.latitude || null);
+    setEditLng(report.longitude || null);
+    setEditError('');
+  };
+
+  const handleUpdateReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingReport) return;
+    setEditError('');
+    setUpdatingReport(true);
+
+    try {
+      const res = await fetch(`/api/reports/${editingReport.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          judulPusaka: editJudul,
+          kategori: editKategori,
+          kabupatenKota: editKabupaten,
+          lokasiSpesifik: editLokasi,
+          deskripsiKrisis: editDeskripsi,
+          fotoKondisiAwal: editFoto,
+          latitude: editLat,
+          longitude: editLng,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Gagal memperbarui laporan');
+      }
+
+      setReports((prev) =>
+        prev.map((r) => (r.id === editingReport.id ? { ...r, ...data.report } : r))
+      );
+      setEditingReport(null);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan perubahan.');
+    } finally {
+      setUpdatingReport(false);
     }
   };
 
@@ -343,16 +409,26 @@ export default function PelaporDashboardPage() {
                             <span>Lihat Detail</span>
                           </Link>
 
-                          {/* Pelapor can cancel/delete only if status is LAPORAN_MASUK */}
+                          {/* Pelapor can edit or cancel only if status is LAPORAN_MASUK */}
                           {report.status === 'LAPORAN_MASUK' ? (
-                            <button
-                              onClick={() => handleDeleteReport(report.id)}
-                              disabled={deletingId === report.id}
-                              className="btn btn-danger btn-sm"
-                            >
-                              <Trash2 size={13} />
-                              <span>{deletingId === report.id ? 'Membatalkan...' : 'Batalkan'}</span>
-                            </button>
+                            <>
+                              <button
+                                onClick={() => openEditModal(report)}
+                                className="btn btn-secondary btn-sm"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                              >
+                                <Edit3 size={13} />
+                                <span>Koreksi</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteReport(report.id)}
+                                disabled={deletingId === report.id}
+                                className="btn btn-danger btn-sm"
+                              >
+                                <Trash2 size={13} />
+                                <span>{deletingId === report.id ? 'Membatalkan...' : 'Batalkan'}</span>
+                              </button>
+                            </>
                           ) : (
                             <div
                               style={{
@@ -424,6 +500,195 @@ export default function PelaporDashboardPage() {
           )}
         </div>
       </div>
+
+      {/* Edit Report Modal */}
+      {editingReport && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="paper-card"
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              padding: 'clamp(1.5rem, 4vw, 2rem)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Edit3 size={18} style={{ color: 'var(--action-primary)' }} />
+                <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                  Koreksi Laporan Pusaka
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditingReport(null)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                }}
+                aria-label="Tutup modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div
+              style={{
+                fontSize: '0.78rem',
+                color: 'var(--text-muted)',
+                marginBottom: '1.25rem',
+                padding: '0.65rem 0.85rem',
+                background: 'var(--bg-canvas)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-hairline)',
+              }}
+            >
+              Laporan Anda masih berstatus <strong>LAPORAN MASUK</strong> dan dapat diperbarui sebelum dikunci oleh Konservator Lapangan.
+            </div>
+
+            {editError && (
+              <div
+                style={{
+                  padding: '0.75rem 1rem',
+                  background: 'var(--status-masuk-bg)',
+                  color: 'var(--status-masuk)',
+                  border: '1px solid var(--status-masuk-border)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.85rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                {editError}
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateReport}>
+              <div className="form-group">
+                <label className="form-label">Judul Cagar Budaya</label>
+                <input
+                  type="text"
+                  required
+                  value={editJudul}
+                  onChange={(e) => setEditJudul(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Kategori Pusaka</label>
+                  <select
+                    value={editKategori}
+                    onChange={(e) => setEditKategori(e.target.value as 'BENDA' | 'TAKBENDA')}
+                    className="form-select"
+                  >
+                    <option value="BENDA">Benda (Megalit, Arsitektur, Artefak)</option>
+                    <option value="TAKBENDA">Takbenda (Tradisi Lisan, Bahasa, Sastra)</option>
+                  </select>
+                </div>
+
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label">Kabupaten / Kota</label>
+                  <select
+                    value={editKabupaten}
+                    onChange={(e) => setEditKabupaten(e.target.value)}
+                    className="form-select"
+                  >
+                    {SULTENG_KABUPATEN_KOTA.map((kab) => (
+                      <option key={kab} value={kab}>
+                        {kab}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Lokasi Spesifik / Desa / Kecamatan</label>
+                <input
+                  type="text"
+                  required
+                  value={editLokasi}
+                  onChange={(e) => setEditLokasi(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Deskripsi Kondisi Ancaman / Krisis</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={editDeskripsi}
+                  onChange={(e) => setEditDeskripsi(e.target.value)}
+                  className="form-textarea"
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <ImageCompressorUpload
+                  label="Ganti Foto Bukti Kondisi Awal (Opsional)"
+                  initialUrl={editFoto}
+                  onUploadSuccess={(url) => setEditFoto(url)}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.75rem',
+                  marginTop: '1.5rem',
+                  borderTop: '1px solid var(--border-hairline)',
+                  paddingTop: '1rem',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setEditingReport(null)}
+                  className="btn btn-secondary btn-sm"
+                  disabled={updatingReport}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={updatingReport}
+                  className="btn btn-primary btn-sm"
+                >
+                  {updatingReport ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Menyimpan...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={14} />
+                      <span>Simpan Perubahan</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

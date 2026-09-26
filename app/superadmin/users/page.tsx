@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   Loader2,
   ArrowLeft,
+  UserPlus,
+  X,
 } from 'lucide-react';
 
 interface UserItem {
@@ -35,6 +37,13 @@ export default function UserManagementPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [newNama, setNewNama] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newRole, setNewRole] = useState<UserRole>('ADMIN');
+  const [creatingUser, setCreatingUser] = useState(false);
+  const [createError, setCreateError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -133,6 +142,42 @@ export default function UserManagementPage() {
     }
   };
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError('');
+    setCreatingUser(true);
+
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nama: newNama,
+          email: newEmail,
+          password: newPassword,
+          role: newRole,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Gagal menambahkan pengguna');
+      }
+
+      setUsers((prev) => [data.user, ...prev]);
+      setFeedback({ type: 'success', message: `Pengguna "${newNama}" berhasil didaftarkan sebagai ${newRole}.` });
+      setAddModalOpen(false);
+      setNewNama('');
+      setNewEmail('');
+      setNewPassword('');
+      setNewRole('ADMIN');
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'Terjadi kesalahan');
+    } finally {
+      setCreatingUser(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '6rem 0' }}>
@@ -199,9 +244,22 @@ export default function UserManagementPage() {
             </p>
           </div>
 
-          <Link href="/superadmin/analytics" className="btn btn-secondary btn-sm">
-            <ArrowLeft size={14} /> Ke Dasbor Analitik
-          </Link>
+          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                setCreateError('');
+                setAddModalOpen(true);
+              }}
+              className="btn btn-primary btn-sm"
+            >
+              <UserPlus size={14} />
+              <span>Tambah Pengguna Baru</span>
+            </button>
+            <Link href="/superadmin/analytics" className="btn btn-secondary btn-sm">
+              <ArrowLeft size={14} />
+              <span>Ke Dasbor Analitik</span>
+            </Link>
+          </div>
         </div>
 
         {/* Feedback Alert */}
@@ -359,6 +417,163 @@ export default function UserManagementPage() {
           </table>
         </div>
       </div>
+
+      {/* Add User Modal */}
+      {addModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="paper-card"
+            style={{
+              width: '100%',
+              maxWidth: '480px',
+              padding: 'clamp(1.5rem, 4vw, 2rem)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <UserPlus size={18} style={{ color: 'var(--action-primary)' }} />
+                <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                  Tambah Pengguna Baru
+                </h3>
+              </div>
+              <button
+                onClick={() => setAddModalOpen(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                }}
+                aria-label="Tutup modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {createError && (
+              <div
+                style={{
+                  padding: '0.75rem 1rem',
+                  background: 'var(--status-masuk-bg)',
+                  color: 'var(--status-masuk)',
+                  border: '1px solid var(--status-masuk-border)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.85rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                {createError}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateUser}>
+              <div className="form-group">
+                <label className="form-label">Nama Lengkap</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Budi Santoso"
+                  value={newNama}
+                  onChange={(e) => setNewNama(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Alamat Email</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="nama@instansi.id"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Kata Sandi (Password Awal)</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Minimal 6 karakter"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Peran & Hak Akses</label>
+                <select
+                  value={newRole}
+                  onChange={(e) => setNewRole(e.target.value as UserRole)}
+                  className="form-select"
+                >
+                  <option value="ADMIN">ADMIN (Petugas / Konservator Wilayah)</option>
+                  <option value="PELAPOR">PELAPOR (Masyarakat Umum)</option>
+                  <option value="SUPERADMIN">SUPERADMIN (Pimpinan / Pengelola Sistem)</option>
+                </select>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', display: 'block' }}>
+                  Admin berhak memverifikasi antrean dan mengunggah digitalisasi; Pelapor berhak mengirim laporan pusaka.
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.75rem',
+                  marginTop: '1.5rem',
+                  borderTop: '1px solid var(--border-hairline)',
+                  paddingTop: '1rem',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setAddModalOpen(false)}
+                  className="btn btn-secondary btn-sm"
+                  disabled={creatingUser}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingUser}
+                  className="btn btn-primary btn-sm"
+                >
+                  {creatingUser ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Menyimpan...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={14} />
+                      <span>Buat Pengguna</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

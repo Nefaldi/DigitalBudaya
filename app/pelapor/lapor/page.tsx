@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import MapPicker from '@/components/MapPicker';
@@ -11,7 +11,10 @@ import {
   AlertCircle,
   Loader2,
   Send,
+  BookmarkCheck,
 } from 'lucide-react';
+
+const DRAFT_STORAGE_KEY = 'digiculture_field_draft_v1';
 
 export default function LaporPusakaPage() {
   const [judulPusaka, setJudulPusaka] = useState('');
@@ -28,7 +31,85 @@ export default function LaporPusakaPage() {
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [hasSavedDraft, setHasSavedDraft] = useState(false);
+  const [draftTimestamp, setDraftTimestamp] = useState<string | null>(null);
   const router = useRouter();
+
+  // Check for existing field draft on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.judulPusaka || parsed.deskripsiKrisis || parsed.lokasiSpesifik) {
+            setHasSavedDraft(true);
+            if (parsed.savedAt) {
+              setDraftTimestamp(
+                new Date(parsed.savedAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+              );
+            }
+          }
+        }
+      } catch {
+        // LocalStorage access may fail in private browsing mode
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Auto-save draft whenever field inputs change
+  useEffect(() => {
+    if (!judulPusaka && !lokasiSpesifik && !deskripsiKrisis && !fotoKondisiAwal) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_STORAGE_KEY,
+          JSON.stringify({
+            judulPusaka,
+            kategori,
+            kabupatenKota,
+            lokasiSpesifik,
+            deskripsiKrisis,
+            fotoKondisiAwal,
+            coordinates,
+            savedAt: new Date().toISOString(),
+          })
+        );
+      } catch {
+        // Ignore storage quota errors
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [judulPusaka, kategori, kabupatenKota, lokasiSpesifik, deskripsiKrisis, fotoKondisiAwal, coordinates]);
+
+  const handleRestoreDraft = () => {
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.judulPusaka) setJudulPusaka(parsed.judulPusaka);
+        if (parsed.kategori) setKategori(parsed.kategori);
+        if (parsed.kabupatenKota) setKabupatenKota(parsed.kabupatenKota);
+        if (parsed.lokasiSpesifik) setLokasiSpesifik(parsed.lokasiSpesifik);
+        if (parsed.deskripsiKrisis) setDeskripsiKrisis(parsed.deskripsiKrisis);
+        if (parsed.fotoKondisiAwal) setFotoKondisiAwal(parsed.fotoKondisiAwal);
+        if (parsed.coordinates) setCoordinates(parsed.coordinates);
+      }
+    } catch {
+      // Ignore
+    }
+    setHasSavedDraft(false);
+  };
+
+  const handleDiscardDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // Ignore
+    }
+    setHasSavedDraft(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +146,12 @@ export default function LaporPusakaPage() {
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Gagal mengirimkan laporan');
+      }
+
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // Ignore
       }
 
       router.push('/pelapor');
@@ -135,6 +222,56 @@ export default function LaporPusakaPage() {
               Informasi yang Anda kirimkan akan ditelaah oleh Tim Konservator Balai Pelestarian Kebudayaan Sulawesi Tengah untuk investigasi lapangan dan preservasi digital.
             </p>
           </div>
+
+          {hasSavedDraft && (
+            <div
+              style={{
+                padding: '0.85rem 1.15rem',
+                borderRadius: 'var(--radius-sm)',
+                background: 'var(--color-parchment)',
+                border: '1px solid var(--border-neutral)',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+                fontSize: '0.875rem',
+                color: 'var(--text-primary)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <BookmarkCheck size={18} style={{ color: 'var(--action-primary)' }} />
+                <span>
+                  Ditemukan draf laporan lapangan tersimpan {draftTimestamp ? `(pukul ${draftTimestamp})` : ''}.
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={handleRestoreDraft}
+                  className="btn btn-outline"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                >
+                  Pulihkan Draf
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDiscardDraft}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                    padding: '0.35rem 0.5rem',
+                  }}
+                >
+                  Abaikan
+                </button>
+              </div>
+            </div>
+          )}
 
           {errorMsg && (
             <div
