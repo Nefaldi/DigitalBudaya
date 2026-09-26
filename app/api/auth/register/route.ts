@@ -12,8 +12,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Nama, email, dan password wajib diisi' }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedNama = nama.trim();
+
     // Check existing email
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existingUser) {
       return NextResponse.json({ error: 'Email sudah terdaftar dalam sistem' }, { status: 400 });
     }
@@ -21,8 +24,8 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await hashPassword(password);
     const user = await prisma.user.create({
       data: {
-        nama,
-        email,
+        nama: normalizedNama,
+        email: normalizedEmail,
         password: hashedPassword,
         role: Role.PELAPOR,
       },
@@ -44,6 +47,8 @@ export async function POST(req: NextRequest) {
 
     response.cookies.set('token', token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60,
     });

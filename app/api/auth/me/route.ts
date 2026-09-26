@@ -12,6 +12,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST() {
   const response = NextResponse.json({ message: 'Logout berhasil' });
-  response.cookies.set('token', '', { expires: new Date(0), path: '/' });
+  response.cookies.set('token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+  });
   return response;
 }
