@@ -9,6 +9,7 @@ import WorkflowStepper from '@/components/WorkflowStepper';
 import SultengMap from '@/components/SultengMap';
 import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
+import PrintDossierButton from '@/components/PrintDossierButton';
 import {
   MapPin,
   Calendar,
@@ -48,10 +49,29 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
   return (
     <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
       <div className="container" style={{ maxWidth: '1080px' }}>
-        {/* Back Link */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        {/* Official Print Dossier Header (Only visible on print) */}
+        <div className="print-only official-print-header" style={{ marginBottom: '1.5rem', borderBottom: '2px solid #222', paddingBottom: '0.85rem' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '0.9rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              Pemerintah Provinsi Sulawesi Tengah
+            </div>
+            <div style={{ fontSize: '0.825rem', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              Dinas Kebudayaan & Balai Pelestarian Kebudayaan Wilayah XVIII
+            </div>
+            <div style={{ fontSize: '1.15rem', fontWeight: 700, marginTop: '0.5rem', letterSpacing: '-0.01em', textTransform: 'uppercase' }}>
+              Lembar Registrasi Dan Dokumentasi Cagar Budaya
+            </div>
+            <div style={{ fontSize: '0.75rem', color: '#444', marginTop: '0.25rem' }}>
+              No. Registrasi: REG-{report.id.substring(0, 8).toUpperCase()} • Tanggal Unduh Arsip: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </div>
+          </div>
+        </div>
+
+        {/* Action Bar (Back Link & Print Button) */}
+        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link
             href="/katalog"
+            className="no-print"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -65,6 +85,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
             <ArrowLeft size={16} />
             <span>Kembali ke Katalog Pusaka</span>
           </Link>
+          <PrintDossierButton />
         </div>
 
         {/* Header Metadata */}
@@ -326,6 +347,26 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
                   </span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Official Print Dossier Signatures (Only visible on print) */}
+        <div className="print-only official-print-footer" style={{ marginTop: '2.5rem', paddingTop: '1.25rem', borderTop: '1px solid #999', breakInside: 'avoid' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+            <div style={{ width: '45%' }}>
+              <p style={{ margin: 0, fontWeight: 600 }}>Pelapor Lapangan / Komunitas:</p>
+              <div style={{ height: '48px' }} />
+              <p style={{ margin: 0, borderTop: '1px dashed #666', paddingTop: '0.3rem' }}>
+                {report.pelapor?.nama || 'Masyarakat Partisipan'}
+              </p>
+            </div>
+            <div style={{ width: '45%', textAlign: 'right' }}>
+              <p style={{ margin: 0, fontWeight: 600 }}>Tim Konservator / Kurator Wilayah XVIII:</p>
+              <div style={{ height: '48px' }} />
+              <p style={{ margin: 0, borderTop: '1px dashed #666', paddingTop: '0.3rem' }}>
+                {report.admin?.nama || 'Petugas Balai Pelestarian Kebudayaan'}
+              </p>
             </div>
           </div>
         </div>

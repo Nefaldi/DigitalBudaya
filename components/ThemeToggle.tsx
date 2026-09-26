@@ -19,10 +19,10 @@ function getSnapshot(): 'light' | 'dark' {
     return currentAttr;
   }
   const saved = localStorage.getItem('digiculture_theme');
-  if (saved === 'dark' || saved === 'light') {
-    return saved;
+  if (saved === 'dark') {
+    return 'dark';
   }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'light';
 }
 
 function getServerSnapshot(): 'light' | 'dark' {

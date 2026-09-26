@@ -768,3 +768,45 @@ a {
 [data-theme="dark"] .logo-light-variant {
   display: none !important;
 }
+
+/* Print Media Styles */
+.print-only {
+  display: none !important;
+}
+
+@media print {
+  .no-print,
+  nav,
+  footer,
+  .btn,
+  button,
+  .leaflet-control-container,
+  .leaflet-container {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .paper-card {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

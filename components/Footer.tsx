@@ -42,9 +42,6 @@ export default function Footer() {
             <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'rgba(255, 255, 255, 0.72)', marginBottom: '1.25rem', maxWidth: '340px' }}>
               Platform partisipatif penyelamatan, restorasi, dan pengarsipan digital cagar budaya megalitikum, arsitektur kayu soura, dan tradisi tutur lisan Provinsi Sulawesi Tengah.
             </p>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-sandstone)', fontWeight: 500 }}>
-              Edisi Khusus Sulawesi Tengah • v3.1.0
-            </div>
           </div>
 
           {/* Quick Links */}

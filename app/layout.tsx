@@ -29,17 +29,17 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+    <html lang="id" data-theme="light" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               try {
                 var saved = localStorage.getItem('digiculture_theme');
-                if (saved === 'dark' || saved === 'light') {
-                  document.documentElement.setAttribute('data-theme', saved);
-                } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                if (saved === 'dark') {
                   document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                  document.documentElement.setAttribute('data-theme', 'light');
                 }
               } catch (e) {}
             `,

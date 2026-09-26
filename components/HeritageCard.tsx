@@ -25,8 +25,6 @@ export interface HeritageReportItem {
   admin?: { id: string; nama: string; email: string } | null;
 }
 
-export { optimizeCloudinaryUrl };
-
 export default function HeritageCard({ report }: { report: HeritageReportItem }) {
   const displayImage = report.fotoDigitalisasi || report.fotoKondisiAwal;
   const isRestored = Boolean(report.fotoDigitalisasi);
