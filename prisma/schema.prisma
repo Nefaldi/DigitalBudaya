@@ -62,4 +62,6 @@ model HeritageReport {
 
   @@index([status, kabupatenKota])
   @@index([kategori])
+  @@index([pelaporId])
+  @@index([adminId])
 }
