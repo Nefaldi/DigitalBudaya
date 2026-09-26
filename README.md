@@ -1,5 +1,6 @@
-# 🏛️ DigitalBudaya (DigiCulture Care) — Platform Cagar Budaya Sulawesi Tengah (v3.1.0)
-> **Sistem Partisipatif Penyelamatan, Restorasi, dan Pengarsipan Digital Warisan Budaya Megalitikum & Tradisi Lisan Sulawesi Tengah**
+# DigitalBudaya (DigiCulture Care)
+
+Sistem registrasi, pelaporan, dan pengarsipan digital cagar budaya megalitikum serta tradisi lisan Provinsi Sulawesi Tengah berbasis Next.js 16 App Router, Prisma ORM, PostgreSQL (Supabase), dan Cloudinary.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
@@ -10,228 +11,224 @@
 
 ---
 
-## 📖 Ringkasan Proyek
-
-**DigitalBudaya (DigiCulture Care)** adalah platform *fullstack* berbasis **Next.js 16 (App Router)** yang dirancang untuk mengawal upaya penyelamatan, dokumentasi partisipatif, serta digitalisasi cagar budaya di 13 Kabupaten dan Kota se-Provinsi Sulawesi Tengah.
-
-Mulai dari komplek patung megalitikum dan kalamba purba di Lembah Bada/Besoa/Napu (Taman Nasional Lore Lindu), arsitektur vernakular rumah adat Soura & Tambi, hingga sastra tutur dan bahasa daerah yang terancam punah (seperti bahasa Rampi).
-
-Platform ini mengintegrasikan katalog geospasial publik, alur kerja verifikasi konservator cagar budaya (*state machine*), perbandingan visual pemugaran sebelum-sesudah (*before-after slider*), pemutar audio warisan takbenda, serta portal analitik provinsi untuk pengambil kebijakan.
-
----
-
-## 🛡️ Identitas Visual & Desain Editorial Kuratorial (Anti AI-Slop)
-
-Sistem antarmuka DigitalBudaya dibangun dengan filosofi **Editorial Museum & Arsip Kuratorial**, menghindari estetika "AI-slop" (tanpa karakter emoji murahan, tanpa warna neon Tailwind sintetis, dan tanpa badge berbentuk kapsul bulat lonjong `border-radius: 9999px`).
-
-### 1. Logo Resmi: Perisai Tadulako & Arca Palindo
-Logo resmi menggabungkan **Perisai Tadulako** (simbol keprajuritan dan perlindungan adat Sulawesi Tengah) yang memayungi siluet **Arca Megalitikum Palindo / Sepe** (Lembah Bada, Poso).
-- **Varian Terang (`public/logo-transparent.png`):** Siluet *Tadulako Shield Navy* (`#142948`) dengan latar transparan.
-- **Varian Gelap (`public/logo-light-transparent.png`):** Siluet *Ivory Slate* (`#f8fafc`) dengan latar transparan.
-
-### 2. Dual-Theme Harmonized Palette
-
-| Token / Elemen | Tema Terang (*Light Editorial Archive*) | Tema Gelap (*Deep Megalithic Basalt*) | Deskripsi & Filosofi |
-| :--- | :--- | :--- | :--- |
-| **Brand Primer** | `#142948` (*Tadulako Shield Navy*) | `#5b8ec9` (*Megalith Azure*) | Warna institusional wibawa dari logo resmi; kontras WCAG AAA di kedua tema. |
-| **Latar Kanvas** | `#f8fafc` (*Slate Archival Paper*) | `#0c1421` (*Deep Oceanic Basalt*) | Menghindari putih silau mentah `#ffffff` dan hitam pekat baterai `#000000`. |
-| **Kartu & Permukaan** | `#ffffff` (Batas 1px `#e2e8f0`) | `#131f32` (Batas 1px `#1e2f49`) | Kedalaman hierarki struktural dengan garis rambut (*hairline borders*). |
-| **Teks Primer** | `#0f172a` (*Obsidian Slate*) | `#f8fafc` (*Ivory Frost*) | Keterbacaan tipografi maksimal untuk teks panjang dan catatan arsip. |
-| **Aksen Besoa Sandstone** | `#9c6634` (Soft: `#fbf5ee`) | `#c49658` (Soft: `rgba(196,150,88,0.14)`) | Aksen arca batu pasir purba untuk status antrean & tag kategori. |
-| **Aksen Lindu Conifer** | `#1e4030` (Soft: `#edf6f0`) | `#4e8268` (Soft: `rgba(78,130,104,0.14)`) | Aksen vegetasi hutan Lore Lindu untuk status terverifikasi / selesai. |
-| **Aksen Donggala Terracotta** | `#8c351e` (Soft: `#f7ede8`) | `#b84c30` (Soft: `rgba(184,76,48,0.14)`) | Aksen tenun Donggala untuk status proses & verifikasi kritis. |
-
-### 3. Arsitektur Mobile-First & Desktop Ergonomics
-- **Mobile-First:** Seluruh komponen diuji pada lebar layar HP (375px - 414px) dengan *minimum touch-target* 44px, drawer navigasi *slide-over*, accordion tabel data, dan peta yang aman dari *scroll trapping*.
-- **Desktop UX:** Layar lebar (1280px+) memanfaatkan tata letak multi-kolom, dossier arsip berdampingan (*split-panel*), dan meja kerja inspeksi konservator yang efisien.
+## Daftar Isi
+- [Akun Demo](#akun-demo)
+- [Quick Start](#quick-start)
+- [Arsitektur & Batasan Free-Tier](#arsitektur--batasan-free-tier)
+- [Identitas Visual & Sistem Desain](#identitas-visual--sistem-desain)
+- [Fitur Sistem](#fitur-sistem)
+- [Struktur Direktori](#struktur-direktori)
+- [Ringkasan REST API](#ringkasan-rest-api)
+- [Daftar Skrip](#daftar-skrip)
 
 ---
 
-## ⚡ Arsitektur Efisiensi & Strategi Free-Tier
+## Akun Demo
 
-Platform ini dioptimalkan secara ketat untuk berjalan andal di bawah batasan paket gratis (*free-tier constraints*):
+Semua akun hasil seeding menggunakan password default: `password123`
 
-1. **Vercel Serverless Function (Batas Payload 4.5 MB):**
-   - Komponen [`ImageCompressorUpload.tsx`](file:///home/dil/Code/DigitalBudaya/components/ImageCompressorUpload.tsx) melakukan *downsampling* dan kompresi JPEG berbasis HTML5 Canvas langsung di browser pengguna sebelum diunggah ke server. Foto kamera ponsel 12MP (8–15 MB) terkompresi otomatis menjadi ~300–500 KB tanpa kehilangan detail arkeologis.
-2. **Cloudinary CDN (Batas Kuota 25 Kredit/Bulan):**
-   - Menggunakan utility [`lib/imageUtils.ts`](file:///home/dil/Code/DigitalBudaya/lib/imageUtils.ts) yang menginjeksi transformasi *on-the-fly* (`f_auto,q_auto,w_*`) untuk menyajikan format WebP/AVIF modern sesuai dimensi layar pengguna.
-   - Komponen Next.js `<Image unoptimized />` digunakan untuk gambar Cloudinary dinamis sehingga **tidak memakan kuota 1.000 Image Optimization per bulan milik Vercel**.
-3. **Supabase PostgreSQL (Koneksi Pooler Port 6543 & Batas DB 500 MB):**
-   - Optimasi kueri database pada rute analitik ([`app/api/analytics/route.ts`](file:///home/dil/Code/DigitalBudaya/app/api/analytics/route.ts)) dan beranda ([`app/page.tsx`](file:///home/dil/Code/DigitalBudaya/app/page.tsx)) dengan menggabungkan kueri hitung sekuensial menjadi kueri SQL agregat paralel `prisma.heritageReport.groupBy()`. Mengurangi *roundtrip database* hingga 70%.
-4. **Zero Layout Shift Font Self-Hosting:**
-   - Tipografi Google Fonts (`Plus Jakarta Sans` & `JetBrains Mono`) diimpor melalui `next/font/google` di [`app/layout.tsx`](file:///home/dil/Code/DigitalBudaya/app/layout.tsx), memangkas *render-blocking network requests* ke CDN eksternal.
-
----
-
-## ✨ Fitur-Fitur Utama
-
-- 🗺️ **Katalog Publik & Geospasial Sulteng:** Filter multi-dimensi (13 Kabupaten/Kota, Kategori Benda/Takbenda, Status Penyelamatan, Pencarian teks bebas *case-insensitive*).
-- 📍 **Peta Interaktif Leaflet:** Bounding box Sulawesi Tengah (-3.8°S s/d 2.2°N, 119.0°E s/d 124.5°E) dengan pin SVG bertema Tadulako Shield dan popup interaktif.
-- 🎚️ **Before-After Restoration Slider:** Slider perbandingan visual interaktif geser (*drag & touch*) untuk membandingkan kondisi rusak awal dengan hasil digitalisasi 3D / konservasi fisik.
-- 🎵 **Audio Wave Player:** Pemutar audio HTML5 responsif dengan visualisator gelombang suara untuk dokumentasi warisan budaya takbenda (WBTB) seperti bahasa daerah Rampi dan sastra tutur.
-- 📋 **Workflow Stepper (State Machine):** Visualisasi tahapan penanganan terstandar: `LAPORAN_MASUK` ➔ `DIPROSES` (oleh Konservator Wilayah) ➔ `SELESAI` (Verifikasi Lapangan Tuntas).
-- 🔐 **Role-Based Access Control (RBAC):**
-  - **Publik:** Menjelajahi katalog terverifikasi dan dossier detail.
-  - **Pelapor:** Pendaftaran mandiri, pembuatan laporan cagar budaya, manajemen draf laporan sendiri.
-  - **Admin (Konservator):** Mengklaim laporan, mengubah status penanganan, mengunggah foto digitalisasi pemugaran & audio WBTB.
-  - **Superadmin:** Manajemen pengguna se-provinsi (ubah role / hapus akun) dan pemantauan analitik sebaran 13 Kab/Kota.
-
----
-
-## 🔑 Akun Demo Siap Pakai
-
-Semua akun hasil seeding menggunakan password default: **`password123`**
-
-| Peran (Role) | Email | Hak Akses Utama |
+| Peran (Role) | Email | Akses & Kewenangan |
 |---|---|---|
-| **Superadmin** | `superadmin@digiculture.id` | Manajemen user se-provinsi, hapus laporan, dan dashboard analitik lengkap |
-| **Admin** | `admin@digiculture.id` | Konservator lapangan: klaim laporan, update status, upload hasil restorasi & audio |
-| **Pelapor** | `pelapor@digiculture.id` | Masyarakat umum: buat laporan pusaka baru, edit laporan sendiri berstatus masuk |
+| **Superadmin** | `superadmin@digiculture.id` | Manajemen pengguna se-provinsi, analitik regional, hapus laporan |
+| **Admin** | `admin@digiculture.id` | Konservator lapangan: verifikasi status, upload foto restorasi & audio WBTB |
+| **Pelapor** | `pelapor@digiculture.id` | Masyarakat umum: kirim laporan kondisi cagar budaya, kelola draft laporan mandiri |
 
 ---
 
-## 📂 Struktur Direktori Proyek
+## Quick Start
 
-```
-DigitalBudaya/
-├── 📁 app/                             # Next.js App Router (Fullstack)
-│   ├── 📁 admin/                       # Meja Kerja Konservator Lapangan (/admin)
-│   ├── 📁 api/                         # REST API Route Handlers
-│   │   ├── 📁 analytics/               # GET /api/analytics (Agregat Wilayah & Status)
-│   │   ├── 📁 auth/                    # Login, Register, Me (JWT Cookie & Header)
-│   │   ├── 📁 reports/                 # CRUD Laporan & Katalog ([id], POST, PATCH, DELETE)
-│   │   ├── 📁 upload/                  # Upload Media ke Cloudinary CDN
-│   │   └── 📁 users/                   # Manajemen User ([id], PATCH role, DELETE)
-│   ├── 📁 katalog/                     # Direktori Publik Geospasial
-│   │   ├── 📁 [id]/                    # Dossier Detail Cagar Budaya & Slider Pemugaran
-│   │   └── page.tsx                    # Daftar Katalog Publik & Filter Spasial
-│   ├── 📁 login/                       # Halaman Masuk Akun
-│   ├── 📁 pelapor/                     # Portal Pelapor Masyarakat (/pelapor)
-│   │   └── 📁 lapor/                   # Formulir Kirim Laporan dengan Peta & Kompresor
-│   ├── 📁 register/                    # Pendaftaran Akun Pelapor Baru
-│   ├── 📁 superadmin/                  # Panel Superadmin Provinsi
-│   │   ├── 📁 analytics/               # Visualisasi Matriks Sebaran 13 Kab/Kota
-│   │   └── 📁 users/                   # Meja Kerja Manajemen Akses Pengguna
-│   ├── globals.css                     # Design System Vanilla CSS (Light & Dark Theme)
-│   ├── layout.tsx                      # Root Layout (next/font, Theme Initializer, Leaflet CSS)
-│   └── page.tsx                        # Beranda Editorial & Ringkasan Metrik Cagar Budaya
-│
-├── 📁 components/                      # Komponen UI Terisolasi & Reusable
-│   ├── AudioWavePlayer.tsx             # Pemutar Audio Warisan Budaya Takbenda (WBTB)
-│   ├── BeforeAfterSlider.tsx           # Slider Komparasi Restorasi Fisik / Digital
-│   ├── Footer.tsx                      # Footer Institusional dengan Logo Light-Variant
-│   ├── HeritageCard.tsx                # Kartu Dossier Cagar Budaya (Archival Tags)
-│   ├── ImageCompressorUpload.tsx       # Kompresor Foto Klien (HTML5 Canvas -> Cloudinary)
-│   ├── MapPicker.tsx                   # Penentu Koordinat Interaktif saat Pelaporan
-│   ├── Navbar.tsx                      # Navigasi Responsif Desktop & Drawer Mobile
-│   ├── SultengMap.tsx                  # Peta Interaktif Sebaran Cagar Budaya (Leaflet)
-│   ├── ThemeToggle.tsx                 # Tombol Pergantian Tema Terang / Gelap
-│   └── WorkflowStepper.tsx             # Indikator Status Tahapan Penyelamatan
-│
-├── 📁 lib/                             # Core Driver & Utility Helpers
-│   ├── auth.ts                         # Helper JWT Token, Hash Bcrypt, & Ekstraksi Sesi
-│   ├── cloudinary.ts                   # Driver Cloudinary SDK Upload Stream
-│   ├── imageUtils.ts                   # Utility Optimasi URL Cloudinary On-The-Fly
-│   ├── prisma.ts                       # Singleton PrismaClient untuk Serverless/Dev
-│   └── sultengLocations.ts             # Daftar 13 Kab/Kota & Bounding Box Koordinat Sulteng
-│
-├── 📁 prisma/                          # Skema & Migrasi Database
-│   ├── schema.prisma                   # Model User & HeritageReport
-│   └── seed.ts                         # Seeder Data Awal Akun & Pusaka Sulteng
-│
-├── 📁 public/                          # Aset Statis Publik
-│   ├── logo-transparent.png            # Logo Perisai Tadulako Navy (Light Mode)
-│   ├── logo-light-transparent.png      # Logo Perisai Tadulako Ivory (Dark Mode & Footer)
-│   └── logo.png                        # Master Asset Logo Resolusi Tinggi
-│
-├── 📄 API_DOCUMENTATION.md             # Dokumentasi Lengkap REST API Payload
-├── 📄 next.config.ts                   # Konfigurasi Next.js (Image Remote Patterns & Optimasi)
-└── 📄 README.md                        # Dokumentasi Utama Repositori
-```
+### 1. Prasyarat Sistem
+- Node.js versi 18.x atau 20.x
+- npm versi 9.x atau lebih baru
+- Akun Supabase (Database PostgreSQL)
+- Akun Cloudinary (Media Storage)
 
----
-
-## 🚀 Panduan Memulai (Quick Start)
-
-### 1. Pasang Dependensi
-Pastikan **Node.js** (v18 atau v20+) dan **npm** sudah terpasang di sistem Anda:
+### 2. Kloning & Pasang Dependensi
 ```bash
+git clone <URL_REPOSITORY>
+cd DigitalBudaya
 npm install
 ```
 
-### 2. Konfigurasi Environment (`.env`)
-Salin file template `.env.example` menjadi `.env`:
+### 3. Konfigurasi Environment (`.env`)
+Salin file template `.env.example` ke `.env`:
 ```bash
 cp .env.example .env
 ```
-Isi variabel lingkungan berikut:
+
+Sesuaikan variabel berikut pada file `.env`:
 ```env
-# Database PostgreSQL Supabase (Gunakan Port 6543 untuk Transaction Pooler)
+# Database PostgreSQL Supabase (Port 6543 untuk Transaction Pooler)
 DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
 
-# Kunci Rahasia Sesi JWT
+# Sesi JWT
 JWT_SECRET="kunci-rahasia-jwt-digitalbudaya-2026-super-secure"
 AUTH_SECRET="kunci-rahasia-jwt-digitalbudaya-2026-super-secure"
 
-# Kredensial Media Cloudinary CDN
+# Kredensial Cloudinary
 CLOUDINARY_CLOUD_NAME="nama_cloud_anda"
 CLOUDINARY_API_KEY="api_key_anda"
 CLOUDINARY_API_SECRET="api_secret_anda"
 ```
 
-### 3. Migrasi & Seeding Database
-Dorong skema Prisma ke database Supabase dan masukkan data awal:
+### 4. Sinkronisasi Database & Seeding
 ```bash
-# 1. Generate Prisma Client
+# Sinkronkan skema Prisma ke database
 npx prisma generate
-
-# 2. Sinkronkan tabel ke database
 npx prisma db push
 
-# 3. Jalankan script seeder
+# Masukkan data awal (akun demo & contoh cagar budaya Sulteng)
 npm run seed
 ```
 
-### 4. Jalankan Server Development
+### 5. Jalankan Server Development
 ```bash
 npm run dev
 ```
-Buka **[http://localhost:3000](http://localhost:3000)** di browser Anda.
+Aplikasi dapat diakses di `http://localhost:3000`.
 
 ---
 
-## 🛠️ Ringkasan REST API Endpoints
+## Arsitektur & Batasan Free-Tier
 
-Spesifikasi detail request/response payload tersedia di [API_DOCUMENTATION.md](file:///home/dil/Code/DigitalBudaya/API_DOCUMENTATION.md).
+Sistem dirancang dengan optimasi khusus untuk beroperasi di bawah batasan paket gratis penyedia layanan cloud:
 
-| Method | Endpoint | Fungsi | Hak Akses |
+1. **Vercel Serverless (Maksimal 4.5 MB Payload Request):**
+   - Kompresi sisi klien menggunakan HTML5 Canvas pada `ImageCompressorUpload.tsx`. Foto kamera ponsel berukuran 8–15 MB diubah dimensinya menjadi maksimal 1600px dan dikompresi ke JPEG kualitas 0.82 sebelum dikirim ke API upload, menghasilkan berkas 300–500 KB tanpa melanggar batasan payload Vercel.
+2. **Cloudinary (Batas 25 Kredit/Bulan):**
+   - Menggunakan utility `lib/imageUtils.ts` untuk menginjeksi parameter transformasi on-the-fly (`f_auto,q_auto,w_*`) langsung pada URL CDN.
+   - Komponen Next.js Image dikonfigurasi dengan properti `unoptimized` untuk gambar eksternal Cloudinary, mencegah terpakainya kuota 1.000 transformasi bulanan pada Vercel Hobby.
+3. **Supabase PostgreSQL (Batas Database 500 MB & Connection Pooling):**
+   - Kueri analitik dan halaman beranda menggunakan eksekusi agregat paralel `prisma.heritageReport.groupBy()` di dalam `Promise.all`, memangkas kueri hitung sekuensial dari 6 kali menjadi 1 kali roundtrip database.
+   - Menggunakan port 6543 (PgBouncer Transaction Pooler) untuk mencegah koneksi habis pada lingkungan serverless.
+4. **Optimasi Font & Aset Statis:**
+   - Tipografi Google Fonts (`Plus Jakarta Sans` dan `JetBrains Mono`) diimpor melalui modul bawaan `next/font/google` di `app/layout.tsx`. Font disimpan lokal saat build untuk mencegah layout shift (CLS = 0) dan menghilangkan network waterfall ke domain pihak ketiga.
+
+---
+
+## Identitas Visual & Sistem Desain
+
+Antarmuka menggunakan sistem desain editorial museum dengan sudut kuratorial (`border-radius: 3px - 8px`), tipografi terstruktur, dan penyesuaian tema terang/gelap berbasis logo resmi.
+
+### 1. Logo Resmi
+- Simbol: Perisai Tadulako melindungi Arca Megalitikum Palindo (Lembah Bada, Kabupaten Poso).
+- Warna Inti: `#142948` (Tadulako Shield Navy).
+- Aset Terintegrasi:
+  - `public/logo-transparent.png` (Varian navy untuk tema terang).
+  - `public/logo-light-transparent.png` (Varian gading `#f8fafc` untuk tema gelap dan footer).
+
+### 2. Spesifikasi Palet Warna
+
+| Elemen Token | Light Mode (Editorial Archive) | Dark Mode (Oceanic Basalt) | Keterangan |
 |---|---|---|---|
-| `POST` | `/api/auth/register` | Pendaftaran akun masyarakat pelapor | Publik |
-| `POST` | `/api/auth/login` | Autentikasi akun & penerbitan token JWT | Publik |
-| `GET` | `/api/auth/me` | Membaca sesi pengguna aktif | Terautentikasi |
+| `--color-brand` | `#142948` | `#5b8ec9` | Warna utama perisai logo, kontras WCAG AAA di kedua tema |
+| `--bg-canvas` | `#f8fafc` | `#0c1421` | Kanvas latar bebas silau |
+| `--bg-card` | `#ffffff` | `#131f32` | Permukaan panel kartu |
+| `--border-hairline` | `#e2e8f0` | `#1e2f49` | Garis batas tipis 1px |
+| `--text-primary` | `#0f172a` | `#f8fafc` | Teks utama dengan kontras tinggi |
+| `--text-muted` | `#64748b` | `#94a3b8` | Teks pendukung / metadata |
+| Status Masuk | `#9c6634` (Sandstone) | `#c49658` | Aksen batu purba Besoa |
+| Status Selesai | `#1e4030` (Conifer) | `#4e8268` | Aksen vegetasi Lore Lindu |
+| Status Kritis | `#8c351e` (Terracotta) | `#b84c30` | Aksen tenun Donggala |
+
+---
+
+## Fitur Sistem
+
+- **Katalog Geospasial Publik:** Direktori pencarian pusaka mencakup 13 Kabupaten/Kota se-Sulawesi Tengah dengan filter kategori (Benda vs Takbenda), status konservasi, dan pencarian teks *case-insensitive*.
+- **Peta Interaktif Leaflet:** Pembatasan wilayah spesifik Sulteng (119.0°E - 124.5°E, -3.8°S - 2.2°N) dengan penanda pin SVG bertema perisai Tadulako.
+- **Before-After Slider:** Komponen komparasi visual interaktif geser untuk membandingkan kondisi kerusakan awal dengan hasil pemugaran fisik atau digitalisasi 3D.
+- **Audio Wave Player:** Pemutar audio HTML5 untuk pelestarian Warisan Budaya Takbenda (WBTB), sastra tutur lisan, dan rekaman dialek bahasa daerah yang terancam punah.
+- **State Machine Konservasi:** Alur penanganan terstruktur: `LAPORAN_MASUK` -> `DIPROSES` (dikunci oleh Konservator Wilayah) -> `SELESAI`.
+- **Manajemen Pengguna & Analitik:** Panel Superadmin untuk promosi peran pengguna serta visualisasi agregat sebaran cagar budaya per kabupaten/kota.
+
+---
+
+## Struktur Direktori
+
+```
+DigitalBudaya/
+├── app/
+│   ├── admin/                 # Meja kerja verifikasi konservator (/admin)
+│   ├── api/                   # Route handlers REST API
+│   │   ├── analytics/         # GET /api/analytics
+│   │   ├── auth/              # login, register, me, logout
+│   │   ├── reports/           # CRUD katalog & laporan cagar budaya
+│   │   ├── upload/            # Upload foto & audio ke Cloudinary
+│   │   └── users/             # Manajemen user (Superadmin)
+│   ├── katalog/               # Direktori publik geospasial
+│   │   └── [id]/              # Dossier detail pusaka & slider pemugaran
+│   ├── login/                 # Halaman autentikasi login
+│   ├── pelapor/               # Portal pelapor masyarakat (/pelapor)
+│   │   └── lapor/             # Form pelaporan dengan kompresor kanvas & peta
+│   ├── register/              # Halaman pendaftaran pelapor
+│   ├── superadmin/            # Panel kontrol provinsi
+│   │   ├── analytics/         # Visualisasi sebaran 13 Kab/Kota
+│   │   └── users/             # Manajemen akun & peran pengguna
+│   ├── globals.css            # Desain sistem CSS tanpa framework utilitas eksternal
+│   ├── layout.tsx             # Root layout (next/font & Leaflet CSS bundle)
+│   └── page.tsx               # Beranda sistem & metrik provinsi
+│
+├── components/                # Komponen antarmuka mandiri
+│   ├── AudioWavePlayer.tsx    # Pemutar audio WBTB
+│   ├── BeforeAfterSlider.tsx  # Slider komparasi foto restorasi
+│   ├── Footer.tsx             # Footer dengan varian logo dark
+│   ├── HeritageCard.tsx       # Kartu katalog cagar budaya
+│   ├── ImageCompressorUpload.tsx # Kompresor gambar HTML5 canvas
+│   ├── MapPicker.tsx          # Penentu titik koordinat laporan
+│   ├── Navbar.tsx             # Navigasi responsif (desktop & mobile drawer)
+│   ├── SultengMap.tsx         # Peta spasial cagar budaya (Leaflet)
+│   ├── ThemeToggle.tsx        # Toggle tema terang / gelap
+│   └── WorkflowStepper.tsx    # Indikator alur status penanganan
+│
+├── lib/                       # Modul driver & helper
+│   ├── auth.ts                # Verifikasi JWT & hash kata sandi bcrypt
+│   ├── cloudinary.ts          # Driver upload stream Cloudinary SDK
+│   ├── imageUtils.ts          # Optimasi format & ukuran URL Cloudinary
+│   ├── prisma.ts              # Singleton PrismaClient
+│   └── sultengLocations.ts    # Validasi koordinat batas wilayah Sulteng
+│
+├── prisma/
+│   ├── schema.prisma          # Definisi skema model database
+│   └── seed.ts                # Seeder akun demo & contoh data cagar budaya
+│
+├── public/                    # Berkas aset statis (logo resmi format transparan)
+├── next.config.ts             # Konfigurasi remote domain gambar Next.js
+└── README.md                  # Dokumentasi teknis proyek
+```
+
+---
+
+## Ringkasan REST API
+
+Spesifikasi lengkap muatan permintaan dan respons dapat dilihat pada [API_DOCUMENTATION.md](file:///home/dil/Code/DigitalBudaya/API_DOCUMENTATION.md).
+
+| Method | Endpoint | Deskripsi Fungsi | Akses |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Pendaftaran akun masyarakat baru | Publik |
+| `POST` | `/api/auth/login` | Autentikasi akun & pembuatan cookie JWT | Publik |
+| `GET` | `/api/auth/me` | Pembacaan profil pengguna sesi aktif | Terautentikasi |
 | `POST` | `/api/auth/me` | Logout (penghapusan cookie sesi) | Terautentikasi |
-| `GET` | `/api/reports` | Mengambil katalog publik & filter spasial | Publik / Semua |
+| `GET` | `/api/reports` | Mengambil daftar katalog & filter wilayah | Publik |
 | `POST` | `/api/reports` | Membuat laporan cagar budaya baru | Pelapor & Admin |
-| `GET` | `/api/reports/[id]` | Mengambil satu dossier cagar budaya | Publik / Semua |
-| `PATCH` | `/api/reports/[id]` | Memperbarui laporan / alur status konservasi | Sesuai Peran |
-| `DELETE` | `/api/reports/[id]` | Menghapus / membatalkan laporan | Pelapor / Superadmin |
-| `POST` | `/api/upload` | Mengunggah foto/audio ke Cloudinary CDN | Terautentikasi |
-| `GET` | `/api/users` | Daftar seluruh pengguna & filter peran | Superadmin |
-| `PATCH` | `/api/users/[id]` | Mengubah peran (*role promotion/demotion*) | Superadmin |
-| `DELETE` | `/api/users/[id]` | Menghapus akun pengguna | Superadmin |
-| `GET` | `/api/analytics` | Ringkasan statistik sebaran 13 Kab/Kota | Admin & Superadmin |
+| `GET` | `/api/reports/[id]` | Mengambil satu data detail cagar budaya | Publik |
+| `PATCH` | `/api/reports/[id]` | Pembaruan status penanganan / koreksi draft | Sesuai Peran |
+| `DELETE` | `/api/reports/[id]` | Pembatalan atau penghapusan laporan | Pelapor / Superadmin |
+| `POST` | `/api/upload` | Upload media foto/audio ke Cloudinary | Terautentikasi |
+| `GET` | `/api/users` | Daftar semua akun pengguna | Superadmin |
+| `PATCH` | `/api/users/[id]` | Perubahan peran pengguna (Role Promotion) | Superadmin |
+| `DELETE` | `/api/users/[id]` | Penonaktifan / penghapusan akun pengguna | Superadmin |
+| `GET` | `/api/analytics` | Ringkasan statistik agregat se-provinsi | Admin & Superadmin |
 
 ---
 
-## 🧪 Skrip Perintah Tersedia
+## Daftar Skrip
 
-- `npm run dev` — Menjalankan server Next.js lokal di mode development.
-- `npm run build` — Melakukan kompilasi produksi Next.js (TypeScript, Prerendering, Optimasi Bundle).
-- `npm run start` — Menjalankan server Next.js di mode produksi setelah dibuild.
-- `npm run lint` — Memeriksa standar kode dan linting ESLint (0 errors, 0 warnings).
-- `npm run seed` — Mengisi database dengan data awal akun demo dan pusaka Sulteng.
-
----
-
-Mari bersama menjaga dan mendokumentasikan warisan adiluhung peradaban megalitik dan tradisi tutur bumi Tadulako, Sulawesi Tengah! 🏛️✨
+| Perintah | Deskripsi |
+|---|---|
+| `npm run dev` | Menjalankan server development Next.js lokal (`http://localhost:3000`) |
+| `npm run build` | Menjalankan kompilasi TypeScript dan pembuatan build produksi |
+| `npm run start` | Menjalankan server aplikasi pada mode produksi |
+| `npm run lint` | Menjalankan pemeriksaan kode menggunakan ESLint |
+| `npm run seed` | Menjalankan pengisian data awal ke database Supabase |
