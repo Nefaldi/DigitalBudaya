@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadToCloudinary } from '@/lib/cloudinary';
+import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary';
 import { getAuthenticatedUser } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const MAX_FILE_SIZE = 4.5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'Ukuran berkas melebihi batas maksimal 4.5 MB (Batas Vercel Serverless Function). Harap kompresi berkas sebelum diunggah.' },
+        { error: 'Ukuran berkas melebihi batas maksimal 4.5 MB. Harap pilih berkas lain atau gunakan kamera.' },
         { status: 413 }
       );
     }
@@ -38,16 +38,48 @@ export async function POST(req: NextRequest) {
     const result = await uploadToCloudinary(buffer, folder, resourceType);
 
     return NextResponse.json({
-      message: 'Upload ke Cloudinary berhasil',
+      message: 'Unggah berkas berhasil',
       url: result.secure_url,
       publicId: result.public_id,
     });
   } catch (error: unknown) {
-    console.error('Cloudinary upload error:', error);
-    const message = error instanceof Error ? error.message : 'Gagal mengunggah berkas ke Cloudinary. Pastikan CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, dan CLOUDINARY_API_SECRET telah diset di .env';
+    console.error('Upload error:', error);
+    const message = error instanceof Error ? error.message : 'Gagal memproses unggahan berkas. Silakan coba beberapa saat lagi.';
     return NextResponse.json(
       { error: message },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = getAuthenticatedUser(req);
+    if (!user) {
+      return NextResponse.json({ error: 'Harap login terlebih dahulu' }, { status: 401 });
+    }
+
+    let urlOrPublicId = '';
+    const contentType = req.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const body = await req.json();
+      urlOrPublicId = body.url || body.publicId || '';
+    } else {
+      const { searchParams } = new URL(req.url);
+      urlOrPublicId = searchParams.get('url') || searchParams.get('publicId') || '';
+    }
+
+    if (!urlOrPublicId) {
+      return NextResponse.json({ error: 'URL atau publicId berkas wajib disertakan' }, { status: 400 });
+    }
+
+    const isAudio = urlOrPublicId.endsWith('.mp3') || urlOrPublicId.endsWith('.wav') || urlOrPublicId.includes('/video/');
+    const resourceType = isAudio ? 'video' : 'image';
+
+    const success = await deleteFromCloudinary(urlOrPublicId, resourceType);
+    return NextResponse.json({ success, message: success ? 'Berkas berhasil dihapus dari Cloudinary' : 'Gagal menghapus berkas dari Cloudinary' });
+  } catch (error) {
+    console.error('Cloudinary delete error:', error);
+    return NextResponse.json({ error: 'Gagal memproses penghapusan berkas' }, { status: 500 });
   }
 }

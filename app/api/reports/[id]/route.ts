@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
 import { isWithinSulteng } from '@/lib/sultengLocations';
 import { Prisma, StatusPenyelamatan, KategoriPusaka } from '@prisma/client';
+import { deleteFromCloudinary } from '@/lib/cloudinary';
 
 export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   try {
@@ -68,6 +69,11 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
         return NextResponse.json({ error: 'Koordinat GPS berada di luar wilayah Sulawesi Tengah' }, { status: 400 });
       }
 
+      // If pelapor replaces initial photo with a new one, remove previous one from Cloudinary
+      if (fotoKondisiAwal && report.fotoKondisiAwal && fotoKondisiAwal !== report.fotoKondisiAwal) {
+        deleteFromCloudinary(report.fotoKondisiAwal, 'image').catch(() => {});
+      }
+
       const updated = await prisma.heritageReport.update({
         where: { id },
         data: {
@@ -114,6 +120,14 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       if (rekamanAudioUrl !== undefined) dataToUpdate.rekamanAudioUrl = rekamanAudioUrl;
       if (catatanPenanganan !== undefined) dataToUpdate.catatanPenanganan = catatanPenanganan;
 
+      // If admin replaces restoration photo or audio with new files, remove superseded ones from Cloudinary
+      if (fotoDigitalisasi && report.fotoDigitalisasi && fotoDigitalisasi !== report.fotoDigitalisasi) {
+        deleteFromCloudinary(report.fotoDigitalisasi, 'image').catch(() => {});
+      }
+      if (rekamanAudioUrl && report.rekamanAudioUrl && rekamanAudioUrl !== report.rekamanAudioUrl) {
+        deleteFromCloudinary(report.rekamanAudioUrl, 'video').catch(() => {});
+      }
+
       const updated = await prisma.heritageReport.update({
         where: { id },
         data: dataToUpdate,
@@ -156,8 +170,23 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
       if (report.status !== StatusPenyelamatan.LAPORAN_MASUK) {
         return NextResponse.json({ error: 'Laporan yang sedang diproses atau selesai tidak dapat dibatalkan/dihapus' }, { status: 400 });
       }
-    } else if (user.role !== 'SUPERADMIN' && user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Akses ditolak' }, { status: 403 });
+    } else if (user.role !== 'SUPERADMIN') {
+      return NextResponse.json({ error: 'Akses ditolak. Hanya Superadmin yang dapat menghapus laporan' }, { status: 403 });
+    }
+
+    // Garbage collection of media assets on Cloudinary
+    const deletePromises: Promise<boolean>[] = [];
+    if (report.fotoKondisiAwal) {
+      deletePromises.push(deleteFromCloudinary(report.fotoKondisiAwal, 'image'));
+    }
+    if (report.fotoDigitalisasi) {
+      deletePromises.push(deleteFromCloudinary(report.fotoDigitalisasi, 'image'));
+    }
+    if (report.rekamanAudioUrl) {
+      deletePromises.push(deleteFromCloudinary(report.rekamanAudioUrl, 'video'));
+    }
+    if (deletePromises.length > 0) {
+      await Promise.allSettled(deletePromises);
     }
 
     await prisma.heritageReport.delete({ where: { id } });

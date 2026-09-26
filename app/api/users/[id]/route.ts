@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
+import { deleteFromCloudinary } from '@/lib/cloudinary';
 import { Role } from '@prisma/client';
 
 export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
@@ -56,6 +57,22 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
 
     if (id === user.id) {
       return NextResponse.json({ error: 'Anda tidak dapat menghapus akun Superadmin anda sendiri' }, { status: 400 });
+    }
+
+    // Clean up media assets from Cloudinary for reports owned by this user
+    const userReports = await prisma.heritageReport.findMany({
+      where: { pelaporId: id },
+      select: { fotoKondisiAwal: true, fotoDigitalisasi: true, rekamanAudioUrl: true },
+    });
+
+    const deletePromises: Promise<boolean>[] = [];
+    for (const r of userReports) {
+      if (r.fotoKondisiAwal) deletePromises.push(deleteFromCloudinary(r.fotoKondisiAwal, 'image'));
+      if (r.fotoDigitalisasi) deletePromises.push(deleteFromCloudinary(r.fotoDigitalisasi, 'image'));
+      if (r.rekamanAudioUrl) deletePromises.push(deleteFromCloudinary(r.rekamanAudioUrl, 'video'));
+    }
+    if (deletePromises.length > 0) {
+      await Promise.allSettled(deletePromises);
     }
 
     await prisma.user.delete({ where: { id } });
