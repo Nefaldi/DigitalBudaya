@@ -290,7 +290,7 @@ a {
 .grid-cols-3 { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
 .grid-cols-4 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 
-/* 2-columns on mobile when specifically intended (e.g. 2x2 metric strips) */
+/* 2-columns on mobile when specifically intended (e.g. 2x2 metric strips, 4 on desktop) */
 .grid-cols-2-mobile {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -307,6 +307,34 @@ a {
 @media (min-width: 1024px) {
   .grid-cols-3 { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
   .grid-cols-4 { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+  .grid-cols-2-mobile { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+}
+
+/* Tactile Stat Card System */
+.stat-card-tactile {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justifyContent: space-between;
+  transition: border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .stat-card-tactile {
+    padding: 1.5rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stat-card-tactile:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+  }
 }
 
 /* Paper Card (Tactile Hairline Surface, No AI-Slop Shadows) */

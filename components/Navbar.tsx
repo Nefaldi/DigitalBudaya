@@ -62,7 +62,7 @@ export default function Navbar() {
   useEffect(() => {
     if (pathname !== '/') return;
 
-    const sections = ['beranda', 'statistik', 'peta', 'katalog', 'alur-kerja'];
+    const sections = ['beranda', 'peta', 'katalog', 'alur-kerja', 'statistik'];
     const handleScroll = () => {
       // Abaikan event scroll jika sedang animasi manual scroll dari klik tombol
       if (isManualScroll.current) return;
