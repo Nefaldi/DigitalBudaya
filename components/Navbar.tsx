@@ -357,7 +357,7 @@ export default function Navbar() {
                   </Link>
                 ) : (
                   <Link href="/pelapor/lapor" className="polaris-cta-btn">
-                    {user.role === 'PELAPOR' ? 'Lapor Pusaka' : 'Input Laporan'}
+                    {user.role === 'PELAPOR' ? 'Lapor' : 'Input Laporan'}
                   </Link>
                 )}
               </div>
@@ -538,7 +538,7 @@ export default function Navbar() {
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      Lapor Pusaka
+                      Lapor
                     </Link>
                   )}
                 </div>

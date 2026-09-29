@@ -485,7 +485,7 @@ export default function PelaporDashboardPage() {
                   lineHeight: 1.6,
                 }}
               >
-                Menemukan batu megalitikum yang tererosi, struktur kayu soura yang lapuk, atau sastra lisan suku lokal yang mulai langka? Laporkan untuk penanganan konservasi melalui tombol <strong>Lapor Pusaka</strong> pada menu atas.
+                Menemukan batu megalitikum yang tererosi, struktur kayu soura yang lapuk, atau sastra lisan suku lokal yang mulai langka? Laporkan untuk penanganan konservasi melalui tombol <strong>Lapor</strong> pada menu atas.
               </p>
             </div>
           )}
