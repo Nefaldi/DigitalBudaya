@@ -698,19 +698,221 @@ a {
   }
 }
 
-/* Desktop vs Mobile Navigation Visibility */
-.desktop-nav {
+/* ==============================================================================
+   Navbar Button System (Polaris Layout: Logo Left — Center Sections — Log in & Register Right)
+   Standard Full-Width Header with Polaris Button Arrangement
+   ============================================================================== */
+.navbar-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-hairline);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+}
+
+@media (min-width: 860px) {
+  .navbar-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-center {
   display: none;
 }
 
-@media (min-width: 768px) {
-  .desktop-nav {
-    display: flex !important;
+@media (min-width: 860px) {
+  .navbar-center {
+    display: flex;
     align-items: center;
-    gap: 1.5rem;
+    justify-content: center;
+    gap: 1.35rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navbar-center {
+    gap: 1.75rem;
+  }
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .navbar-right {
+    gap: 1.25rem;
+  }
+}
+
+/* Polaris Center Nav Link with Solid Underline Active State (Zero Layout Shift) */
+.polaris-nav-link {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0 0.15rem;
+  height: 62px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.polaris-nav-link:hover {
+  color: var(--text-primary);
+}
+
+.polaris-nav-link.active {
+  color: var(--text-primary);
+}
+
+/* Crisp horizontal underline right under the active link text, aligned with navbar bottom border */
+.polaris-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+  border-radius: 1px 1px 0 0;
+}
+
+.polaris-nav-link.active::after {
+  background-color: var(--text-primary);
+}
+
+/* Polaris Log in Text Link (Right Side) */
+.polaris-login-link {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.25rem;
+}
+
+.polaris-login-link:hover {
+  color: var(--action-primary);
+  opacity: 0.85;
+}
+
+/* Polaris Register Solid Button (Right Side - Replaced Start Free) */
+.polaris-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: var(--text-primary);
+  color: var(--bg-canvas) !important;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.52rem 1.25rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.polaris-cta-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.polaris-cta-btn:active {
+  transform: translateY(0);
+}
+
+[data-theme="dark"] .polaris-cta-btn {
+  background: #f8fafc;
+  color: #0f172a !important;
+}
+
+/* Desktop-only action items in right group */
+.polaris-desktop-actions {
+  display: none;
+}
+
+@media (min-width: 860px) {
+  .polaris-desktop-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
   }
   .mobile-menu-btn {
     display: none !important;
+  }
+}
+
+/* User chip for logged in state */
+.polaris-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.65rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  line-height: 1.2;
+}
+
+.mobile-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-strong);
+}
+
+/* Backwards compatibility */
+.desktop-nav {
+  display: none;
+}
+@media (min-width: 860px) {
+  .desktop-nav {
+    display: flex !important;
   }
 }
 

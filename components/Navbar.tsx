@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
@@ -14,6 +14,8 @@ import {
   LogOut,
   Menu,
   X,
+  MapPin,
+  GitBranch,
 } from 'lucide-react';
 import { UserSession } from '@/types';
 
@@ -21,6 +23,9 @@ export default function Navbar() {
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('beranda');
+  const isManualScroll = useRef(false);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -44,7 +49,38 @@ export default function Navbar() {
     checkAuth();
   }, [pathname]);
 
-  // Close mobile drawer on route change during render
+  // Observer stabil untuk mendeteksi seksi landingpage yang aktif tanpa flicker/glitch
+  useEffect(() => {
+    if (pathname !== '/') return;
+
+    const sections = ['beranda', 'statistik', 'peta', 'katalog', 'alur-kerja'];
+    const handleScroll = () => {
+      // Abaikan event scroll jika sedang animasi manual scroll dari klik tombol
+      if (isManualScroll.current) return;
+
+      const scrollY = window.scrollY + 100;
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY;
+          if (top <= scrollY) {
+            setActiveSection(sections[i]);
+            return;
+          }
+        }
+      }
+      setActiveSection('beranda');
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    };
+  }, [pathname]);
+
+  // Tutup drawer mobile saat navigasi berubah
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (pathname !== prevPathname) {
     setPrevPathname(pathname);
@@ -62,6 +98,32 @@ export default function Navbar() {
     }
   };
 
+  // Navigasi scroll yang halus, stabil tanpa bentrok dengan router Next.js
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      isManualScroll.current = true;
+      setActiveSection(id);
+
+      if (id === 'beranda') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const el = document.getElementById(id);
+        if (el) {
+          const navHeight = 62;
+          const targetY = el.getBoundingClientRect().top + window.scrollY - navHeight;
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        }
+      }
+
+      // Kunci selama durasi smooth scroll agar underline tidak loncat-loncat
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+      scrollTimeout.current = setTimeout(() => {
+        isManualScroll.current = false;
+      }, 850);
+    }
+  };
+
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'SUPERADMIN':
@@ -75,202 +137,158 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-          background: 'var(--bg-glass)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid var(--border-hairline)',
-        }}
-      >
-        <div
-          className="container"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: '62px',
-          }}
-        >
-          {/* Logo & Identity (Sulawesi Tengah Cultural Brand) */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: 'var(--radius-xs)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <Image
-                src="/logo-transparent.png"
-                alt="DigiCulture Care Logo"
-                width={38}
-                height={38}
-                priority
-                className="logo-light-variant"
-                style={{ width: '38px', height: '38px', objectFit: 'contain' }}
-              />
-              <Image
-                src="/logo-light-transparent.png"
-                alt="DigiCulture Care Logo"
-                width={38}
-                height={38}
-                priority
-                className="logo-dark-variant"
-                style={{ width: '38px', height: '38px', objectFit: 'contain' }}
-              />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', lineHeight: 1.15 }}>
-                <span style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-                  DigiCulture
-                </span>
-                <span style={{ color: 'var(--action-primary)', fontWeight: 500, fontSize: '0.95rem' }}>
-                  Care
-                </span>
-              </div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', letterSpacing: '0.02em' }}>
-                Sulawesi Tengah Heritage
-              </div>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <nav className="desktop-nav">
+      {/* Header Standar Full-Width (Bentuk Asli Tanpa Glitch) */}
+      <header className="navbar-header">
+        <div className="container navbar-container">
+          {/* 1. BAGIAN KIRI: Logo & Identitas Brand DigiCulture Care */}
+          <div className="navbar-left">
             <Link
               href="/"
               style={{
-                color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
-                fontWeight: pathname === '/' ? 540 : 460,
-                fontSize: '0.92rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.65rem',
+                textDecoration: 'none',
               }}
+            >
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: 'var(--radius-xs)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Image
+                  src="/logo-transparent.png"
+                  alt="DigiCulture Care Logo"
+                  width={36}
+                  height={36}
+                  priority
+                  className="logo-light-variant"
+                  style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+                />
+                <Image
+                  src="/logo-light-transparent.png"
+                  alt="DigiCulture Care Logo"
+                  width={36}
+                  height={36}
+                  priority
+                  className="logo-dark-variant"
+                  style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+                />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', lineHeight: 1.15 }}>
+                  <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                    DigiCulture
+                  </span>
+                  <span style={{ color: 'var(--action-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
+                    Care
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', letterSpacing: '0.02em' }}>
+                  Sulawesi Tengah Heritage
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          {/* 2. BAGIAN TENGAH: Tombol Fitur / Bagian Landingpage (Gaya Polaris dengan Underline Stabil) */}
+          <nav className="navbar-center" aria-label="Navigasi Bagian Landingpage">
+            <Link
+              href="/#beranda"
+              onClick={(e) => scrollToSection(e, 'beranda')}
+              className={`polaris-nav-link ${pathname === '/' && activeSection === 'beranda' ? 'active' : ''}`}
             >
               Beranda
             </Link>
+
             <Link
-              href="/katalog"
-              style={{
-                color: pathname.startsWith('/katalog') ? 'var(--action-primary)' : 'var(--text-primary)',
-                fontWeight: pathname.startsWith('/katalog') ? 540 : 460,
-                fontSize: '0.92rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
+              href="/#peta"
+              onClick={(e) => scrollToSection(e, 'peta')}
+              className={`polaris-nav-link ${pathname === '/' && activeSection === 'peta' ? 'active' : ''}`}
             >
-              <Compass size={15} />
-              <span>Katalog Pusaka</span>
+              Peta Sebaran
             </Link>
 
-            {/* Conditional Role Links */}
-            {user?.role === 'PELAPOR' && (
-              <>
-                <Link
-                  href="/pelapor"
-                  style={{
-                    color: pathname === '/pelapor' ? 'var(--action-primary)' : 'var(--text-primary)',
-                    fontWeight: pathname === '/pelapor' ? 540 : 460,
-                    fontSize: '0.92rem',
-                  }}
-                >
-                  Laporan Saya
-                </Link>
-                <Link href="/pelapor/lapor" className="btn btn-primary btn-sm">
-                  <FilePlus size={14} />
-                  <span>Lapor Pusaka</span>
-                </Link>
-              </>
-            )}
+            <Link
+              href="/#katalog"
+              onClick={(e) => scrollToSection(e, 'katalog')}
+              className={`polaris-nav-link ${
+                pathname === '/' && activeSection === 'katalog' ? 'active' : ''
+              }`}
+            >
+              Katalog Terkini
+            </Link>
 
-            {user?.role === 'ADMIN' && (
-              <>
-                <Link
-                  href="/admin"
-                  style={{
-                    color: pathname === '/admin' ? 'var(--action-primary)' : 'var(--text-primary)',
-                    fontWeight: pathname === '/admin' ? 540 : 460,
-                    fontSize: '0.92rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                  }}
-                >
-                  <Shield size={15} />
-                  <span>Workbench Konservator</span>
-                </Link>
-                <Link href="/pelapor/lapor" className="btn btn-secondary btn-sm">
-                  <FilePlus size={14} />
-                  <span>Input Laporan</span>
-                </Link>
-              </>
-            )}
+            <Link
+              href="/#alur-kerja"
+              onClick={(e) => scrollToSection(e, 'alur-kerja')}
+              className={`polaris-nav-link ${pathname === '/' && activeSection === 'alur-kerja' ? 'active' : ''}`}
+            >
+              Alur Kerja
+            </Link>
 
-            {user?.role === 'SUPERADMIN' && (
-              <>
-                <Link
-                  href="/admin"
-                  style={{
-                    color: pathname === '/admin' ? 'var(--action-primary)' : 'var(--text-primary)',
-                    fontWeight: pathname === '/admin' ? 540 : 460,
-                    fontSize: '0.92rem',
-                  }}
-                >
-                  Workbench
-                </Link>
-                <Link
-                  href="/superadmin/analytics"
-                  style={{
-                    color: pathname === '/superadmin/analytics' ? 'var(--action-primary)' : 'var(--text-primary)',
-                    fontWeight: pathname === '/superadmin/analytics' ? 540 : 460,
-                    fontSize: '0.92rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                  }}
-                >
-                  <BarChart3 size={15} />
-                  <span>Analitik</span>
-                </Link>
-                <Link
-                  href="/superadmin/users"
-                  style={{
-                    color: pathname === '/superadmin/users' ? 'var(--action-primary)' : 'var(--text-primary)',
-                    fontWeight: pathname === '/superadmin/users' ? 540 : 460,
-                    fontSize: '0.92rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                  }}
-                >
-                  <Users size={15} />
-                  <span>Kelola User</span>
-                </Link>
-              </>
-            )}
+            <Link
+              href="/#statistik"
+              onClick={(e) => scrollToSection(e, 'statistik')}
+              className={`polaris-nav-link ${pathname === '/' && activeSection === 'statistik' ? 'active' : ''}`}
+            >
+              Statistik
+            </Link>
           </nav>
 
-          {/* User Account, Theme Toggle & Mobile Menu Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <ThemeToggle />
-
+          {/* 3. BAGIAN KANAN: Tombol Log in & Register (Solid Button) */}
+          <div className="navbar-right">
             {!loading && user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <div style={{ textAlign: 'right', display: 'none' }} className="desktop-nav">
-                  <span style={{ fontSize: '0.85rem', fontWeight: 540, color: 'var(--text-primary)', display: 'block' }}>
+              <div className="polaris-desktop-actions">
+                {/* Tautan Dashboard Role */}
+                {user.role === 'PELAPOR' && (
+                  <Link href="/pelapor" className="polaris-login-link">
+                    Laporan Saya
+                  </Link>
+                )}
+                {user.role === 'ADMIN' && (
+                  <Link href="/admin" className="polaris-login-link">
+                    Workbench
+                  </Link>
+                )}
+                {user.role === 'SUPERADMIN' && (
+                  <Link href="/superadmin/analytics" className="polaris-login-link">
+                    Analitik
+                  </Link>
+                )}
+
+                {/* Tombol Solid CTA Aksi */}
+                {user.role === 'PELAPOR' && (
+                  <Link href="/pelapor/lapor" className="polaris-cta-btn">
+                    <FilePlus size={15} />
+                    <span>Lapor Pusaka</span>
+                  </Link>
+                )}
+                {(user.role === 'ADMIN' || user.role === 'SUPERADMIN') && (
+                  <Link href="/pelapor/lapor" className="polaris-cta-btn">
+                    <FilePlus size={15} />
+                    <span>Input Laporan</span>
+                  </Link>
+                )}
+
+                {/* Profil Pengguna Ringkas */}
+                <div className="polaris-user-chip">
+                  <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user.nama.split(' ')[0]}
                   </span>
                   {getRoleBadge(user.role)}
                 </div>
+
+                {/* Tombol Logout */}
                 <button
                   onClick={handleLogout}
-                  className="btn btn-outline btn-sm desktop-nav"
+                  className="btn btn-outline btn-sm"
                   title="Keluar (Logout)"
                   style={{ padding: '0.4rem', height: '36px', width: '36px' }}
                 >
@@ -278,35 +296,31 @@ export default function Navbar() {
                 </button>
               </div>
             ) : !loading ? (
-              <div style={{ display: 'none' }} className="desktop-nav">
-                <Link href="/login" className="btn btn-sm btn-outline">
-                  Masuk
+              <div className="polaris-desktop-actions">
+                {/* Log in (Teks Polos seperti di referensi) */}
+                <Link href="/login" className="polaris-login-link">
+                  Log in
                 </Link>
-                <Link href="/register" className="btn btn-primary btn-sm">
-                  Daftar
+
+                {/* Register (Tombol Solid menggantikan Start Free) */}
+                <Link href="/register" className="polaris-cta-btn">
+                  Register
                 </Link>
               </div>
-            ) : null}
+            ) : (
+              <div className="polaris-desktop-actions" style={{ width: '140px', height: '36px' }} />
+            )}
+
+            {/* Theme Toggle (Hadir di Desktop & Mobile) */}
+            <ThemeToggle />
 
             {/* Mobile Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="mobile-menu-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                background: 'transparent',
-                border: '1px solid var(--border-hairline)',
-                borderRadius: 'var(--radius-sm)',
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-              }}
               aria-label="Buka menu navigasi"
             >
-              <Menu size={20} />
+              <Menu size={19} />
             </button>
           </div>
         </div>
@@ -319,7 +333,7 @@ export default function Navbar() {
         aria-hidden="true"
       />
       <div className={`mobile-drawer ${mobileMenuOpen ? 'open' : ''}`}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-hairline)', paddingBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-hairline)', paddingBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <div
               style={{
@@ -383,7 +397,7 @@ export default function Navbar() {
             }}
           >
             <div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 540, color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 {user.nama}
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -394,58 +408,135 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Navigation Links */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flexGrow: 1 }}>
+        {/* Navigation Links (Fitur Landingpage) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexGrow: 1 }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.25rem 0.75rem' }}>
+            Bagian Landingpage
+          </div>
+
           <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
+            href="/#beranda"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              scrollToSection(e, 'beranda');
+            }}
             style={{
               display: 'flex',
               alignItems: 'center',
-              padding: '0.75rem 1rem',
+              padding: '0.65rem 0.9rem',
               borderRadius: 'var(--radius-sm)',
-              background: pathname === '/' ? 'var(--color-terracotta-soft)' : 'transparent',
-              color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
-              fontWeight: pathname === '/' ? 600 : 500,
-              fontSize: '0.95rem',
+              background: pathname === '/' && activeSection === 'beranda' ? 'var(--color-brand-soft)' : 'transparent',
+              color: pathname === '/' && activeSection === 'beranda' ? 'var(--action-primary)' : 'var(--text-primary)',
+              fontWeight: pathname === '/' && activeSection === 'beranda' ? 600 : 500,
+              fontSize: '0.92rem',
             }}
           >
             Beranda
           </Link>
 
           <Link
-            href="/katalog"
-            onClick={() => setMobileMenuOpen(false)}
+            href="/#peta"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              scrollToSection(e, 'peta');
+            }}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              padding: '0.75rem 1rem',
+              padding: '0.65rem 0.9rem',
               borderRadius: 'var(--radius-sm)',
-              background: pathname.startsWith('/katalog') ? 'var(--color-terracotta-soft)' : 'transparent',
-              color: pathname.startsWith('/katalog') ? 'var(--action-primary)' : 'var(--text-primary)',
-              fontWeight: pathname.startsWith('/katalog') ? 600 : 500,
-              fontSize: '0.95rem',
+              background: pathname === '/' && activeSection === 'peta' ? 'var(--color-brand-soft)' : 'transparent',
+              color: pathname === '/' && activeSection === 'peta' ? 'var(--action-primary)' : 'var(--text-primary)',
+              fontWeight: pathname === '/' && activeSection === 'peta' ? 600 : 500,
+              fontSize: '0.92rem',
             }}
           >
-            <Compass size={17} />
-            <span>Katalog Pusaka Sulteng</span>
+            <MapPin size={16} />
+            <span>Peta Sebaran Pusaka</span>
           </Link>
 
+          <Link
+            href="/#katalog"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              scrollToSection(e, 'katalog');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.65rem 0.9rem',
+              borderRadius: 'var(--radius-sm)',
+              background: pathname === '/' && activeSection === 'katalog' ? 'var(--color-brand-soft)' : 'transparent',
+              color: pathname === '/' && activeSection === 'katalog' ? 'var(--action-primary)' : 'var(--text-primary)',
+              fontWeight: pathname === '/' && activeSection === 'katalog' ? 600 : 500,
+              fontSize: '0.92rem',
+            }}
+          >
+            <Compass size={16} />
+            <span>Katalog Terkini</span>
+          </Link>
+
+          <Link
+            href="/#alur-kerja"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              scrollToSection(e, 'alur-kerja');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.65rem 0.9rem',
+              borderRadius: 'var(--radius-sm)',
+              background: pathname === '/' && activeSection === 'alur-kerja' ? 'var(--color-brand-soft)' : 'transparent',
+              color: pathname === '/' && activeSection === 'alur-kerja' ? 'var(--action-primary)' : 'var(--text-primary)',
+              fontWeight: pathname === '/' && activeSection === 'alur-kerja' ? 600 : 500,
+              fontSize: '0.92rem',
+            }}
+          >
+            <GitBranch size={16} />
+            <span>Alur Kerja Penyelamatan</span>
+          </Link>
+
+          <Link
+            href="/#statistik"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              scrollToSection(e, 'statistik');
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.65rem 0.9rem',
+              borderRadius: 'var(--radius-sm)',
+              background: pathname === '/' && activeSection === 'statistik' ? 'var(--color-brand-soft)' : 'transparent',
+              color: pathname === '/' && activeSection === 'statistik' ? 'var(--action-primary)' : 'var(--text-primary)',
+              fontWeight: pathname === '/' && activeSection === 'statistik' ? 600 : 500,
+              fontSize: '0.92rem',
+            }}
+          >
+            <BarChart3 size={16} />
+            <span>Statistik & Metrik</span>
+          </Link>
+
+          {/* Fitur Berdasarkan Role */}
           {user?.role === 'PELAPOR' && (
-            <>
+            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-hairline)' }}>
               <Link
                 href="/pelapor"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '0.75rem 1rem',
+                  padding: '0.65rem 0.9rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/pelapor' ? 'var(--color-terracotta-soft)' : 'transparent',
+                  background: pathname === '/pelapor' ? 'var(--color-brand-soft)' : 'transparent',
                   color: pathname === '/pelapor' ? 'var(--action-primary)' : 'var(--text-primary)',
                   fontWeight: pathname === '/pelapor' ? 600 : 500,
-                  fontSize: '0.95rem',
+                  fontSize: '0.92rem',
                 }}
               >
                 Dashboard Laporan Saya
@@ -453,16 +544,16 @@ export default function Navbar() {
               <Link
                 href="/pelapor/lapor"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-primary"
-                style={{ marginTop: '0.5rem', width: '100%' }}
+                className="polaris-cta-btn"
+                style={{ marginTop: '0.65rem', width: '100%' }}
               >
                 <FilePlus size={16} /> Lapor Pusaka Baru
               </Link>
-            </>
+            </div>
           )}
 
           {user?.role === 'ADMIN' && (
-            <>
+            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-hairline)' }}>
               <Link
                 href="/admin"
                 onClick={() => setMobileMenuOpen(false)}
@@ -470,45 +561,46 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  padding: '0.75rem 1rem',
+                  padding: '0.65rem 0.9rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/admin' ? 'var(--color-terracotta-soft)' : 'transparent',
+                  background: pathname === '/admin' ? 'var(--color-brand-soft)' : 'transparent',
                   color: pathname === '/admin' ? 'var(--action-primary)' : 'var(--text-primary)',
                   fontWeight: pathname === '/admin' ? 600 : 500,
-                  fontSize: '0.95rem',
+                  fontSize: '0.92rem',
                 }}
               >
-                <Shield size={17} />
+                <Shield size={16} />
                 <span>Workbench Konservator</span>
               </Link>
               <Link
                 href="/pelapor/lapor"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-secondary"
-                style={{ marginTop: '0.5rem', width: '100%' }}
+                className="polaris-cta-btn"
+                style={{ marginTop: '0.65rem', width: '100%' }}
               >
                 <FilePlus size={16} /> Input Laporan Lapangan
               </Link>
-            </>
+            </div>
           )}
 
           {user?.role === 'SUPERADMIN' && (
-            <>
+            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-hairline)' }}>
               <Link
                 href="/admin"
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '0.75rem 1rem',
+                  padding: '0.65rem 0.9rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/admin' ? 'var(--color-terracotta-soft)' : 'transparent',
+                  background: pathname === '/admin' ? 'var(--color-brand-soft)' : 'transparent',
                   color: pathname === '/admin' ? 'var(--action-primary)' : 'var(--text-primary)',
                   fontWeight: pathname === '/admin' ? 600 : 500,
-                  fontSize: '0.95rem',
+                  fontSize: '0.92rem',
                 }}
               >
-                Workbench Konservator
+                <Shield size={16} />
+                <span>Workbench Konservator</span>
               </Link>
               <Link
                 href="/superadmin/analytics"
@@ -517,15 +609,15 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  padding: '0.75rem 1rem',
+                  padding: '0.65rem 0.9rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/superadmin/analytics' ? 'var(--color-terracotta-soft)' : 'transparent',
-                  color: pathname === '/superadmin/analytics' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/superadmin/analytics' ? 600 : 500,
-                  fontSize: '0.95rem',
+                  background: pathname.startsWith('/superadmin/analytics') ? 'var(--color-brand-soft)' : 'transparent',
+                  color: pathname.startsWith('/superadmin/analytics') ? 'var(--action-primary)' : 'var(--text-primary)',
+                  fontWeight: pathname.startsWith('/superadmin/analytics') ? 600 : 500,
+                  fontSize: '0.92rem',
                 }}
               >
-                <BarChart3 size={17} />
+                <BarChart3 size={16} />
                 <span>Analitik Provinsi</span>
               </Link>
               <Link
@@ -535,18 +627,18 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  padding: '0.75rem 1rem',
+                  padding: '0.65rem 0.9rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/superadmin/users' ? 'var(--color-terracotta-soft)' : 'transparent',
-                  color: pathname === '/superadmin/users' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/superadmin/users' ? 600 : 500,
-                  fontSize: '0.95rem',
+                  background: pathname.startsWith('/superadmin/users') ? 'var(--color-brand-soft)' : 'transparent',
+                  color: pathname.startsWith('/superadmin/users') ? 'var(--action-primary)' : 'var(--text-primary)',
+                  fontWeight: pathname.startsWith('/superadmin/users') ? 600 : 500,
+                  fontSize: '0.92rem',
                 }}
               >
-                <Users size={17} />
+                <Users size={16} />
                 <span>Manajemen Pengguna</span>
               </Link>
-            </>
+            </div>
           )}
 
           {!user && (
@@ -557,15 +649,15 @@ export default function Navbar() {
                 className="btn btn-outline"
                 style={{ width: '100%' }}
               >
-                Masuk
+                Log in
               </Link>
               <Link
                 href="/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-primary"
-                style={{ width: '100%' }}
+                className="polaris-cta-btn"
+                style={{ width: '100%', justifyContent: 'center' }}
               >
-                Daftar Pelapor
+                Register
               </Link>
             </div>
           )}

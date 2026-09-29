@@ -55,10 +55,12 @@ export default async function HomePage() {
     <div>
       {/* Editorial Hero Section (Central Sulawesi Cultural Earth) */}
       <section
+        id="beranda"
         style={{
           paddingTop: 'clamp(2.5rem, 6vw, 4.5rem)',
           paddingBottom: 'clamp(2.5rem, 6vw, 4.5rem)',
           borderBottom: '1px solid var(--border-hairline)',
+          scrollMarginTop: '90px',
         }}
       >
         <div className="container" style={{ maxWidth: '960px', textAlign: 'center' }}>
@@ -133,10 +135,12 @@ export default async function HomePage() {
 
           {/* Key Metrics Strip (Mobile: 2x2 grid, Desktop: 4 columns) */}
           <div
+            id="statistik"
             className="paper-card grid-cols-2-mobile"
             style={{
               padding: '1.25rem 1.5rem',
               textAlign: 'left',
+              scrollMarginTop: '100px',
             }}
           >
             <div>
@@ -179,7 +183,7 @@ export default async function HomePage() {
       </section>
 
       {/* Feature Band: Lindu Forest Emerald (Full-Bleed Map Section) */}
-      <section className="deep-lagoon-band">
+      <section id="peta" className="deep-lagoon-band" style={{ scrollMarginTop: '80px' }}>
         <div className="container">
           <div style={{ maxWidth: '640px', marginBottom: '2rem' }}>
             <div
@@ -212,7 +216,14 @@ export default async function HomePage() {
       </section>
 
       {/* Featured Heritage Dossiers (Mobile: 1 col, Desktop: 3 cols) */}
-      <section style={{ paddingTop: 'clamp(2.5rem, 5vw, 4.5rem)', paddingBottom: 'clamp(2.5rem, 5vw, 4.5rem)' }}>
+      <section
+        id="katalog"
+        style={{
+          paddingTop: 'clamp(2.5rem, 5vw, 4.5rem)',
+          paddingBottom: 'clamp(2.5rem, 5vw, 4.5rem)',
+          scrollMarginTop: '80px',
+        }}
+      >
         <div className="container">
           <div
             style={{
@@ -265,11 +276,13 @@ export default async function HomePage() {
 
       {/* 3-Step Preservation Workflow Section */}
       <section
+        id="alur-kerja"
         style={{
           paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
           paddingBottom: 'clamp(2.5rem, 5vw, 4rem)',
           background: 'var(--bg-subtle)',
           borderTop: '1px solid var(--border-hairline)',
+          scrollMarginTop: '80px',
         }}
       >
         <div className="container">
