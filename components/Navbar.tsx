@@ -16,6 +16,7 @@ import {
   MapPin,
   GitBranch,
   FileText,
+  User,
 } from 'lucide-react';
 import { UserSession } from '@/types';
 
@@ -286,6 +287,12 @@ export default function Navbar() {
                   >
                     Katalog Terkini
                   </Link>
+                  <Link
+                    href="/pelapor/profil"
+                    className={`polaris-nav-link ${pathname.startsWith('/pelapor/profil') ? 'active' : ''}`}
+                  >
+                    Profil
+                  </Link>
                 </>
               )}
             </nav>
@@ -524,6 +531,24 @@ export default function Navbar() {
                   >
                     <Compass size={16} />
                     <span>Katalog Terkini</span>
+                  </Link>
+                  <Link
+                    href="/pelapor/profil"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.65rem 0.9rem',
+                      borderRadius: 'var(--radius-sm)',
+                      background: pathname.startsWith('/pelapor/profil') ? 'var(--color-brand-soft)' : 'transparent',
+                      color: pathname.startsWith('/pelapor/profil') ? 'var(--action-primary)' : 'var(--text-primary)',
+                      fontWeight: pathname.startsWith('/pelapor/profil') ? 600 : 500,
+                      fontSize: '0.92rem',
+                    }}
+                  >
+                    <User size={16} />
+                    <span>Profil</span>
                   </Link>
                   {isFormLaporan ? (
                     <Link
