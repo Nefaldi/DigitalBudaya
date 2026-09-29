@@ -1,9 +1,26 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isDashboard =
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/pelapor') ||
+    pathname.startsWith('/superadmin');
+
+  const brandHref = isDashboard
+    ? pathname.startsWith('/superadmin')
+      ? '/superadmin/analytics'
+      : pathname.startsWith('/admin')
+      ? '/admin'
+      : '/pelapor'
+    : '/';
+
   return (
     <footer
       style={{
@@ -28,16 +45,18 @@ export default function Footer() {
           {/* Brand Info */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1rem' }}>
-              <Image
-                src="/logo-light-transparent.png"
-                alt="DigiCulture Care Logo"
-                width={36}
-                height={36}
-                style={{ width: '36px', height: '36px', objectFit: 'contain' }}
-              />
-              <span style={{ fontSize: '1.15rem', fontWeight: 600, color: '#ffffff', letterSpacing: '-0.02em' }}>
-                DigiCulture Care
-              </span>
+              <Link href={brandHref} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+                <Image
+                  src="/logo-light-transparent.png"
+                  alt="DigiCulture Care Logo"
+                  width={36}
+                  height={36}
+                  style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+                />
+                <span style={{ fontSize: '1.15rem', fontWeight: 600, color: '#ffffff', letterSpacing: '-0.02em' }}>
+                  DigiCulture Care
+                </span>
+              </Link>
             </div>
             <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'rgba(255, 255, 255, 0.72)', marginBottom: '1.25rem', maxWidth: '340px' }}>
               Platform partisipatif penyelamatan, restorasi, dan pengarsipan digital cagar budaya megalitikum, arsitektur kayu soura, dan tradisi tutur lisan Provinsi Sulawesi Tengah.
@@ -50,11 +69,13 @@ export default function Footer() {
               Eksplorasi Arsip Pusaka
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
-              <li>
-                <Link href="/" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                  Beranda
-                </Link>
-              </li>
+              {!isDashboard && (
+                <li>
+                  <Link href="/" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
+                    Beranda
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href="/katalog" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
                   Katalog Terpadu
