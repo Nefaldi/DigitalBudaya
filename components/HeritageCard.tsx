@@ -83,7 +83,7 @@ export default function HeritageCard({ report }: { report: HeritageReportItem })
           pointerEvents: 'none',
         }}>
           <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`} style={{ backdropFilter: 'blur(8px)' }}>
-            {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Pusaka Benda'}
+            {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Benda'}
           </span>
 
           {isRestored && (
@@ -177,7 +177,7 @@ export default function HeritageCard({ report }: { report: HeritageReportItem })
             className="link-editorial"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.84rem' }}
           >
-            <span>Buka Dossier</span>
+            <span>Detail</span>
             <ArrowRight size={13} />
           </Link>
         </div>

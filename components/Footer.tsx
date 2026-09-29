@@ -59,14 +59,14 @@ export default function Footer() {
               </Link>
             </div>
             <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'rgba(255, 255, 255, 0.72)', marginBottom: '1.25rem', maxWidth: '340px' }}>
-              Platform partisipatif penyelamatan, restorasi, dan pengarsipan digital cagar budaya megalitikum, arsitektur kayu soura, dan tradisi tutur lisan Provinsi Sulawesi Tengah.
+              Platform digital pelestarian dan pengarsipan cagar budaya Sulawesi Tengah.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
             <h4 style={{ color: '#ffffff', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.02em' }}>
-              Eksplorasi Arsip Pusaka
+              Navigasi
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
               {!isDashboard && (
@@ -83,17 +83,17 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/katalog?kategori=BENDA" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                  Cagar Budaya Megalitikum (Benda)
+                  Cagar Budaya Benda
                 </Link>
               </li>
               <li>
                 <Link href="/katalog?kategori=TAKBENDA" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                  Tradisi Lisan & Bahasa Daerah (Takbenda)
+                  Warisan Takbenda
                 </Link>
               </li>
               <li>
                 <Link href="/pelapor/lapor" style={{ color: 'var(--color-sandstone)', fontWeight: 500 }}>
-                  Laporkan Ancaman Cagar Budaya →
+                  Laporkan Cagar Budaya →
                 </Link>
               </li>
             </ul>
@@ -102,7 +102,7 @@ export default function Footer() {
           {/* 13 Wilayah Administratif Sulteng */}
           <div>
             <h4 style={{ color: '#ffffff', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.02em' }}>
-              13 Wilayah Konservasi
+              13 Kabupaten / Kota
             </h4>
             <div
               style={{
@@ -146,7 +146,7 @@ export default function Footer() {
           }}
         >
           <div>
-            © {new Date().getFullYear()} DigiCulture Care • Preservasi Pusaka Sulawesi Tengah.
+            © {new Date().getFullYear()} DigiCulture Care • Sulawesi Tengah.
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.78rem', flexWrap: 'wrap' }}>
             <span>Lembah Besoa</span>

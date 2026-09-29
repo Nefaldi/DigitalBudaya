@@ -86,7 +86,7 @@ export default function RegisterPage() {
               Daftar Akun Pelapor
             </h1>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              Jadilah pelopor penyelamatan pusaka cagar budaya di Sulawesi Tengah
+              Jadilah pelopor penyelamatan cagar budaya di Sulawesi Tengah
             </p>
           </div>
 

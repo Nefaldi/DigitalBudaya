@@ -238,7 +238,7 @@ export default function AdminWorkbenchPage() {
                 borderRadius: 'var(--radius-sm)',
               }}
             >
-              <Shield size={14} /> Meja Kerja Konservator Wilayah Sulawesi Tengah
+              <Shield size={14} /> Meja Konservator
             </div>
             <h1
               style={{
@@ -249,14 +249,14 @@ export default function AdminWorkbenchPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Antrean & Investigasi Lapangan
+              Manajemen Laporan
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-              Masuk sebagai:{' '}
+              Petugas:{' '}
               <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
                 {user?.nama}
               </strong>{' '}
-              ({user?.role === 'SUPERADMIN' ? 'Superadmin Pimpinan' : 'Konservator Wilayah'})
+              ({user?.role === 'SUPERADMIN' ? 'Superadmin' : 'Konservator'})
             </p>
           </div>
         </div>
@@ -267,25 +267,25 @@ export default function AdminWorkbenchPage() {
             onClick={() => setActiveTab('ALL')}
             className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
           >
-            Semua Tiket ({reports.length})
+            Semua ({reports.length})
           </button>
           <button
             onClick={() => setActiveTab('LAPORAN_MASUK')}
             className={`btn btn-sm ${activeTab === 'LAPORAN_MASUK' ? 'btn-primary' : 'btn-secondary'}`}
           >
-            Antrean Masuk ({countMasuk})
+            Masuk ({countMasuk})
           </button>
           <button
             onClick={() => setActiveTab('DIPROSES')}
             className={`btn btn-sm ${activeTab === 'DIPROSES' ? 'btn-primary' : 'btn-secondary'}`}
           >
-            Sedang Investigasi ({countDiproses})
+            Diproses ({countDiproses})
           </button>
           <button
             onClick={() => setActiveTab('SELESAI')}
             className={`btn btn-sm ${activeTab === 'SELESAI' ? 'btn-primary' : 'btn-secondary'}`}
           >
-            Selesai / Terbit ({countSelesai})
+            Selesai ({countSelesai})
           </button>
         </div>
 
@@ -331,7 +331,7 @@ export default function AdminWorkbenchPage() {
                       {report.status}
                     </span>
                     <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
-                      {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Pusaka Benda'}
+                      {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
                     </span>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       <MapPin size={13} style={{ color: 'var(--action-primary)' }} />
@@ -393,7 +393,7 @@ export default function AdminWorkbenchPage() {
                     style={{ width: '100%', justifyContent: 'center' }}
                   >
                     <Upload size={13} />
-                    <span>Tindak Lanjut / Restorasi</span>
+                    <span>Tindak Lanjut</span>
                   </button>
 
                   <Link
@@ -466,7 +466,7 @@ export default function AdminWorkbenchPage() {
                     Tatalaksana Digitalisasi & Restorasi
                   </h3>
                   <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
-                    Pusaka: <strong style={{ color: 'var(--text-primary)' }}>{selectedReport.judulPusaka}</strong>
+                    Cagar Budaya: <strong style={{ color: 'var(--text-primary)' }}>{selectedReport.judulPusaka}</strong>
                   </div>
                 </div>
                 <button

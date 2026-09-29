@@ -111,7 +111,7 @@ function KatalogContent() {
 
             {/* Kategori Dropdown */}
             <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Kategori Pusaka</label>
+              <label className="form-label">Kategori</label>
               <select
                 value={selectedKategori}
                 onChange={(e) => setSelectedKategori(e.target.value)}
@@ -181,7 +181,7 @@ function KatalogContent() {
               Tidak Ada Cagar Budaya Ditemukan
             </h3>
             <p style={{ color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto 1.5rem auto', fontSize: '0.86rem' }}>
-              Tidak ditemukan data pusaka dengan kombinasi filter yang Anda pilih.
+              Tidak ditemukan data cagar budaya dengan kombinasi filter yang Anda pilih.
             </p>
             <button
               onClick={() => {

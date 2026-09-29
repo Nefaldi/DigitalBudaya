@@ -196,7 +196,7 @@ export default function PelaporDashboardPage() {
                   borderRadius: 'var(--radius-sm)',
                 }}
               >
-                Dashboard Sahabat Budaya Sulteng
+                Dashboard Pelapor
               </div>
             <h1
               style={{
@@ -207,10 +207,10 @@ export default function PelaporDashboardPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Selamat Datang, {user?.nama}
+              Halo, {user?.nama}
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', margin: 0 }}>
-              Pantau status verifikasi lapangan, investigasi fisik, dan preservasi digital laporan cagar budaya Anda.
+              Pantau status dan penanganan laporan cagar budaya Anda.
             </p>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function PelaporDashboardPage() {
                 {countMasuk}
               </div>
               <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                Laporan Masuk (Antrean)
+                Laporan Masuk
               </div>
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function PelaporDashboardPage() {
                 {countDiproses}
               </div>
               <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                Sedang Ditangani Konservator
+                Sedang Ditangani
               </div>
             </div>
           </div>
@@ -288,7 +288,7 @@ export default function PelaporDashboardPage() {
                 {countSelesai}
               </div>
               <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                Tuntas & Masuk Katalog Publik
+                Selesai & Terverifikasi
               </div>
             </div>
           </div>
@@ -305,7 +305,7 @@ export default function PelaporDashboardPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Daftar Tiket Pengaduan Cagar Budaya Anda ({reports.length})
+            Daftar Laporan Anda ({reports.length})
           </h2>
 
           {reports.length > 0 ? (
@@ -340,7 +340,7 @@ export default function PelaporDashboardPage() {
                       <div>
                         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
                           <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
-                            {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Pusaka Benda'}
+                            {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
                           </span>
                           <span style={{ fontSize: '0.8rem', color: 'var(--border-hairline)' }}>/</span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
@@ -474,7 +474,7 @@ export default function PelaporDashboardPage() {
                   fontWeight: 460,
                 }}
               >
-                Anda Belum Mengirimkan Laporan Pusaka
+                Anda Belum Mengirimkan Laporan
               </h3>
               <p
                 style={{
@@ -521,7 +521,7 @@ export default function PelaporDashboardPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Edit3 size={18} style={{ color: 'var(--action-primary)' }} />
                 <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 500 }}>
-                  Koreksi Laporan Pusaka
+                  Koreksi Laporan
                 </h3>
               </div>
               <button
@@ -583,7 +583,7 @@ export default function PelaporDashboardPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label">Kategori Pusaka</label>
+                  <label className="form-label">Kategori</label>
                   <select
                     value={editKategori}
                     onChange={(e) => setEditKategori(e.target.value as 'BENDA' | 'TAKBENDA')}

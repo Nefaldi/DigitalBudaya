@@ -83,7 +83,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
             }}
           >
             <ArrowLeft size={16} />
-            <span>Kembali ke Katalog Pusaka</span>
+            <span>Kembali ke Katalog</span>
           </Link>
           <PrintDossierButton />
         </div>
@@ -92,7 +92,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
         <div style={{ marginBottom: '2.25rem' }}>
           <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
             <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
-              {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Pusaka Benda'}
+              {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
             </span>
             <span style={{ color: 'var(--border-hairline)', fontSize: '0.85rem' }}>/</span>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
@@ -337,7 +337,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Kategori:</span>
                   <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-                    {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Pusaka Benda'}
+                    {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Benda'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

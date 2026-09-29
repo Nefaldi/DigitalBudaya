@@ -224,7 +224,7 @@ export default function UserManagementPage() {
                 borderRadius: 'var(--radius-sm)',
               }}
             >
-              <Shield size={14} /> Konsol Akses & Otorisasi RBAC
+              <Shield size={14} /> Akses Pengguna
             </div>
             <h1
               style={{
@@ -235,10 +235,10 @@ export default function UserManagementPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Manajemen Pengguna & Peran
+              Manajemen Pengguna
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-              Kelola peran petugas konservator, pimpinan superadmin, dan akun masyarakat pelapor cagar budaya.
+              Kelola hak akses dan akun pengguna sistem.
             </p>
           </div>
 
@@ -251,7 +251,7 @@ export default function UserManagementPage() {
               className="btn btn-primary btn-sm"
             >
               <UserPlus size={14} />
-              <span>Tambah Pengguna Baru</span>
+              <span>Tambah Pengguna</span>
             </button>
           </div>
         </div>
@@ -524,7 +524,7 @@ export default function UserManagementPage() {
                   <option value="SUPERADMIN">SUPERADMIN (Pimpinan / Pengelola Sistem)</option>
                 </select>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', display: 'block' }}>
-                  Admin berhak memverifikasi antrean dan mengunggah digitalisasi; Pelapor berhak mengirim laporan pusaka.
+                  Admin berhak memverifikasi antrean dan mengunggah digitalisasi; Pelapor berhak mengirim laporan budaya.
                 </span>
               </div>
 

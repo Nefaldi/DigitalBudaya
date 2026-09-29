@@ -367,14 +367,14 @@ export default function Navbar() {
               </div>
             ) : !loading ? (
               <div className="polaris-desktop-actions">
-                {/* Log in (Teks Polos seperti di referensi) */}
+                {/* Masuk (Teks Polos seperti di referensi) */}
                 <Link href="/login" className="polaris-login-link">
-                  Log in
+                  Masuk
                 </Link>
 
-                {/* Register (Tombol Solid menggantikan Start Free) */}
+                {/* Daftar (Tombol Solid menggantikan Start Free) */}
                 <Link href="/register" className="polaris-cta-btn">
-                  Register
+                  Daftar
                 </Link>
               </div>
             ) : (
@@ -766,7 +766,7 @@ export default function Navbar() {
                 }}
               >
                 <MapPin size={16} />
-                <span>Peta Sebaran Pusaka</span>
+                <span>Peta Sebaran</span>
               </Link>
 
               <Link
@@ -842,7 +842,7 @@ export default function Navbar() {
                   className="btn btn-outline"
                   style={{ width: '100%' }}
                 >
-                  Log in
+                  Masuk
                 </Link>
                 <Link
                   href="/register"
@@ -850,7 +850,7 @@ export default function Navbar() {
                   className="polaris-cta-btn"
                   style={{ width: '100%', justifyContent: 'center' }}
                 >
-                  Register
+                  Daftar
                 </Link>
               </div>
             </>

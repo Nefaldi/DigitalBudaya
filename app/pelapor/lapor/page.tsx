@@ -185,7 +185,7 @@ export default function LaporPusakaPage() {
                 borderRadius: 'var(--radius-sm)',
               }}
             >
-              Formulir Partisipasi Masyarakat
+              Formulir Laporan
             </div>
             <h1
               style={{
@@ -196,10 +196,10 @@ export default function LaporPusakaPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Laporkan Ancaman Cagar Budaya
+              Laporkan Cagar Budaya
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
-              Informasi yang Anda kirimkan akan ditelaah oleh Tim Konservator Balai Pelestarian Kebudayaan Sulawesi Tengah untuk investigasi lapangan dan preservasi digital.
+              Kirimkan laporan kondisi cagar budaya untuk ditindaklanjuti oleh tim konservator.
             </p>
           </div>
 
@@ -223,7 +223,7 @@ export default function LaporPusakaPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <BookmarkCheck size={18} style={{ color: 'var(--action-primary)' }} />
                 <span>
-                  Ditemukan draf laporan lapangan tersimpan {draftTimestamp ? `(pukul ${draftTimestamp})` : ''}.
+                  Ada draf laporan tersimpan {draftTimestamp ? `(${draftTimestamp})` : ''}.
                 </span>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -274,10 +274,10 @@ export default function LaporPusakaPage() {
           )}
 
           <form onSubmit={handleSubmit}>
-            {/* 1. Nama Pusaka & Kategori */}
+            {/* 1. Nama Budaya & Kategori */}
             <div className="form-row-2-1">
               <div className="form-group">
-                <label className="form-label">Nama Cagar Budaya / Pusaka *</label>
+                <label className="form-label">Nama Cagar Budaya *</label>
                 <input
                   type="text"
                   required
@@ -289,7 +289,7 @@ export default function LaporPusakaPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Kategori Pusaka *</label>
+                <label className="form-label">Kategori *</label>
                 <select
                   value={kategori}
                   onChange={(e) => setKategori(e.target.value as 'BENDA' | 'TAKBENDA')}

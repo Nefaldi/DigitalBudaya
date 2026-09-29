@@ -82,7 +82,7 @@ export default async function HomePage() {
             }}
           >
             <Landmark size={14} style={{ color: 'var(--action-primary)' }} />
-            <span>Sistem Registrasi & Penyelamatan Cagar Budaya Sulawesi Tengah</span>
+            <span>Penyelamatan Cagar Budaya Sulawesi Tengah</span>
           </div>
 
           {/* Headline (Fluid Mobile-to-Desktop Scaling) */}
@@ -96,7 +96,7 @@ export default async function HomePage() {
               color: 'var(--text-primary)',
             }}
           >
-            Menjaga Napas Peradaban Megalitik & Sastra Lisan Bumi Tadulako
+            Lestarikan Warisan Budaya Sulawesi Tengah
           </h1>
 
           <p
@@ -105,12 +105,12 @@ export default async function HomePage() {
               color: 'var(--text-secondary)',
               lineHeight: 1.65,
               marginBottom: '2.25rem',
-              maxWidth: '720px',
+              maxWidth: '680px',
               marginLeft: 'auto',
               marginRight: 'auto',
             }}
           >
-            Platform geospasial terpadu untuk mendokumentasikan kalamba megalitikum Lembah Besoa, arsitektur vernakular Tambi, serta melindungi ratusan tradisi tutur dan bahasa lokal se-Provinsi Sulawesi Tengah.
+            Platform digital terpadu untuk pendataan, pemetaan, dan penyelamatan cagar budaya bersama masyarakat.
           </p>
 
           {/* Action Hierarchy (Full width on mobile, side-by-side on desktop) */}
@@ -124,12 +124,12 @@ export default async function HomePage() {
             }}
           >
             <Link href="/katalog" className="btn btn-primary btn-lg btn-mobile-block">
-              <span>Jelajahi Direktori Pusaka</span>
+              <span>Jelajah Katalog Budaya</span>
               <ArrowRight size={17} />
             </Link>
             <Link href="/pelapor/lapor" className="btn btn-secondary btn-lg btn-mobile-block">
               <FilePlus size={17} />
-              <span>Laporkan Ancaman Pusaka</span>
+              <span>Laporkan Cagar Budaya</span>
             </Link>
           </div>
 
@@ -198,13 +198,13 @@ export default async function HomePage() {
                 marginBottom: '0.5rem',
               }}
             >
-              Sebaran Geospasial Sulteng
+              Peta Sebaran
             </div>
             <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.15rem)', marginBottom: '0.5rem', color: '#ffffff' }}>
-              Peta Sebaran Pusaka Benda & Takbenda
+              Peta Cagar Budaya
             </h2>
             <p style={{ fontSize: '0.92rem', color: 'rgba(255, 255, 255, 0.85)', margin: 0 }}>
-              Jelajahi titik koordinat situs megalitik purba, rumah adat, dan dokumentasi sastra lisan di 13 Kabupaten/Kota se-Sulawesi Tengah.
+              Pantau sebaran situs sejarah dan tradisi lisan di 13 kabupaten/kota se-Sulawesi Tengah.
             </p>
           </div>
 
@@ -237,10 +237,10 @@ export default async function HomePage() {
           >
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--action-primary)', fontWeight: 500, marginBottom: '0.35rem' }}>
-                Katalog Dokumentasi Terkini
+                Katalog Terverifikasi
               </div>
               <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.15rem)', color: 'var(--text-primary)', margin: 0 }}>
-                Arsip Cagar Budaya Terverifikasi
+                Arsip Cagar Budaya
               </h2>
             </div>
 
@@ -255,7 +255,7 @@ export default async function HomePage() {
                 fontSize: '0.9rem',
               }}
             >
-              <span>Lihat Semua Katalog</span>
+              <span>Lihat Semua</span>
               <ArrowRight size={15} />
             </Link>
           </div>
@@ -288,13 +288,13 @@ export default async function HomePage() {
         <div className="container">
           <div style={{ maxWidth: '640px', marginBottom: '2.5rem' }}>
             <div style={{ fontSize: '0.8rem', color: 'var(--action-primary)', fontWeight: 500, marginBottom: '0.35rem' }}>
-              Alur Kerja Transparan
+              Alur Kerja
             </div>
             <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.95rem)', marginBottom: '0.4rem' }}>
-              Bagaimana Inisiatif Penyelamatan Berjalan?
+              Cara Kerja Sistem
             </h2>
             <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', margin: 0 }}>
-              Mekanisme akuntabel dari partisipasi masyarakat hingga restorasi fisik dan pengarsipan digital terbuka.
+              Proses terpadu dari laporan masyarakat hingga publikasi arsip digital.
             </p>
           </div>
 
@@ -318,10 +318,10 @@ export default async function HomePage() {
                 1
               </div>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.45rem', fontWeight: 500 }}>
-                Laporan Partisipatif
+                1. Lapor
               </h3>
-              <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
-                Masyarakat dan Sahabat Budaya melaporkan ancaman kerusakan fisik atau kepunahan tradisi dengan koordinat GPS dan foto bukti awal.
+              <p style={{ fontSize: '0.875rem', lineHeight: '1.55', color: 'var(--text-secondary)' }}>
+                Kirim laporan temuan atau kondisi cagar budaya lengkap dengan foto dan titik lokasi.
               </p>
             </div>
 
@@ -344,10 +344,10 @@ export default async function HomePage() {
                 2
               </div>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.45rem', fontWeight: 500 }}>
-                Investigasi Konservator
+                2. Verifikasi
               </h3>
-              <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
-                Konservator wilayah memvalidasi laporan, mengambil alih tiket status, serta melakukan intervensi konservasi fisik maupun perekaman audio.
+              <p style={{ fontSize: '0.875rem', lineHeight: '1.55', color: 'var(--text-secondary)' }}>
+                Tim konservator memvalidasi data dan melakukan tindakan pelestarian di lapangan.
               </p>
             </div>
 
@@ -370,10 +370,10 @@ export default async function HomePage() {
                 3
               </div>
               <h3 style={{ fontSize: '1.1rem', marginBottom: '0.45rem', fontWeight: 500 }}>
-                Digitalisasi Terbuka
+                3. Publikasi
               </h3>
-              <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'var(--text-secondary)' }}>
-                Hasil dokumentasi resolusi tinggi dan rekaman audio penutur asli diarsipkan secara digital dan dirilis ke Katalog Publik untuk edukasi dan riset.
+              <p style={{ fontSize: '0.875rem', lineHeight: '1.55', color: 'var(--text-secondary)' }}>
+                Dokumentasi dan arsip digital diterbitkan ke katalog publik untuk masyarakat.
               </p>
             </div>
           </div>

@@ -83,7 +83,7 @@ export default function SultengMap({
           const popupContent = `
             <div style="font-family:'Plus Jakarta Sans',sans-serif;min-width:200px;max-width:240px;padding:4px;">
               <div style="font-size:11px;font-weight:600;color:${rep.kategori === 'TAKBENDA' ? '#1e4030' : '#142948'};margin-bottom:3px;">
-                ${rep.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Pusaka Benda'} • ${rep.kabupatenKota}
+                ${rep.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'} • ${rep.kabupatenKota}
               </div>
               <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;line-height:1.3;">
                 ${rep.judulPusaka}
@@ -92,7 +92,7 @@ export default function SultengMap({
                 ${rep.lokasiSpesifik}
               </div>
               <a href="/katalog/${rep.id}" style="display:inline-block;background:#142948;color:#ffffff;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:500;text-decoration:none;">
-                Lihat Dossier →
+                Lihat Detail →
               </a>
             </div>
           `;
@@ -172,7 +172,7 @@ export default function SultengMap({
         }}
       >
         <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-          Legenda Pusaka Sulteng
+          Legenda Cagar Budaya
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
           <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#142948', border: '1px solid #ffffff' }} />

@@ -18,19 +18,19 @@ export default function WorkflowStepper({
     {
       id: 'LAPORAN_MASUK',
       title: '1. Laporan Masuk',
-      desc: 'Pengaduan dari Pelapor tercatat dengan koordinat geospasial valid.',
+      desc: 'Laporan tercatat dan menunggu verifikasi.',
       icon: AlertCircle,
     },
     {
       id: 'DIPROSES',
-      title: '2. Investigasi & Konservasi',
-      desc: adminName ? `Ditangani oleh Konservator: ${adminName}` : 'Tim konservator turun survei fisik ke lapangan.',
+      title: '2. Investigasi Lapangan',
+      desc: adminName ? `Ditangani oleh: ${adminName}` : 'Sedang dalam survei konservator.',
       icon: Clock,
     },
     {
       id: 'SELESAI',
-      title: '3. Digitalisasi & Selesai',
-      desc: 'Restorasi tuntas, data diarsipkan dan dirilis ke Katalog Publik.',
+      title: '3. Selesai & Terbit',
+      desc: 'Preservasi selesai dan masuk katalog publik.',
       icon: CheckCircle2,
     },
   ];
@@ -56,7 +56,7 @@ export default function WorkflowStepper({
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
         <h4 style={{ fontSize: '0.92rem', color: 'var(--text-primary)', fontWeight: 540 }}>
-          Status Alur Penanganan Cagar Budaya
+          Status Penanganan
         </h4>
         {updatedAt && (
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>

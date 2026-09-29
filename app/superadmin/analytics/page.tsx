@@ -109,7 +109,7 @@ export default function AnalyticsDashboardPage() {
                 borderRadius: 'var(--radius-sm)',
               }}
             >
-              <BarChart3 size={14} /> Konsol Intelijen Pelestarian Budaya
+              <BarChart3 size={14} /> Analitik Wilayah
             </div>
             <h1
               style={{
@@ -120,10 +120,10 @@ export default function AnalyticsDashboardPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Metrik Regional Sulawesi Tengah
+              Analitik Cagar Budaya
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-              Statistik pemulihan krisis, rasio cagar budaya benda vs takbenda, serta sebaran 13 Kabupaten/Kota.
+              Ringkasan data pelestarian dan sebaran 13 kabupaten/kota.
             </p>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function AnalyticsDashboardPage() {
               {data.totalReports}
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Pusaka terdaftar di database
+              Pusaka terdata
             </div>
           </div>
 
@@ -156,7 +156,7 @@ export default function AnalyticsDashboardPage() {
               {completionRate}%
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              {data.statusBreakdown.SELESAI} dari {data.totalReports} tuntas digitalisasi
+              {data.statusBreakdown.SELESAI} laporan selesai
             </div>
           </div>
 
@@ -171,7 +171,7 @@ export default function AnalyticsDashboardPage() {
               {data.statusBreakdown.DIPROSES}
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Sedang dikonservasi di lapangan
+              Sedang ditangani tim
             </div>
           </div>
 
@@ -278,7 +278,7 @@ export default function AnalyticsDashboardPage() {
                   textAlign: 'center',
                 }}
               >
-                <span className="badge badge-benda" style={{ marginBottom: '0.85rem' }}>Pusaka Benda</span>
+                <span className="badge badge-benda" style={{ marginBottom: '0.85rem' }}>Cagar Budaya Benda</span>
                 <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--text-primary)', lineHeight: 1.1 }}>
                   {data.kategoriBreakdown.BENDA}
                 </div>

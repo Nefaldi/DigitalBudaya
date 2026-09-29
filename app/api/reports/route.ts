@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     // Validation
     if (!judulPusaka || !lokasiSpesifik || !kabupatenKota || !deskripsiKrisis || !fotoKondisiAwal) {
       return NextResponse.json(
-        { error: 'Judul pusaka, lokasi spesifik, kabupaten/kota, deskripsi krisis, dan foto kondisi awal wajib diisi' },
+        { error: 'Nama cagar budaya, lokasi spesifik, kabupaten/kota, deskripsi krisis, dan foto kondisi awal wajib diisi' },
         { status: 400 }
       );
     }
