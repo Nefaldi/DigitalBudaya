@@ -213,11 +213,6 @@ export default function PelaporDashboardPage() {
               Pantau status verifikasi lapangan, investigasi fisik, dan preservasi digital laporan cagar budaya Anda.
             </p>
           </div>
-
-          <Link href="/pelapor/lapor" className="btn btn-primary btn-lg">
-            <FilePlus size={18} />
-            <span>Kirim Laporan Pusaka Baru</span>
-          </Link>
         </div>
 
         {/* Quick Stats Metric Cards */}
@@ -485,17 +480,13 @@ export default function PelaporDashboardPage() {
                 style={{
                   color: 'var(--text-secondary)',
                   maxWidth: '440px',
-                  margin: '0 auto 1.75rem auto',
+                  margin: '0 auto',
                   fontSize: '0.875rem',
                   lineHeight: 1.6,
                 }}
               >
-                Menemukan batu megalitikum yang tererosi, struktur kayu soura yang lapuk, atau sastra lisan suku lokal yang mulai langka? Laporkan untuk penanganan konservasi.
+                Menemukan batu megalitikum yang tererosi, struktur kayu soura yang lapuk, atau sastra lisan suku lokal yang mulai langka? Laporkan untuk penanganan konservasi melalui tombol <strong>Lapor Pusaka</strong> pada menu atas.
               </p>
-              <Link href="/pelapor/lapor" className="btn btn-primary">
-                <FilePlus size={16} />
-                <span>Kirim Laporan Pertama</span>
-              </Link>
             </div>
           )}
         </div>

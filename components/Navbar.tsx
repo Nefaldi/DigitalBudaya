@@ -16,6 +16,7 @@ import {
   MapPin,
   GitBranch,
   FileText,
+  ArrowLeft,
 } from 'lucide-react';
 import { UserSession } from '@/types';
 
@@ -28,6 +29,14 @@ export default function Navbar() {
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+
+  const isFormLaporan = pathname.startsWith('/pelapor/lapor');
+  const backHref =
+    user?.role === 'SUPERADMIN'
+      ? '/superadmin/analytics'
+      : user?.role === 'ADMIN'
+      ? '/admin'
+      : '/pelapor';
 
   useEffect(() => {
     async function checkAuth() {
@@ -336,10 +345,21 @@ export default function Navbar() {
                   Keluar
                 </button>
 
-                {/* Tombol Solid CTA Aksi (Bentuk Tombol Solid Polaris persis "Register") */}
-                <Link href="/pelapor/lapor" className="polaris-cta-btn">
-                  {user.role === 'PELAPOR' ? 'Lapor Pusaka' : 'Input Laporan'}
-                </Link>
+                {/* Tombol Solid CTA Aksi (Berubah jadi 'Kembali' saat masuk ke laman form laporan) */}
+                {isFormLaporan ? (
+                  <Link
+                    href={backHref}
+                    className="polaris-cta-btn"
+                    title="Kembali ke Dashboard"
+                  >
+                    <ArrowLeft size={15} />
+                    <span>Kembali</span>
+                  </Link>
+                ) : (
+                  <Link href="/pelapor/lapor" className="polaris-cta-btn">
+                    {user.role === 'PELAPOR' ? 'Lapor Pusaka' : 'Input Laporan'}
+                  </Link>
+                )}
               </div>
             ) : !loading ? (
               <div className="polaris-desktop-actions">
@@ -501,14 +521,26 @@ export default function Navbar() {
                     <Compass size={16} />
                     <span>Katalog Terkini</span>
                   </Link>
-                  <Link
-                    href="/pelapor/lapor"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="polaris-cta-btn"
-                    style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                  >
-                    Lapor Pusaka
-                  </Link>
+                  {isFormLaporan ? (
+                    <Link
+                      href={backHref}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
+                    >
+                      <ArrowLeft size={15} />
+                      <span>Kembali</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/pelapor/lapor"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
+                    >
+                      Lapor Pusaka
+                    </Link>
+                  )}
                 </div>
               )}
 
@@ -568,14 +600,26 @@ export default function Navbar() {
                     <Compass size={16} />
                     <span>Katalog Terkini</span>
                   </Link>
-                  <Link
-                    href="/pelapor/lapor"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="polaris-cta-btn"
-                    style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                  >
-                    Input Laporan
-                  </Link>
+                  {isFormLaporan ? (
+                    <Link
+                      href={backHref}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
+                    >
+                      <ArrowLeft size={15} />
+                      <span>Kembali</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/pelapor/lapor"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
+                    >
+                      Input Laporan
+                    </Link>
+                  )}
                 </div>
               )}
 
@@ -653,14 +697,26 @@ export default function Navbar() {
                     <Compass size={16} />
                     <span>Katalog Terkini</span>
                   </Link>
-                  <Link
-                    href="/pelapor/lapor"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="polaris-cta-btn"
-                    style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                  >
-                    Input Laporan
-                  </Link>
+                  {isFormLaporan ? (
+                    <Link
+                      href={backHref}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
+                    >
+                      <ArrowLeft size={15} />
+                      <span>Kembali</span>
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/pelapor/lapor"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
+                    >
+                      Input Laporan
+                    </Link>
+                  )}
                 </div>
               )}
             </>
