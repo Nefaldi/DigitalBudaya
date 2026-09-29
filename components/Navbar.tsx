@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
 import {
   Shield,
@@ -22,11 +22,11 @@ import { UserSession } from '@/types';
 export default function Navbar() {
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('beranda');
   const isManualScroll = useRef(false);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
   const pathname = usePathname();
 
   const isFormLaporan = pathname.startsWith('/pelapor/lapor');
@@ -96,13 +96,17 @@ export default function Navbar() {
   }
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
       await fetch('/api/auth/me', { method: 'POST' });
-      setUser(null);
-      router.push('/');
-      router.refresh();
     } catch (err) {
       console.error('Logout error:', err);
+    } finally {
+      setUser(null);
+      // Hard redirect to clear all SPA router cache/session state and land cleanly on the homepage
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = '/';
     }
   };
 
@@ -338,10 +342,12 @@ export default function Navbar() {
                 {/* Tombol Teks Keluar (Bentuk Teks Link Murni persis "Log in") */}
                 <button
                   onClick={handleLogout}
+                  disabled={isLoggingOut}
                   className="polaris-login-link"
                   title={`Keluar dari akun (${user.nama})`}
+                  style={{ opacity: isLoggingOut ? 0.6 : 1, cursor: isLoggingOut ? 'wait' : 'pointer' }}
                 >
-                  Keluar
+                  {isLoggingOut ? 'Keluar...' : 'Keluar'}
                 </button>
 
                 {/* Tombol Solid CTA Aksi (Berubah jadi 'Kembali' saat masuk ke laman form laporan) */}
@@ -859,11 +865,17 @@ export default function Navbar() {
                 setMobileMenuOpen(false);
                 handleLogout();
               }}
+              disabled={isLoggingOut}
               className="btn btn-outline"
-              style={{ width: '100%', color: 'var(--status-masuk)', borderColor: 'var(--border-hairline)' }}
+              style={{
+                width: '100%',
+                color: 'var(--status-masuk)',
+                borderColor: 'var(--border-hairline)',
+                opacity: isLoggingOut ? 0.6 : 1,
+              }}
             >
               <LogOut size={16} />
-              <span>Keluar Akun</span>
+              <span>{isLoggingOut ? 'Keluar...' : 'Keluar Akun'}</span>
             </button>
           </div>
         )}

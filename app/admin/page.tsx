@@ -259,12 +259,6 @@ export default function AdminWorkbenchPage() {
               ({user?.role === 'SUPERADMIN' ? 'Superadmin Pimpinan' : 'Konservator Wilayah'})
             </p>
           </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <Link href="/katalog" className="btn btn-secondary btn-sm">
-              <ExternalLink size={14} /> Buka Katalog Publik
-            </Link>
-          </div>
         </div>
 
         {/* Tab Filters */}

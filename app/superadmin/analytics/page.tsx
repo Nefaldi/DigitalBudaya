@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   BarChart3,
@@ -12,7 +11,6 @@ import {
   MapPin,
   TrendingUp,
   Loader2,
-  ExternalLink,
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -127,15 +125,6 @@ export default function AnalyticsDashboardPage() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
               Statistik pemulihan krisis, rasio cagar budaya benda vs takbenda, serta sebaran 13 Kabupaten/Kota.
             </p>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <Link href="/superadmin/users" className="btn btn-primary btn-sm">
-              <Users size={14} /> Kelola Pengguna
-            </Link>
-            <Link href="/admin" className="btn btn-secondary btn-sm">
-              <ExternalLink size={14} /> Meja Konservator
-            </Link>
           </div>
         </div>
 

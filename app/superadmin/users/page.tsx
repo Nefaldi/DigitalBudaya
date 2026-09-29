@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { UserRole, UserSession } from '@/types';
 import {
@@ -11,7 +10,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader2,
-  ArrowLeft,
   UserPlus,
   X,
 } from 'lucide-react';
@@ -244,7 +242,7 @@ export default function UserManagementPage() {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <div>
             <button
               onClick={() => {
                 setCreateError('');
@@ -255,10 +253,6 @@ export default function UserManagementPage() {
               <UserPlus size={14} />
               <span>Tambah Pengguna Baru</span>
             </button>
-            <Link href="/superadmin/analytics" className="btn btn-secondary btn-sm">
-              <ArrowLeft size={14} />
-              <span>Ke Dasbor Analitik</span>
-            </Link>
           </div>
         </div>
 
