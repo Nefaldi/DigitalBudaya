@@ -7,7 +7,6 @@ import MapPicker from '@/components/MapPicker';
 import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import {
-  ArrowLeft,
   AlertCircle,
   Loader2,
   Send,
@@ -167,25 +166,6 @@ export default function LaporPusakaPage() {
   return (
     <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
       <div className="container" style={{ maxWidth: '840px' }}>
-        {/* Back Link */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <Link
-            href="/pelapor"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              color: 'var(--action-primary)',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              textDecoration: 'none',
-            }}
-          >
-            <ArrowLeft size={16} />
-            <span>Kembali ke Dashboard Laporan Saya</span>
-          </Link>
-        </div>
-
         {/* Paper White Card Container */}
         <div className="paper-card" style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)' }}>
           {/* Header */}

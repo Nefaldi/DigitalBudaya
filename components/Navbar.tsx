@@ -16,7 +16,6 @@ import {
   MapPin,
   GitBranch,
   FileText,
-  ArrowLeft,
 } from 'lucide-react';
 import { UserSession } from '@/types';
 
@@ -352,8 +351,7 @@ export default function Navbar() {
                     className="polaris-cta-btn"
                     title="Kembali ke Dashboard"
                   >
-                    <ArrowLeft size={15} />
-                    <span>Kembali</span>
+                    Kembali
                   </Link>
                 ) : (
                   <Link href="/pelapor/lapor" className="polaris-cta-btn">
@@ -528,8 +526,7 @@ export default function Navbar() {
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      <ArrowLeft size={15} />
-                      <span>Kembali</span>
+                      Kembali
                     </Link>
                   ) : (
                     <Link
@@ -607,8 +604,7 @@ export default function Navbar() {
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      <ArrowLeft size={15} />
-                      <span>Kembali</span>
+                      Kembali
                     </Link>
                   ) : (
                     <Link
@@ -704,8 +700,7 @@ export default function Navbar() {
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      <ArrowLeft size={15} />
-                      <span>Kembali</span>
+                      Kembali
                     </Link>
                   ) : (
                     <Link
