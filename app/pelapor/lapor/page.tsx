@@ -32,7 +32,43 @@ export default function LaporPusakaPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [hasSavedDraft, setHasSavedDraft] = useState(false);
   const [draftTimestamp, setDraftTimestamp] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<'PELAPOR' | 'ADMIN' | 'SUPERADMIN'>('PELAPOR');
   const router = useRouter();
+
+  // Check authentication
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
+          router.push('/login');
+          return;
+        }
+        const data = await res.json();
+        if (data.user?.role) {
+          if (data.user.role === 'ADMIN') {
+            router.replace('/admin');
+            return;
+          }
+          if (data.user.role === 'SUPERADMIN') {
+            router.replace('/superadmin/analytics');
+            return;
+          }
+          setUserRole(data.user.role);
+        }
+      } catch {
+        router.push('/login');
+      }
+    }
+    checkAuth();
+  }, [router]);
+
+  const dashboardHref =
+    userRole === 'SUPERADMIN'
+      ? '/superadmin/analytics'
+      : userRole === 'ADMIN'
+      ? '/admin'
+      : '/pelapor';
 
   // Check for existing field draft on mount
   useEffect(() => {
@@ -153,7 +189,7 @@ export default function LaporPusakaPage() {
         // Ignore
       }
 
-      router.push('/pelapor');
+      router.push(dashboardHref);
       router.refresh();
     } catch (err: unknown) {
       console.error('Submission error:', err);
@@ -371,7 +407,7 @@ export default function LaporPusakaPage() {
                 gap: '1rem',
               }}
             >
-              <Link href="/pelapor" className="btn btn-secondary">
+              <Link href={dashboardHref} className="btn btn-secondary">
                 Batal
               </Link>
 

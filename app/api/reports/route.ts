@@ -73,6 +73,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Harap login terlebih dahulu untuk membuat laporan' }, { status: 401 });
     }
 
+    if (user.role !== 'PELAPOR') {
+      return NextResponse.json({ error: 'Fitur pelaporan hanya tersedia untuk peran Pelapor' }, { status: 403 });
+    }
+
     const body = await req.json();
     const {
       judulPusaka,

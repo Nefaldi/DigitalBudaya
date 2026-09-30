@@ -236,7 +236,7 @@ export default function PelaporProfilPage() {
     return (
       <div style={{ textAlign: 'center', padding: '6rem 0' }}>
         <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)', margin: '0 auto 1rem auto' }} />
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memuat profil akun Pelapor...</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memuat profil akun...</p>
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function PelaporProfilPage() {
                 flexShrink: 0,
               }}
             >
-              {profile?.nama ? profile.nama.charAt(0).toUpperCase() : 'P'}
+              {profile?.nama ? profile.nama.charAt(0).toUpperCase() : 'U'}
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
@@ -295,7 +295,11 @@ export default function PelaporProfilPage() {
                     border: '1px solid var(--border-hairline)',
                   }}
                 >
-                  Pelapor Cagar Budaya
+                  {profile?.role === 'SUPERADMIN'
+                    ? 'Superadmin Sistem'
+                    : profile?.role === 'ADMIN'
+                    ? 'Konservator Cagar Budaya'
+                    : 'Pelapor Cagar Budaya'}
                 </span>
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -456,7 +460,7 @@ export default function PelaporProfilPage() {
                   <span>Peran</span>
                 </div>
                 <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                  PELAPOR
+                  {profile?.role === 'SUPERADMIN' ? 'Superadmin' : profile?.role === 'ADMIN' ? 'Konservator' : 'Pelapor'}
                 </div>
               </div>
             </div>
@@ -471,7 +475,7 @@ export default function PelaporProfilPage() {
                 Edit Profil Pengguna
               </h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-                Perbarui nama tampilan akun Anda. Perubahan akan langsung tertera pada laporan cagar budaya Anda.
+                Perbarui nama tampilan akun Anda.
               </p>
             </div>
 
@@ -559,7 +563,7 @@ export default function PelaporProfilPage() {
                 <input
                   type="text"
                   disabled
-                  value="PELAPOR"
+                  value={profile?.role || 'PELAPOR'}
                   className="form-input"
                   style={{ background: 'var(--bg-canvas)', opacity: 0.85, cursor: 'not-allowed' }}
                 />
@@ -770,51 +774,69 @@ export default function PelaporProfilPage() {
               </form>
             </div>
 
-            {/* Card 2: Zona Berbahaya (Hapus Akun Mandiri) */}
-            <div
-              className="paper-card"
-              style={{
-                padding: '2rem',
-                border: '1px solid var(--status-masuk-border)',
-                background: 'var(--status-masuk-bg)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--status-masuk)', marginBottom: '0.35rem' }}>
-                    <AlertTriangle size={18} />
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: 0 }}>
-                      Zona Berbahaya: Hapus Akun
-                    </h3>
+            {/* Card 2: Zona Berbahaya (Hapus Akun Mandiri - Khusus Role PELAPOR) */}
+            {profile?.role === 'PELAPOR' ? (
+              <div
+                className="paper-card"
+                style={{
+                  padding: '2rem',
+                  border: '1px solid var(--status-masuk-border)',
+                  background: 'var(--status-masuk-bg)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--status-masuk)', marginBottom: '0.35rem' }}>
+                      <AlertTriangle size={18} />
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 600, margin: 0 }}>
+                        Zona Berbahaya: Hapus Akun
+                      </h3>
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--status-masuk)', maxWidth: '580px', margin: 0, lineHeight: 1.5 }}>
+                      Menghapus akun Anda akan membatalkan seluruh data profil dan menghapus riwayat laporan cagar budaya Anda secara permanen. Tindakan ini tidak dapat dibatalkan.
+                    </p>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--status-masuk)', maxWidth: '580px', margin: 0, lineHeight: 1.5 }}>
-                    Menghapus akun Anda akan membatalkan seluruh data profil dan menghapus riwayat laporan cagar budaya Anda secara permanen. Tindakan ini tidak dapat dibatalkan.
-                  </p>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsDeleteModalOpen(true);
-                    setDeletePassword('');
-                    setDeleteErrorMsg('');
-                  }}
-                  className="btn btn-outline"
-                  style={{
-                    color: 'var(--status-masuk)',
-                    borderColor: 'var(--status-masuk-border)',
-                    background: 'var(--color-card)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  <Trash2 size={15} />
-                  <span>Hapus Akun Saya</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDeleteModalOpen(true);
+                      setDeletePassword('');
+                      setDeleteErrorMsg('');
+                    }}
+                    className="btn btn-outline"
+                    style={{
+                      color: 'var(--status-masuk)',
+                      borderColor: 'var(--status-masuk-border)',
+                      background: 'var(--color-card)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    <Trash2 size={15} />
+                    <span>Hapus Akun Saya</span>
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div
+                className="paper-card"
+                style={{
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-hairline)',
+                  background: 'var(--bg-canvas)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-secondary)' }}>
+                  <ShieldCheck size={18} style={{ color: 'var(--action-primary)' }} />
+                  <span style={{ fontSize: '0.875rem' }}>
+                    Akun {profile?.role === 'SUPERADMIN' ? 'Superadmin' : 'Konservator'} dikelola langsung pada konsol administrasi sistem dan tidak dapat dihapus secara mandiri.
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

@@ -4,13 +4,15 @@ import React, { useState, useEffect } from 'react';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import { Search, Compass, Loader2 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 function KatalogContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialKab = searchParams.get('kabupatenKota') || 'Semua';
   const initialKat = searchParams.get('kategori') || 'Semua';
 
+  const [authChecked, setAuthChecked] = useState(false);
   const [reports, setReports] = useState<HeritageReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +20,26 @@ function KatalogContent() {
   const [selectedKategori, setSelectedKategori] = useState(initialKat);
   const [selectedStatus, setSelectedStatus] = useState('Semua');
 
+  // Wajib login untuk mengakses katalog budaya
   useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
+          router.replace('/login');
+          return;
+        }
+        setAuthChecked(true);
+      } catch {
+        router.replace('/login');
+      }
+    }
+    checkAuth();
+  }, [router]);
+
+  useEffect(() => {
+    if (!authChecked) return;
+
     async function fetchReports() {
       setLoading(true);
       try {
@@ -42,7 +63,16 @@ function KatalogContent() {
 
     const timer = setTimeout(fetchReports, 200);
     return () => clearTimeout(timer);
-  }, [searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
+  }, [authChecked, searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
+
+  if (!authChecked) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1rem' }}>
+        <Loader2 className="animate-spin" size={32} style={{ color: 'var(--action-primary)' }} />
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memverifikasi sesi pengguna...</p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ paddingTop: '3.5rem', paddingBottom: '6rem' }}>

@@ -22,7 +22,6 @@ import {
   Lock,
   Edit3,
   X,
-  User,
 } from 'lucide-react';
 
 export default function PelaporDashboardPage() {
@@ -213,17 +212,6 @@ export default function PelaporDashboardPage() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', margin: 0 }}>
               Pantau status dan penanganan laporan cagar budaya Anda.
             </p>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Link
-              href="/pelapor/profil"
-              className="btn btn-secondary"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.875rem' }}
-            >
-              <User size={15} />
-              <span>Kelola Akun</span>
-            </Link>
           </div>
         </div>
 

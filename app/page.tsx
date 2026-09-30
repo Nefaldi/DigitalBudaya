@@ -1,5 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import SultengMap from '@/components/SultengMap';
@@ -13,11 +15,16 @@ import {
   BarChart3,
   Layers,
   MapPin,
+  Shield,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  const user = token ? verifyToken(token) : null;
+
   let reports: HeritageReportItem[] = [];
   let stats = {
     total: 0,
@@ -174,14 +181,26 @@ export default async function HomePage() {
               marginBottom: '3rem',
             }}
           >
-            <Link href="/katalog" className="btn btn-primary btn-lg btn-mobile-block">
+            <Link href={user ? '/katalog' : '/login'} className="btn btn-primary btn-lg btn-mobile-block">
               <span>Jelajah Katalog Budaya</span>
               <ArrowRight size={17} />
             </Link>
-            <Link href="/pelapor/lapor" className="btn btn-secondary btn-lg btn-mobile-block">
-              <FilePlus size={17} />
-              <span>Laporkan Cagar Budaya</span>
-            </Link>
+            {user?.role === 'ADMIN' ? (
+              <Link href="/admin" className="btn btn-secondary btn-lg btn-mobile-block">
+                <Shield size={17} />
+                <span>Workbench Konservator</span>
+              </Link>
+            ) : user?.role === 'SUPERADMIN' ? (
+              <Link href="/superadmin/analytics" className="btn btn-secondary btn-lg btn-mobile-block">
+                <BarChart3 size={17} />
+                <span>Analitik Provinsi</span>
+              </Link>
+            ) : (
+              <Link href={user ? '/pelapor/lapor' : '/login'} className="btn btn-secondary btn-lg btn-mobile-block">
+                <FilePlus size={17} />
+                <span>Laporkan Cagar Budaya</span>
+              </Link>
+            )}
           </div>
 
           {/* Key Metrics Strip (Mobile: 2x2 grid, Desktop: 4 columns) */}
@@ -351,7 +370,7 @@ export default async function HomePage() {
             </div>
 
             <Link
-              href="/katalog"
+              href={user ? '/katalog' : '/login'}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -543,7 +562,7 @@ export default async function HomePage() {
             </div>
 
             <Link
-              href="/katalog"
+              href={user ? '/katalog' : '/login'}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -781,7 +800,7 @@ export default async function HomePage() {
 
               <div style={{ marginTop: '1.25rem', paddingTop: '0.9rem', borderTop: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Standar Pencatatan Ditjen Kebudayaan</span>
-                <Link href="/katalog" style={{ fontSize: '0.82rem', color: 'var(--action-primary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Link href={user ? '/katalog' : '/login'} style={{ fontSize: '0.82rem', color: 'var(--action-primary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                   <span>Eksplorasi Objek</span>
                   <ArrowRight size={13} />
                 </Link>

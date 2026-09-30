@@ -31,7 +31,7 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Gagal mendaftar akun');
       }
 
-      router.push('/pelapor');
+      router.push('/');
       router.refresh();
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Terjadi kesalahan saat registrasi.');

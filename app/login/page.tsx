@@ -37,7 +37,7 @@ export default function LoginPage() {
       } else if (role === 'ADMIN') {
         router.push('/admin');
       } else {
-        router.push('/pelapor');
+        router.push('/');
       }
       router.refresh();
     } catch (err: unknown) {
@@ -46,6 +46,27 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user?.role === 'SUPERADMIN') {
+            router.replace('/superadmin/analytics');
+          } else if (data.user?.role === 'ADMIN') {
+            router.replace('/admin');
+          } else {
+            router.replace('/');
+          }
+        }
+      } catch {
+        // Belum terotentikasi
+      }
+    }
+    checkAuth();
+  }, [router]);
 
   const fillDemoAccount = (demoEmail: string) => {
     setEmail(demoEmail);

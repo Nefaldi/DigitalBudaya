@@ -1,7 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import AudioWavePlayer from '@/components/AudioWavePlayer';
@@ -24,6 +26,14 @@ import {
 export const dynamic = 'force-dynamic';
 
 export default async function HeritageDetailPage(props: { params: Promise<{ id: string }> }) {
+  // Wajib login untuk melihat detail arsip katalog cagar budaya
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  const currentUser = token ? verifyToken(token) : null;
+  if (!currentUser) {
+    redirect('/login');
+  }
+
   const params = await props.params;
   const { id } = params;
 

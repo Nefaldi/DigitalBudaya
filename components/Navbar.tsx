@@ -17,6 +17,7 @@ import {
   GitBranch,
   FileText,
   User,
+  FilePlus,
 } from 'lucide-react';
 import { UserSession } from '@/types';
 
@@ -31,6 +32,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const isFormLaporan = pathname.startsWith('/pelapor/lapor');
+  const isSubPage = pathname.startsWith('/pelapor/lapor') || pathname.startsWith('/pelapor/profil');
   const backHref =
     user?.role === 'SUPERADMIN'
       ? '/superadmin/analytics'
@@ -164,7 +166,7 @@ export default function Navbar() {
           {/* 1. BAGIAN KIRI: Logo & Identitas Brand DigiCulture Care */}
           <div className="navbar-left">
             <Link
-              href={dashboardHomeUrl}
+              href={pathname === '/' ? '/' : dashboardHomeUrl}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -218,8 +220,8 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* 2. BAGIAN TENGAH: Navigasi (Role Dashboard saat Login vs Landingpage saat Tamu) */}
-          {user ? (
+          {/* 2. BAGIAN TENGAH: Navigasi (Role Dashboard saat Login vs Landingpage saat Tamu/di Landingpage) */}
+          {user && pathname !== '/' ? (
             <nav className="navbar-center" aria-label="Navigasi Dashboard Role">
               {user.role === 'SUPERADMIN' && (
                 <>
@@ -245,7 +247,7 @@ export default function Navbar() {
                     href="/katalog"
                     className={`polaris-nav-link ${pathname.startsWith('/katalog') ? 'active' : ''}`}
                   >
-                    Katalog Terkini
+                    Katalog Budaya
                   </Link>
                 </>
               )}
@@ -268,7 +270,7 @@ export default function Navbar() {
                     href="/katalog"
                     className={`polaris-nav-link ${pathname.startsWith('/katalog') ? 'active' : ''}`}
                   >
-                    Katalog Terkini
+                    Katalog Budaya
                   </Link>
                 </>
               )}
@@ -285,13 +287,13 @@ export default function Navbar() {
                     href="/katalog"
                     className={`polaris-nav-link ${pathname.startsWith('/katalog') ? 'active' : ''}`}
                   >
-                    Katalog Terkini
+                    Katalog Budaya
                   </Link>
                   <Link
-                    href="/pelapor/profil"
-                    className={`polaris-nav-link ${pathname.startsWith('/pelapor/profil') ? 'active' : ''}`}
+                    href="/pelapor/lapor"
+                    className={`polaris-nav-link ${pathname.startsWith('/pelapor/lapor') ? 'active' : ''}`}
                   >
-                    Profil
+                    Lapor
                   </Link>
                 </>
               )}
@@ -315,10 +317,10 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/#katalog"
+                href={pathname === '/' ? '/#katalog' : '/katalog'}
                 onClick={(e) => scrollToSection(e, 'katalog')}
                 className={`polaris-nav-link ${
-                  pathname === '/' && activeSection === 'katalog' ? 'active' : ''
+                  (pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog') ? 'active' : ''
                 }`}
               >
                 Katalog Terkini
@@ -346,19 +348,37 @@ export default function Navbar() {
           <div className="navbar-right">
             {!loading && user ? (
               <div className="polaris-desktop-actions">
-                {/* Tombol Teks Keluar (Bentuk Teks Link Murni persis "Log in") */}
-                <button
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="polaris-login-link"
-                  title={`Keluar dari akun (${user.nama})`}
-                  style={{ opacity: isLoggingOut ? 0.6 : 1, cursor: isLoggingOut ? 'wait' : 'pointer' }}
-                >
-                  {isLoggingOut ? 'Keluar...' : 'Keluar'}
-                </button>
+                {/* Tombol Teks: Beranda jika sedang login di luar landingpage, Keluar jika di landingpage */}
+                {pathname === '/' ? (
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="polaris-login-link"
+                    title={`Keluar dari akun (${user.nama})`}
+                    style={{ opacity: isLoggingOut ? 0.6 : 1, cursor: isLoggingOut ? 'wait' : 'pointer' }}
+                  >
+                    {isLoggingOut ? 'Keluar...' : 'Keluar'}
+                  </button>
+                ) : (
+                  <Link
+                    href="/"
+                    className="polaris-login-link"
+                    title="Kembali ke Beranda"
+                  >
+                    Beranda
+                  </Link>
+                )}
 
-                {/* Tombol Solid CTA Aksi (Berubah jadi 'Kembali' saat masuk ke laman form laporan) */}
-                {isFormLaporan ? (
+                {/* Tombol Solid CTA Aksi: Dashboard saat landingpage, Kembali saat form/profil, Profil saat dashboard */}
+                {pathname === '/' ? (
+                  <Link
+                    href={user.role === 'ADMIN' ? '/admin' : user.role === 'SUPERADMIN' ? '/superadmin/analytics' : '/pelapor'}
+                    className="polaris-cta-btn"
+                    title="Masuk ke Dashboard"
+                  >
+                    {user.role === 'ADMIN' ? 'Workbench' : user.role === 'SUPERADMIN' ? 'Analitik' : 'Pelapor'}
+                  </Link>
+                ) : isSubPage ? (
                   <Link
                     href={backHref}
                     className="polaris-cta-btn"
@@ -367,8 +387,8 @@ export default function Navbar() {
                     Kembali
                   </Link>
                 ) : (
-                  <Link href="/pelapor/lapor" className="polaris-cta-btn">
-                    {user.role === 'PELAPOR' ? 'Lapor' : 'Input Laporan'}
+                  <Link href="/pelapor/profil" className="polaris-cta-btn" title="Profil Akun">
+                    Profil
                   </Link>
                 )}
               </div>
@@ -487,7 +507,7 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexGrow: 1 }}>
-          {user ? (
+          {user && pathname !== '/' ? (
             <>
               <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.25rem 0.75rem' }}>
                 Navigasi Dashboard
@@ -496,6 +516,24 @@ export default function Navbar() {
               {/* Fitur Berdasarkan Role */}
               {user.role === 'PELAPOR' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <Link
+                    href="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.65rem 0.9rem',
+                      borderRadius: 'var(--radius-sm)',
+                      background: pathname === '/' ? 'var(--color-brand-soft)' : 'transparent',
+                      color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
+                      fontWeight: pathname === '/' ? 600 : 500,
+                      fontSize: '0.92rem',
+                    }}
+                  >
+                    <Compass size={16} />
+                    <span>Beranda</span>
+                  </Link>
                   <Link
                     href="/pelapor"
                     onClick={() => setMobileMenuOpen(false)}
@@ -530,10 +568,10 @@ export default function Navbar() {
                     }}
                   >
                     <Compass size={16} />
-                    <span>Katalog Terkini</span>
+                    <span>Katalog Budaya</span>
                   </Link>
                   <Link
-                    href="/pelapor/profil"
+                    href="/pelapor/lapor"
                     onClick={() => setMobileMenuOpen(false)}
                     style={{
                       display: 'flex',
@@ -541,16 +579,16 @@ export default function Navbar() {
                       gap: '0.5rem',
                       padding: '0.65rem 0.9rem',
                       borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/pelapor/profil') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/pelapor/profil') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/pelapor/profil') ? 600 : 500,
+                      background: pathname.startsWith('/pelapor/lapor') ? 'var(--color-brand-soft)' : 'transparent',
+                      color: pathname.startsWith('/pelapor/lapor') ? 'var(--action-primary)' : 'var(--text-primary)',
+                      fontWeight: pathname.startsWith('/pelapor/lapor') ? 600 : 500,
                       fontSize: '0.92rem',
                     }}
                   >
-                    <User size={16} />
-                    <span>Profil</span>
+                    <FilePlus size={16} />
+                    <span>Lapor</span>
                   </Link>
-                  {isFormLaporan ? (
+                  {isSubPage ? (
                     <Link
                       href={backHref}
                       onClick={() => setMobileMenuOpen(false)}
@@ -561,12 +599,12 @@ export default function Navbar() {
                     </Link>
                   ) : (
                     <Link
-                      href="/pelapor/lapor"
+                      href="/pelapor/profil"
                       onClick={() => setMobileMenuOpen(false)}
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      Lapor
+                      Profil
                     </Link>
                   )}
                 </div>
@@ -574,6 +612,24 @@ export default function Navbar() {
 
               {user.role === 'ADMIN' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <Link
+                    href="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.65rem 0.9rem',
+                      borderRadius: 'var(--radius-sm)',
+                      background: pathname === '/' ? 'var(--color-brand-soft)' : 'transparent',
+                      color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
+                      fontWeight: pathname === '/' ? 600 : 500,
+                      fontSize: '0.92rem',
+                    }}
+                  >
+                    <Compass size={16} />
+                    <span>Beranda</span>
+                  </Link>
                   <Link
                     href="/admin"
                     onClick={() => setMobileMenuOpen(false)}
@@ -626,9 +682,9 @@ export default function Navbar() {
                     }}
                   >
                     <Compass size={16} />
-                    <span>Katalog Terkini</span>
+                    <span>Katalog Budaya</span>
                   </Link>
-                  {isFormLaporan ? (
+                  {isSubPage ? (
                     <Link
                       href={backHref}
                       onClick={() => setMobileMenuOpen(false)}
@@ -639,12 +695,12 @@ export default function Navbar() {
                     </Link>
                   ) : (
                     <Link
-                      href="/pelapor/lapor"
+                      href="/pelapor/profil"
                       onClick={() => setMobileMenuOpen(false)}
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      Input Laporan
+                      Profil
                     </Link>
                   )}
                 </div>
@@ -652,6 +708,24 @@ export default function Navbar() {
 
               {user.role === 'SUPERADMIN' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <Link
+                    href="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.65rem 0.9rem',
+                      borderRadius: 'var(--radius-sm)',
+                      background: pathname === '/' ? 'var(--color-brand-soft)' : 'transparent',
+                      color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
+                      fontWeight: pathname === '/' ? 600 : 500,
+                      fontSize: '0.92rem',
+                    }}
+                  >
+                    <Compass size={16} />
+                    <span>Beranda</span>
+                  </Link>
                   <Link
                     href="/superadmin/analytics"
                     onClick={() => setMobileMenuOpen(false)}
@@ -722,9 +796,9 @@ export default function Navbar() {
                     }}
                   >
                     <Compass size={16} />
-                    <span>Katalog Terkini</span>
+                    <span>Katalog Budaya</span>
                   </Link>
-                  {isFormLaporan ? (
+                  {isSubPage ? (
                     <Link
                       href={backHref}
                       onClick={() => setMobileMenuOpen(false)}
@@ -735,12 +809,12 @@ export default function Navbar() {
                     </Link>
                   ) : (
                     <Link
-                      href="/pelapor/lapor"
+                      href="/pelapor/profil"
                       onClick={() => setMobileMenuOpen(false)}
                       className="polaris-cta-btn"
                       style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
                     >
-                      Input Laporan
+                      Profil
                     </Link>
                   )}
                 </div>
@@ -795,7 +869,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/#katalog"
+                href={pathname === '/' ? '/#katalog' : '/katalog'}
                 onClick={(e) => {
                   setMobileMenuOpen(false);
                   scrollToSection(e, 'katalog');
@@ -806,9 +880,9 @@ export default function Navbar() {
                   gap: '0.5rem',
                   padding: '0.65rem 0.9rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/' && activeSection === 'katalog' ? 'var(--color-brand-soft)' : 'transparent',
-                  color: pathname === '/' && activeSection === 'katalog' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/' && activeSection === 'katalog' ? 600 : 500,
+                  background: ((pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog')) ? 'var(--color-brand-soft)' : 'transparent',
+                  color: ((pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog')) ? 'var(--action-primary)' : 'var(--text-primary)',
+                  fontWeight: ((pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog')) ? 600 : 500,
                   fontSize: '0.92rem',
                 }}
               >
@@ -861,29 +935,55 @@ export default function Navbar() {
               </Link>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1.25rem' }}>
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="btn btn-outline"
-                  style={{ width: '100%' }}
-                >
-                  Masuk
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="polaris-cta-btn"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                >
-                  Daftar
-                </Link>
+                {user ? (
+                  <>
+                    <Link
+                      href={user.role === 'ADMIN' ? '/admin' : user.role === 'SUPERADMIN' ? '/superadmin/analytics' : '/pelapor'}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ width: '100%', justifyContent: 'center' }}
+                    >
+                      {user.role === 'ADMIN' ? 'Workbench' : user.role === 'SUPERADMIN' ? 'Analitik' : 'Pelapor'}
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      disabled={isLoggingOut}
+                      className="btn btn-outline"
+                      style={{ width: '100%', color: 'var(--status-masuk)', borderColor: 'var(--border-hairline)' }}
+                    >
+                      {isLoggingOut ? 'Keluar...' : 'Keluar'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="btn btn-outline"
+                      style={{ width: '100%' }}
+                    >
+                      Masuk
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="polaris-cta-btn"
+                      style={{ width: '100%', justifyContent: 'center' }}
+                    >
+                      Daftar
+                    </Link>
+                  </>
+                )}
               </div>
             </>
           )}
         </div>
 
-        {/* Mobile Logout Button at Drawer Bottom */}
-        {user && (
+        {/* Mobile Logout Button at Drawer Bottom (saat di dalam dashboard) */}
+        {user && pathname !== '/' && (
           <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-hairline)' }}>
             <button
               onClick={() => {

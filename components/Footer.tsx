@@ -92,7 +92,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/pelapor/lapor" style={{ color: 'var(--color-sandstone)', fontWeight: 500 }}>
+                <Link href="/login" style={{ color: 'var(--color-sandstone)', fontWeight: 500 }}>
                   Laporkan Cagar Budaya →
                 </Link>
               </li>
