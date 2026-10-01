@@ -64,6 +64,7 @@ export default function PelaporProfilPage() {
   const [showDeletePass, setShowDeletePass] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [deleteErrorMsg, setDeleteErrorMsg] = useState('');
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -209,9 +210,11 @@ export default function PelaporProfilPage() {
         throw new Error(data.error || 'Gagal menghapus akun.');
       }
 
-      alert('Akun Anda telah berhasil dihapus. Anda akan dialihkan ke halaman utama.');
-      router.push('/');
-      router.refresh();
+      setDeleteSuccess(true);
+      setTimeout(() => {
+        router.push('/');
+        router.refresh();
+      }, 1500);
     } catch (err) {
       setDeleteErrorMsg(err instanceof Error ? err.message : 'Terjadi kesalahan saat menghapus akun.');
       setDeletingAccount(false);
@@ -868,108 +871,141 @@ export default function PelaporProfilPage() {
                 borderRadius: 'var(--radius-md)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--status-masuk)', marginBottom: '0.75rem' }}>
-                <AlertTriangle size={22} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 600, margin: 0 }}>
-                  Konfirmasi Hapus Akun
-                </h3>
-              </div>
-
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-                Apakah Anda benar-benar yakin ingin menghapus akun Anda? Seluruh riwayat laporan cagar budaya Anda akan dihapus secara permanen.
-              </p>
-
-              {deleteErrorMsg && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: 'var(--radius-sm)',
-                    background: 'var(--status-masuk-bg)',
-                    border: '1px solid var(--status-masuk-border)',
-                    color: 'var(--status-masuk)',
-                    fontSize: '0.825rem',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  <AlertTriangle size={15} />
-                  <span>{deleteErrorMsg}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleDeleteAccount}>
-                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                  <label className="form-label">
-                    Masukkan Kata Sandi untuk Konfirmasi:
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type={showDeletePass ? 'text' : 'password'}
-                      required
-                      value={deletePassword}
-                      onChange={(e) => setDeletePassword(e.target.value)}
-                      placeholder="Kata sandi akun Anda"
-                      className="form-input"
-                      style={{ paddingRight: '2.5rem' }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowDeletePass(!showDeletePass)}
-                      style={{
-                        position: 'absolute',
-                        right: '0.75rem',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        color: 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '0.2rem',
-                      }}
-                    >
-                      {showDeletePass ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
-                  <button
-                    type="button"
-                    disabled={deletingAccount}
-                    onClick={() => setIsDeleteModalOpen(false)}
-                    className="btn btn-secondary btn-sm"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={deletingAccount}
-                    className="btn btn-sm"
+              {deleteSuccess ? (
+                <div style={{ textAlign: 'center', padding: '1.5rem 0.5rem' }}>
+                  <div
                     style={{
-                      backgroundColor: 'var(--status-masuk)',
-                      color: '#ffffff',
-                      border: 'none',
-                      display: 'inline-flex',
+                      width: '52px',
+                      height: '52px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--status-selesai-bg)',
+                      color: 'var(--status-selesai)',
+                      display: 'flex',
                       alignItems: 'center',
-                      gap: '0.4rem',
+                      justifyContent: 'center',
+                      margin: '0 auto 1.25rem',
+                      border: '1px solid var(--status-selesai-border)',
                     }}
                   >
-                    {deletingAccount ? (
-                      <>
-                        <Loader2 size={14} className="animate-spin" />
-                        <span>Menghapus...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 size={14} />
-                        <span>Hapus Permanen</span>
-                      </>
-                    )}
-                  </button>
+                    <CheckCircle2 size={28} />
+                  </div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+                    Akun Berhasil Dihapus
+                  </h3>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                    Seluruh data profil dan arsip laporan Anda telah dibersihkan secara permanen. Anda sedang dialihkan ke beranda...
+                  </p>
                 </div>
-              </form>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--status-masuk)', marginBottom: '0.75rem' }}>
+                    <AlertTriangle size={22} />
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 600, margin: 0 }}>
+                      Konfirmasi Hapus Akun
+                    </h3>
+                  </div>
+
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+                    Apakah Anda benar-benar yakin ingin menghapus akun Anda? Seluruh riwayat laporan cagar budaya Anda akan dihapus secara permanen.
+                  </p>
+
+                  {deleteErrorMsg && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'var(--status-masuk-bg)',
+                        border: '1px solid var(--status-masuk-border)',
+                        color: 'var(--status-masuk)',
+                        fontSize: '0.825rem',
+                        marginBottom: '1rem',
+                      }}
+                    >
+                      <AlertTriangle size={15} />
+                      <span>{deleteErrorMsg}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleDeleteAccount}>
+                    <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                      <label className="form-label">
+                        Masukkan Kata Sandi untuk Konfirmasi:
+                      </label>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showDeletePass ? 'text' : 'password'}
+                          required
+                          value={deletePassword}
+                          onChange={(e) => setDeletePassword(e.target.value)}
+                          placeholder="Kata sandi akun Anda"
+                          className="form-input"
+                          style={{ paddingRight: '2.5rem' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowDeletePass(!showDeletePass)}
+                          style={{
+                            position: 'absolute',
+                            right: '0.75rem',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-muted)',
+                            cursor: 'pointer',
+                            padding: '0.2rem',
+                          }}
+                        >
+                          {showDeletePass ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                      <button
+                        type="button"
+                        disabled={deletingAccount}
+                        onClick={() => {
+                          setIsDeleteModalOpen(false);
+                          setDeletePassword('');
+                          setDeleteErrorMsg('');
+                        }}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        Batal
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={deletingAccount}
+                        className="btn btn-sm"
+                        style={{
+                          backgroundColor: 'var(--status-masuk)',
+                          color: '#ffffff',
+                          border: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                        }}
+                      >
+                        {deletingAccount ? (
+                          <>
+                            <Loader2 size={14} className="animate-spin" />
+                            <span>Menghapus...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 size={14} />
+                            <span>Hapus Permanen</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
             </div>
           </div>
         )}
