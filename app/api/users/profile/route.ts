@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { getAuthenticatedUser, hashPassword, comparePassword, signToken } from '@/lib/auth';
 import { deleteFromCloudinary } from '@/lib/cloudinary';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,6 +57,16 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Tidak terotentikasi' }, { status: 401 });
     }
 
+    // Rate limiting update profil umum (10 per menit)
+    const rateLimit = checkRateLimit(`profile-update:${authUser.id}`, { maxRequests: 10, intervalMs: 60_000 });
+    if (!rateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak permintaan pembaruan profil. Silakan coba kembali dalam ${retrySeconds} detik.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
+    }
+
     const body = await req.json();
     const { nama, email, currentPassword, newPassword } = body;
 
@@ -101,6 +113,16 @@ export async function PATCH(req: NextRequest) {
 
     // Validasi & Update Kata Sandi
     if (newPassword) {
+      // Rate limiting ganti kata sandi (5 per menit)
+      const pwdRateLimit = checkRateLimit(`profile-pwd:${authUser.id}`, { maxRequests: 5, intervalMs: 60_000 });
+      if (!pwdRateLimit.isAllowed) {
+        const retrySeconds = Math.ceil(pwdRateLimit.resetMs / 1000);
+        return NextResponse.json(
+          { error: `Terlalu banyak percobaan penggantian kata sandi. Silakan coba kembali dalam ${retrySeconds} detik.` },
+          { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+        );
+      }
+
       if (!currentPassword) {
         return NextResponse.json({ error: 'Kata sandi saat ini wajib diisi untuk mengubah kata sandi' }, { status: 400 });
       }
@@ -159,6 +181,9 @@ export async function PATCH(req: NextRequest) {
 
     return response;
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return NextResponse.json({ error: 'Alamat email sudah terdaftar pada akun lain' }, { status: 409 });
+    }
     console.error('Error updating profile:', error);
     return NextResponse.json({ error: 'Gagal memperbarui profil pengguna' }, { status: 500 });
   }
@@ -173,6 +198,16 @@ export async function DELETE(req: NextRequest) {
 
     if (authUser.role !== 'PELAPOR') {
       return NextResponse.json({ error: 'Penghapusan mandiri hanya tersedia untuk akun Pelapor' }, { status: 403 });
+    }
+
+    // Rate limiting percobaan penghapusan akun (3 per menit)
+    const delRateLimit = checkRateLimit(`profile-del:${authUser.id}`, { maxRequests: 3, intervalMs: 60_000 });
+    if (!delRateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(delRateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak percobaan penghapusan akun. Silakan coba kembali dalam ${retrySeconds} detik.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
     }
 
     const body = await req.json().catch(() => ({}));
