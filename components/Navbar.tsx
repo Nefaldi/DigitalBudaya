@@ -16,7 +16,6 @@ import {
   MapPin,
   GitBranch,
   FileText,
-  User,
   FilePlus,
 } from 'lucide-react';
 import { UserSession } from '@/types';
@@ -31,7 +30,6 @@ export default function Navbar() {
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
 
-  const isFormLaporan = pathname.startsWith('/pelapor/lapor');
   const isSubPage = pathname.startsWith('/pelapor/lapor') || pathname.startsWith('/pelapor/profil');
   const backHref =
     user?.role === 'SUPERADMIN'
