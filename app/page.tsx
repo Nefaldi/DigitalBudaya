@@ -181,7 +181,7 @@ export default async function HomePage() {
               marginBottom: '3rem',
             }}
           >
-            <Link href={user ? '/katalog' : '/login'} className="btn btn-primary btn-lg btn-mobile-block">
+            <Link href={user ? '/katalog' : '/login?redirect=/katalog'} className="btn btn-primary btn-lg btn-mobile-block">
               <span>Jelajah Katalog Budaya</span>
               <ArrowRight size={17} />
             </Link>
@@ -196,7 +196,7 @@ export default async function HomePage() {
                 <span>Analitik Provinsi</span>
               </Link>
             ) : (
-              <Link href={user ? '/pelapor/lapor' : '/login'} className="btn btn-secondary btn-lg btn-mobile-block">
+              <Link href={user ? '/pelapor/lapor' : '/login?redirect=/pelapor/lapor'} className="btn btn-secondary btn-lg btn-mobile-block">
                 <FilePlus size={17} />
                 <span>Laporkan Cagar Budaya</span>
               </Link>
@@ -370,7 +370,7 @@ export default async function HomePage() {
             </div>
 
             <Link
-              href={user ? '/katalog' : '/login'}
+              href={user ? '/katalog' : '/login?redirect=/katalog'}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -562,7 +562,7 @@ export default async function HomePage() {
             </div>
 
             <Link
-              href={user ? '/katalog' : '/login'}
+              href={user ? '/katalog' : '/login?redirect=/katalog'}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -800,7 +800,7 @@ export default async function HomePage() {
 
               <div style={{ marginTop: '1.25rem', paddingTop: '0.9rem', borderTop: '1px solid var(--border-hairline)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Standar Pencatatan Ditjen Kebudayaan</span>
-                <Link href={user ? '/katalog' : '/login'} style={{ fontSize: '0.82rem', color: 'var(--action-primary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Link href={user ? '/katalog' : '/login?redirect=/katalog'} style={{ fontSize: '0.82rem', color: 'var(--action-primary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                   <span>Eksplorasi Objek</span>
                   <ArrowRight size={13} />
                 </Link>

@@ -1,17 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { LogIn, Key, Mail, AlertCircle, Loader2, KeyRound } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { LogIn, Key, Mail, AlertCircle, Loader2, KeyRound, Info } from 'lucide-react';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const targetRedirect =
+    redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//')
+      ? redirectParam
+      : null;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,14 +36,22 @@ export default function LoginPage() {
         throw new Error(data.error || 'Gagal melakukan otentikasi');
       }
 
-      // Redirect according to role
+      // Redirect according to role & target redirect
       const role = data.user?.role;
       if (role === 'SUPERADMIN') {
-        router.push('/superadmin/analytics');
+        if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+          router.push(targetRedirect);
+        } else {
+          router.push('/superadmin/analytics');
+        }
       } else if (role === 'ADMIN') {
-        router.push('/admin');
+        if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+          router.push(targetRedirect);
+        } else {
+          router.push('/admin');
+        }
       } else {
-        router.push('/');
+        router.push(targetRedirect || '/');
       }
       router.refresh();
     } catch (err: unknown) {
@@ -47,18 +61,27 @@ export default function LoginPage() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function checkAuth() {
       try {
         const res = await fetch('/api/auth/me');
         if (res.ok) {
           const data = await res.json();
-          if (data.user?.role === 'SUPERADMIN') {
-            router.replace('/superadmin/analytics');
-          } else if (data.user?.role === 'ADMIN') {
-            router.replace('/admin');
+          const role = data.user?.role;
+          if (role === 'SUPERADMIN') {
+            if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+              router.replace(targetRedirect);
+            } else {
+              router.replace('/superadmin/analytics');
+            }
+          } else if (role === 'ADMIN') {
+            if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+              router.replace(targetRedirect);
+            } else {
+              router.replace('/admin');
+            }
           } else {
-            router.replace('/');
+            router.replace(targetRedirect || '/');
           }
         }
       } catch {
@@ -66,7 +89,7 @@ export default function LoginPage() {
       }
     }
     checkAuth();
-  }, [router]);
+  }, [router, targetRedirect]);
 
   const fillDemoAccount = (demoEmail: string) => {
     setEmail(demoEmail);
@@ -124,6 +147,27 @@ export default function LoginPage() {
               Portal Pengaduan & Preservasi Cagar Budaya Sulawesi Tengah
             </p>
           </div>
+
+          {targetRedirect && (
+            <div
+              style={{
+                padding: '0.75rem 0.9rem',
+                background: 'var(--color-brand-soft)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--action-primary)',
+                fontSize: '0.825rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '1.25rem',
+                lineHeight: 1.4,
+              }}
+            >
+              <Info size={16} style={{ flexShrink: 0 }} />
+              <span>Silakan masuk untuk melanjutkan ke halaman yang Anda tuju.</span>
+            </div>
+          )}
 
           {errorMsg && (
             <div
@@ -252,7 +296,7 @@ export default function LoginPage() {
           <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Belum memiliki akun Pelapor?{' '}
             <Link
-              href="/register"
+              href={targetRedirect ? `/register?redirect=${encodeURIComponent(targetRedirect)}` : '/register'}
               style={{
                 color: 'var(--action-primary)',
                 fontWeight: 500,
@@ -265,5 +309,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)' }} />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -1,18 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { UserPlus, User, Mail, Key, AlertCircle, Loader2 } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [nama, setNama] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
+  const targetRedirect =
+    redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//')
+      ? redirectParam
+      : null;
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +37,7 @@ export default function RegisterPage() {
         throw new Error(data.error || 'Gagal mendaftar akun');
       }
 
-      router.push('/');
+      router.push(targetRedirect || '/');
       router.refresh();
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Terjadi kesalahan saat registrasi.');
@@ -54,7 +60,7 @@ export default function RegisterPage() {
         <div className="paper-card" style={{ padding: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', border: 'none', justifyContent: 'center', marginBottom: '1.25rem' }}>
               <Image
                 src="/logo-transparent.png"
                 alt="DigiCulture Care Logo"
@@ -86,7 +92,7 @@ export default function RegisterPage() {
               Daftar Akun Pelapor
             </h1>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              Jadilah pelopor penyelamatan cagar budaya di Sulawesi Tengah
+              Partisipasi aktif pelaporan dan pelestarian warisan budaya Sulawesi Tengah
             </p>
           </div>
 
@@ -110,6 +116,7 @@ export default function RegisterPage() {
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleRegister}>
             <div className="form-group">
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -118,7 +125,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 required
-                placeholder="Contoh: Ahmad Kaili"
+                placeholder="Contoh: Siti Rahmawati"
                 value={nama}
                 onChange={(e) => setNama(e.target.value)}
                 className="form-input"
@@ -141,12 +148,12 @@ export default function RegisterPage() {
 
             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Key size={15} style={{ color: 'var(--action-primary)' }} /> Kata Sandi (Minimal 6 Karakter)
+                <Key size={15} style={{ color: 'var(--action-primary)' }} /> Kata Sandi
               </label>
               <input
                 type="password"
                 required
-                placeholder="••••••••"
+                placeholder="Minimal 6 karakter"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-input"
@@ -176,7 +183,7 @@ export default function RegisterPage() {
           <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Sudah memiliki akun?{' '}
             <Link
-              href="/login"
+              href={targetRedirect ? `/login?redirect=${encodeURIComponent(targetRedirect)}` : '/login'}
               style={{
                 color: 'var(--action-primary)',
                 fontWeight: 500,
@@ -189,5 +196,19 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)' }} />
+        </div>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }

@@ -23,19 +23,23 @@ function KatalogContent() {
   // Wajib login untuk mengakses katalog budaya
   useEffect(() => {
     async function checkAuth() {
+      const paramsString = searchParams.toString();
+      const targetUrl = '/katalog' + (paramsString ? `?${paramsString}` : '');
+      const loginUrl = `/login?redirect=${encodeURIComponent(targetUrl)}`;
+
       try {
         const res = await fetch('/api/auth/me');
         if (!res.ok) {
-          router.replace('/login');
+          router.replace(loginUrl);
           return;
         }
         setAuthChecked(true);
       } catch {
-        router.replace('/login');
+        router.replace(loginUrl);
       }
     }
     checkAuth();
-  }, [router]);
+  }, [router, searchParams]);
 
   useEffect(() => {
     if (!authChecked) return;

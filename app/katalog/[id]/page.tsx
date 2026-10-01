@@ -26,16 +26,16 @@ import {
 export const dynamic = 'force-dynamic';
 
 export default async function HeritageDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const { id } = params;
+
   // Wajib login untuk melihat detail arsip katalog cagar budaya
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   const currentUser = token ? verifyToken(token) : null;
   if (!currentUser) {
-    redirect('/login');
+    redirect(`/login?redirect=${encodeURIComponent(`/katalog/${id}`)}`);
   }
-
-  const params = await props.params;
-  const { id } = params;
 
   let report = null;
   try {
