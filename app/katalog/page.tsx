@@ -20,54 +20,55 @@ function KatalogContent() {
   const [selectedKategori, setSelectedKategori] = useState(initialKat);
   const [selectedStatus, setSelectedStatus] = useState('Semua');
 
-  // Wajib login untuk mengakses katalog budaya
+  // Wajib login & paralel fetching data untuk performa maksimal tanpa waterfall delay
   useEffect(() => {
-    async function checkAuth() {
+    let isMounted = true;
+
+    async function loadKatalogData() {
       const paramsString = searchParams.toString();
       const targetUrl = '/katalog' + (paramsString ? `?${paramsString}` : '');
       const loginUrl = `/login?redirect=${encodeURIComponent(targetUrl)}`;
 
+      const query = new URLSearchParams();
+      if (selectedStatus !== 'Semua') query.set('status', selectedStatus);
+      if (selectedKabupaten !== 'Semua') query.set('kabupatenKota', selectedKabupaten);
+      if (selectedKategori !== 'Semua') query.set('kategori', selectedKategori);
+      if (searchTerm) query.set('search', searchTerm);
+
       try {
-        const res = await fetch('/api/auth/me');
-        if (!res.ok) {
+        setLoading(true);
+        // Pemanggilan paralel API auth dan API reports sekaligus
+        const [authRes, reportsRes] = await Promise.all([
+          authChecked ? Promise.resolve({ ok: true }) : fetch('/api/auth/me'),
+          fetch(`/api/reports?${query.toString()}`),
+        ]);
+
+        if (!authRes.ok) {
           router.replace(loginUrl);
           return;
         }
-        setAuthChecked(true);
-      } catch {
-        router.replace(loginUrl);
-      }
-    }
-    checkAuth();
-  }, [router, searchParams]);
 
-  useEffect(() => {
-    if (!authChecked) return;
-
-    async function fetchReports() {
-      setLoading(true);
-      try {
-        const query = new URLSearchParams();
-        if (selectedStatus !== 'Semua') query.set('status', selectedStatus);
-        if (selectedKabupaten !== 'Semua') query.set('kabupatenKota', selectedKabupaten);
-        if (selectedKategori !== 'Semua') query.set('kategori', selectedKategori);
-        if (searchTerm) query.set('search', searchTerm);
-
-        const res = await fetch(`/api/reports?${query.toString()}`);
-        if (res.ok) {
-          const data = await res.json();
-          setReports(data.reports || []);
+        if (isMounted) {
+          setAuthChecked(true);
+          if (reportsRes.ok) {
+            const data = await reportsRes.json();
+            setReports(data.reports || []);
+          }
         }
       } catch (err) {
-        console.error('Error fetching catalog:', err);
+        console.error('Error loading catalog:', err);
+        if (!authChecked) router.replace(loginUrl);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
-    const timer = setTimeout(fetchReports, 200);
-    return () => clearTimeout(timer);
-  }, [authChecked, searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
+    const timer = setTimeout(loadKatalogData, authChecked ? 200 : 0);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [authChecked, router, searchParams, searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
 
   if (!authChecked) {
     return (

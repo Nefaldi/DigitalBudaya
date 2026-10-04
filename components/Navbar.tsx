@@ -58,14 +58,18 @@ export default function Navbar() {
     checkAuth();
   }, [pathname]);
 
-  // Observer stabil untuk mendeteksi seksi landingpage yang aktif tanpa flicker/glitch
+  // Observer teroptimasi (menggunakan requestAnimationFrame) untuk mendeteksi seksi landingpage tanpa reflow thrashing
   useEffect(() => {
     if (pathname !== '/') return;
 
     const sections = ['beranda', 'peta', 'katalog', 'alur-kerja', 'statistik'];
-    const handleScroll = () => {
-      // Abaikan event scroll jika sedang animasi manual scroll dari klik tombol
-      if (isManualScroll.current) return;
+    let ticking = false;
+
+    const updateActiveSection = () => {
+      if (isManualScroll.current) {
+        ticking = false;
+        return;
+      }
 
       const scrollY = window.scrollY + 100;
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -74,15 +78,24 @@ export default function Navbar() {
           const top = el.getBoundingClientRect().top + window.scrollY;
           if (top <= scrollY) {
             setActiveSection(sections[i]);
+            ticking = false;
             return;
           }
         }
       }
       setActiveSection('beranda');
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateActiveSection);
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    updateActiveSection();
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
@@ -105,9 +118,9 @@ export default function Navbar() {
       console.error('Logout error:', err);
     } finally {
       setUser(null);
-      // Hard redirect to clear all SPA router cache/session state and land cleanly on the homepage
+      // Hard redirect to clear all SPA router cache/session state and land cleanly on the login page
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      window.location.href = '/';
+      window.location.href = '/login';
     }
   };
 
@@ -342,22 +355,12 @@ export default function Navbar() {
             </nav>
           )}
 
-          {/* 3. BAGIAN KANAN: Tombol Aksi & Autentikasi (Tata Letak & Tampilan Presisi 2 Tombol Seperti Landing Page) */}
+          {/* 3. BAGIAN KANAN: Tombol Aksi & Autentikasi (Tombol Keluar selalu tersedia saat terautentikasi) */}
           <div className="navbar-right">
             {!loading && user ? (
               <div className="polaris-desktop-actions">
-                {/* Tombol Teks: Beranda jika sedang login di luar landingpage, Keluar jika di landingpage */}
-                {pathname === '/' ? (
-                  <button
-                    onClick={handleLogout}
-                    disabled={isLoggingOut}
-                    className="polaris-login-link"
-                    title={`Keluar dari akun (${user.nama})`}
-                    style={{ opacity: isLoggingOut ? 0.6 : 1, cursor: isLoggingOut ? 'wait' : 'pointer' }}
-                  >
-                    {isLoggingOut ? 'Keluar...' : 'Keluar'}
-                  </button>
-                ) : (
+                {/* Tombol Teks Beranda jika sedang di luar landing page */}
+                {pathname !== '/' && (
                   <Link
                     href="/"
                     className="polaris-login-link"
@@ -389,6 +392,26 @@ export default function Navbar() {
                     Profil
                   </Link>
                 )}
+
+                {/* Tombol Keluar: Selalu tampil di semua halaman saat user terautentikasi */}
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="polaris-login-link"
+                  title={`Keluar dari akun (${user.nama})`}
+                  style={{
+                    opacity: isLoggingOut ? 0.6 : 1,
+                    cursor: isLoggingOut ? 'wait' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    color: 'var(--status-masuk)',
+                    fontWeight: 500,
+                  }}
+                >
+                  <LogOut size={14} />
+                  <span>{isLoggingOut ? 'Keluar...' : 'Keluar'}</span>
+                </button>
               </div>
             ) : !loading ? (
               <div className="polaris-desktop-actions">

@@ -23,7 +23,7 @@ import {
   Compass,
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function HeritageDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

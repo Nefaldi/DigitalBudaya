@@ -19,6 +19,7 @@ import {
   Eye,
   EyeOff,
   Check,
+  LogOut,
 } from 'lucide-react';
 
 interface UserProfileData {
@@ -65,6 +66,19 @@ export default function PelaporProfilPage() {
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [deleteErrorMsg, setDeleteErrorMsg] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/me', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      window.location.href = '/login';
+    }
+  };
 
   useEffect(() => {
     let ignore = false;
@@ -315,6 +329,24 @@ export default function PelaporProfilPage() {
               </div>
             </div>
           </div>
+
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="btn btn-outline btn-sm"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              color: 'var(--status-masuk)',
+              borderColor: 'var(--border-hairline)',
+              opacity: isLoggingOut ? 0.6 : 1,
+              cursor: isLoggingOut ? 'wait' : 'pointer',
+            }}
+          >
+            <LogOut size={14} />
+            <span>{isLoggingOut ? 'Keluar...' : 'Keluar Akun'}</span>
+          </button>
         </div>
 
         {/* 3 FITUR TABS: INFORMASI PRIBADI, EDIT PROFIL, PENGATURAN AKUN */}
