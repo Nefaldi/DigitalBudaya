@@ -85,7 +85,7 @@ export default function WorkflowStepper({
             bgIcon = 'var(--status-selesai-bg)';
           } else if (status === 'active') {
             color = 'var(--action-primary)';
-            borderColor = 'var(--border-active)';
+            borderColor = 'var(--border-strong)';
             bgIcon = 'var(--color-terracotta-soft)';
           }
 

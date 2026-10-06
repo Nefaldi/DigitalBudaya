@@ -1,1042 +1,678 @@
 /* ==============================================================================
-   DigiCulture Care Design System (v3.1.0)
-   Central Sulawesi Cultural Earth Palette & Mobile-First Responsive Engine
-   Theme: Terracotta Donggala, Lindu Forest Emerald, Sandstone Megalith
-   Canvas: Warm Soft Linen (Light) & Volcanic Basalt (Dark)
+   DigitalBudaya Design System — Curatorial Minimal
+   Inspirasi: Swiss Editorial Archival / Contemporary Gallery Standard
+   Prinsip: Anti-AI Slop, Zero Neon Blobs, High Contrast, Hairline Geometry
    ============================================================================== */
 
 :root {
-  /* Tadulako Shield Megalith Palette (Light Mode - Harmonized with Official Logo #142948) */
-  --color-brand: #142948;             /* Authentic Logo Shield Navy */
-  --color-brand-hover: #0d1b30;
-  --color-brand-soft: #edf3fa;        /* Light Ice Slate Wash */
+  /* Kanvas & Permukaan (Light Mode Default) */
+  --bg-canvas: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f4f4f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9f9fb;
 
-  --color-terracotta: #8c351e;        /* Tenun Donggala Deep Rust */
-  --color-terracotta-hover: #732915;
-  --color-terracotta-soft: #f7ede8;
-  --color-emerald: #1e4030;           /* Lore Lindu Deep Conifer / Living Tradition */
-  --color-emerald-hover: #163024;
-  --color-emerald-soft: #edf6f0;
-  --color-sandstone: #9c6634;         /* Ancient Besoa Sandstone Ochre */
-  --color-sandstone-soft: #fbf5ee;
+  /* Garis Pemisah (Hairline 1px Precision) */
+  --border-hairline: #e4e4e7;
+  --border-subtle: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --border-focus: #18181b;
 
-  --color-canvas: #f8fafc;            /* Crisp Archival Slate White */
-  --color-card: #ffffff;              /* Pure Paper Surface */
-  --color-card-hover: #f1f5f9;
-  --color-subtle: #f1f5f9;
-  --color-border: #e2e8f0;            /* Fine Slate Mist Hairline */
-  --color-border-strong: #cbd5e1;
+  /* Tipografi & Kontras */
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --text-inverted: #fafafa;
+  --text-accent: #18181b;
 
-  --color-text-primary: #0f172a;      /* Deep Obsidian Slate */
-  --color-text-secondary: #475569;    /* Weathered Mineral Slate */
-  --color-text-muted: #64748b;        /* Soft Slate */
+  /* Aksi & Tombol */
+  --action-primary: #18181b;
+  --action-primary-hover: #27272a;
+  --action-primary-text: #fafafa;
+  --action-secondary: #ffffff;
+  --action-secondary-hover: #f4f4f5;
+  --action-secondary-text: #18181b;
+  --action-danger: #dc2626;
+  --action-danger-hover: #b91c1c;
 
-  --color-feature-band: #0c192c;      /* Deep Tadulako Shield Navy */
-  --color-feature-band-text: #f8fafc;
+  /* Tinta Status Pelaporan (Refined Archival Inks) */
+  --status-masuk: #991b1b;
+  --status-masuk-bg: #fef2f2;
+  --status-masuk-border: #fecaca;
 
-  /* Semantic UI Tokens */
-  --bg-canvas: var(--color-canvas);
-  --bg-card: var(--color-card);
-  --bg-card-hover: var(--color-card-hover);
-  --bg-subtle: var(--color-subtle);
-  --bg-surface: var(--color-card);
-  --bg-glass: rgba(255, 255, 255, 0.92);
+  --status-diproses: #854d0e;
+  --status-diproses-bg: #fefce8;
+  --status-diproses-border: #fef08a;
 
-  --border-hairline: var(--color-border);
-  --border-subtle: var(--color-border);
-  --border-strong: var(--color-border-strong);
-  --border-active: var(--color-brand);
+  --status-selesai: #166534;
+  --status-selesai-bg: #f0fdf4;
+  --status-selesai-border: #bbf7d0;
 
-  --text-primary: var(--color-text-primary);
-  --text-secondary: var(--color-text-secondary);
-  --text-muted: var(--color-text-muted);
-  --text-accent: var(--color-brand);
+  /* Klasifikasi Budaya */
+  --cat-benda: #18181b;
+  --cat-benda-bg: #f4f4f5;
+  --cat-benda-border: #e4e4e7;
 
-  --action-primary: var(--color-brand);
-  --action-primary-hover: var(--color-brand-hover);
-  --action-secondary: var(--color-subtle);
-  --action-secondary-text: var(--color-text-primary);
-  --action-emerald: var(--color-emerald);
-  --action-amber: var(--color-sandstone);
+  --cat-takbenda: #166534;
+  --cat-takbenda-bg: #f0fdf4;
+  --cat-takbenda-border: #bbf7d0;
 
-  /* Status Tokens (Refined Archival Inks) */
-  --status-masuk: #8a2c24;            /* Muted Brick Red */
-  --status-masuk-bg: #faebea;
-  --status-masuk-border: #edd2cf;
+  /* Aksen Tradisi Sulawesi Tengah */
+  --color-brand: #18181b;
+  --color-brand-soft: #f4f4f5;
+  --color-terracotta: #8a4528;
+  --color-terracotta-soft: #fbf5f2;
 
-  --status-diproses: #8c6034;         /* Muted Warm Ochre */
-  --status-diproses-bg: #fcf6eb;
-  --status-diproses-border: #f2e2c6;
-
-  --status-selesai: #1e4030;          /* Muted Forest Olive */
-  --status-selesai-bg: #edf6f0;
-  --status-selesai-border: #c8e4d2;
-
-  --cat-benda: #142948;               /* Shield Navy */
-  --cat-benda-bg: #edf3fa;
-  --cat-benda-border: #cbd5e1;
-
-  --cat-takbenda: #1e4030;            /* Lindu Forest */
-  --cat-takbenda-bg: #edf6f0;
-  --cat-takbenda-border: #c8e4d2;
-
-  /* Typography */
-  --font-sans: var(--font-sans), 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: var(--font-mono), 'JetBrains Mono', monospace;
-
-  /* Spacing & Radii (Editorial Refined: 4px - 8px, No Cartoonish Pills) */
-  --max-width: 1200px;
-  --radius-xs: 3px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-full: 9999px;
-
-  /* Mobile Touch Target Standards */
-  --touch-target: 44px;
+  /* Geometri Arsitektural */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --max-width: 1160px;
 }
 
 [data-theme="dark"] {
-  /* Tadulako Shield Megalith Palette (Dark Mode - Derived from #142948) */
-  --color-brand: #5b8ec9;             /* Megalith Azure - Clear contrast on dark obsidian */
-  --color-brand-hover: #6ea0db;
-  --color-brand-soft: rgba(91, 142, 201, 0.14);
+  /* Kanvas & Permukaan (Dark Mode) */
+  --bg-canvas: #09090b;
+  --bg-surface: #121215;
+  --bg-subtle: #18181b;
+  --bg-card: #121215;
+  --bg-card-hover: #1c1c20;
 
-  --color-terracotta: #b84c30;        /* Muted Terracotta Brick */
-  --color-terracotta-hover: #c95638;
-  --color-terracotta-soft: rgba(184, 76, 48, 0.14);
-  --color-emerald: #4e8268;           /* Muted Conifer Sage */
-  --color-emerald-hover: #5ea080;
-  --color-emerald-soft: rgba(78, 130, 104, 0.14);
-  --color-sandstone: #c49658;         /* Muted Amber Relic Stone */
-  --color-sandstone-soft: rgba(196, 150, 88, 0.14);
+  /* Garis Pemisah Dark */
+  --border-hairline: #27272a;
+  --border-subtle: #27272a;
+  --border-strong: #3f3f46;
+  --border-focus: #fafafa;
 
-  --color-canvas: #0c1421;            /* Deep Oceanic Obsidian Basalt */
-  --color-card: #131f32;              /* Carved Shield Navy Stone */
-  --color-card-hover: #19273e;
-  --color-subtle: #162338;
-  --color-border: #1e2f49;            /* Hairline Basalt Seam */
-  --color-border-strong: #2d4364;
+  /* Tipografi Dark */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-inverted: #18181b;
+  --text-accent: #fafafa;
 
-  --color-text-primary: #f8fafc;      /* Crisp Archival Ivory */
-  --color-text-secondary: #94a3b8;    /* Weathered Slate Frost */
-  --color-text-muted: #64748b;        /* Deep Slate Ash */
+  /* Aksi Dark */
+  --action-primary: #fafafa;
+  --action-primary-hover: #f4f4f5;
+  --action-primary-text: #18181b;
+  --action-secondary: #121215;
+  --action-secondary-hover: #18181b;
+  --action-secondary-text: #fafafa;
+  --action-danger: #ef4444;
+  --action-danger-hover: #dc2626;
 
-  --color-feature-band: #070c14;      /* Deepest Midnight Trench */
-  --color-feature-band-text: #f8fafc;
+  /* Tinta Status Dark */
+  --status-masuk: #f87171;
+  --status-masuk-bg: #450a0a;
+  --status-masuk-border: #7f1d1d;
 
-  /* Semantic UI Tokens */
-  --bg-canvas: var(--color-canvas);
-  --bg-card: var(--color-card);
-  --bg-card-hover: var(--color-card-hover);
-  --bg-subtle: var(--color-subtle);
-  --bg-surface: var(--color-card);
-  --bg-glass: rgba(19, 31, 50, 0.92);
+  --status-diproses: #facc15;
+  --status-diproses-bg: #422006;
+  --status-diproses-border: #713f12;
 
-  --border-hairline: var(--color-border);
-  --border-subtle: var(--color-border);
-  --border-strong: var(--color-border-strong);
-  --border-active: var(--color-brand);
+  --status-selesai: #4ade80;
+  --status-selesai-bg: #052e16;
+  --status-selesai-border: #14532d;
 
-  --text-primary: var(--color-text-primary);
-  --text-secondary: var(--color-text-secondary);
-  --text-muted: var(--color-text-muted);
-  --text-accent: var(--color-brand);
+  --cat-benda: #fafafa;
+  --cat-benda-bg: #18181b;
+  --cat-benda-border: #27272a;
 
-  --action-primary: var(--color-brand);
-  --action-primary-hover: var(--color-brand-hover);
-  --action-secondary: var(--color-subtle);
-  --action-secondary-text: var(--color-text-primary);
-  --action-emerald: var(--color-emerald);
-  --action-amber: var(--color-sandstone);
+  --cat-takbenda: #4ade80;
+  --cat-takbenda-bg: #052e16;
+  --cat-takbenda-border: #14532d;
 
-  /* Status Tokens (Dark Mode) */
-  --status-masuk: #c96559;
-  --status-masuk-bg: rgba(201, 101, 89, 0.12);
-  --status-masuk-border: rgba(201, 101, 89, 0.28);
-
-  --status-diproses: #c49658;
-  --status-diproses-bg: rgba(196, 150, 88, 0.12);
-  --status-diproses-border: rgba(196, 150, 88, 0.28);
-
-  --status-selesai: #4e8268;
-  --status-selesai-bg: rgba(78, 130, 104, 0.12);
-  --status-selesai-border: rgba(78, 130, 104, 0.28);
-
-  --cat-benda: #5b8ec9;
-  --cat-benda-bg: rgba(91, 142, 201, 0.12);
-  --cat-benda-border: rgba(91, 142, 201, 0.28);
-
-  --cat-takbenda: #4e8268;
-  --cat-takbenda-bg: rgba(78, 130, 104, 0.12);
-  --cat-takbenda-border: rgba(78, 130, 104, 0.28);
+  --color-brand: #fafafa;
+  --color-brand-soft: #18181b;
+  --color-terracotta: #ea580c;
+  --color-terracotta-soft: #2d1810;
 }
 
-/* Global Reset */
-* {
+/* ==============================================================================
+   Reset & Elemen Dasar
+   ============================================================================== */
+*, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
 }
 
 html {
-  font-size: 15px;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-sans);
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-/* Custom Minimal Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-canvas);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 3px;
-}
-
-/* Typography (Mobile-First Scaled Scale) */
-h1, h2, h3, h4 {
-  color: var(--text-primary);
-  letter-spacing: -0.022em;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  text-wrap: balance;
-}
-
-h1 {
-  font-size: clamp(1.85rem, 5.5vw, 3.1rem);
-  line-height: 1.15;
-  letter-spacing: -0.028em;
-  font-weight: 500;
-}
-
-h2 {
-  font-size: clamp(1.4rem, 3.8vw, 2.15rem);
-  line-height: 1.2;
-  letter-spacing: -0.024em;
-  font-weight: 500;
-}
-
-h3 {
-  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
-  line-height: 1.3;
-  letter-spacing: -0.015em;
-  font-weight: 540;
-}
-
-h4 {
-  font-size: 1rem;
-  line-height: 1.35;
-  font-weight: 600;
-}
-
-p {
-  color: var(--text-secondary);
-}
-
-.mono {
-  font-family: var(--font-mono);
+  line-height: 1.5;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.15s ease;
 }
 
-/* Container (Mobile-First: 1rem on phones, 2rem on desktop) */
+/* Monospace Utility */
+.mono {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.85em;
+  letter-spacing: -0.02em;
+}
+
+/* Kontainer Standar */
 .container {
   width: 100%;
   max-width: var(--max-width);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* Mobile-First Grid System */
-.grid-cols-1 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-.grid-cols-2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-.grid-cols-3 { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
-.grid-cols-4 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-
-/* 2-columns on mobile when specifically intended (e.g. 2x2 metric strips, 4 on desktop) */
-.grid-cols-2-mobile {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-}
-
-@media (min-width: 640px) {
-  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-  .grid-cols-2-mobile { gap: 1.25rem; }
-}
-
-@media (min-width: 1024px) {
-  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
-  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-  .grid-cols-2-mobile { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-}
-
-/* Tactile Stat Card System */
-.stat-card-tactile {
-  background: var(--bg-card);
+/* ==============================================================================
+   Kartu Kuratorial (Paper Card)
+   ============================================================================== */
+.paper-card, .card {
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  justifyContent: space-between;
-  transition: border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
-  position: relative;
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-@media (min-width: 640px) {
-  .stat-card-tactile {
-    padding: 1.5rem;
-  }
+.paper-card-interactive:hover, .card-interactive:hover {
+  border-color: var(--border-strong);
+  background-color: var(--bg-card-hover);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .stat-card-tactile:hover {
-    border-color: var(--border-strong);
-    background: var(--bg-card-hover);
-    transform: translateY(-2px);
-  }
-}
-
-/* Paper Card (Tactile Hairline Surface, No AI-Slop Shadows) */
-.paper-card, .stone-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
-  position: relative;
-}
-
-@media (min-width: 640px) {
-  .paper-card, .stone-card {
-    padding: 1.5rem;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .paper-card:hover, .stone-card:hover {
-    border-color: var(--border-strong);
-    background: var(--bg-card-hover);
-  }
-}
-
-/* Feature Band: Lindu Forest Canopy (Full Bleed on Desktop, Native Padding on Mobile) */
-.deep-lagoon-band {
-  background-color: var(--color-feature-band);
-  color: var(--color-feature-band-text);
-  padding: 2.75rem 0;
-  position: relative;
-}
-
-@media (min-width: 768px) {
-  .deep-lagoon-band {
-    padding: 4.5rem 0;
-  }
-}
-
-.deep-lagoon-band h1,
-.deep-lagoon-band h2,
-.deep-lagoon-band h3,
-.deep-lagoon-band h4 {
-  color: #ffffff;
-}
-
-.deep-lagoon-band p {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-/* Buttons (Touch Target Ergonomics: Min-Height 44px) */
+/* ==============================================================================
+   Tombol (Buttons) — Bersih, Tegas, Tanpa Shadow Tebal
+   ============================================================================== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: var(--touch-target);
-  padding: 0.65rem 1.25rem;
-  font-size: 0.92rem;
+  gap: 0.45rem;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.875rem;
   font-weight: 500;
   border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s ease;
+  padding: 0.5rem 1rem;
+  line-height: 1.25;
   border: 1px solid transparent;
-  text-decoration: none;
-  font-family: var(--font-sans);
-  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
   white-space: nowrap;
 }
 
-/* Primary CTA: Terracotta Donggala */
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .btn-primary {
-  background: var(--action-primary);
-  color: #ffffff !important;
-  border-color: transparent;
-}
-.btn-primary:hover {
-  background: var(--action-primary-hover);
-  transform: translateY(-1px);
-}
-.btn-primary:active {
-  transform: translateY(0);
+  background-color: var(--action-primary);
+  color: var(--action-primary-text);
+  border-color: var(--action-primary);
 }
 
-/* Secondary Button: Soft Neutral Sand */
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--action-primary-hover);
+  border-color: var(--action-primary-hover);
+}
+
 .btn-secondary {
-  background: var(--bg-subtle);
-  color: var(--text-primary);
-  border: 1px solid var(--border-hairline);
-}
-.btn-secondary:hover {
-  border-color: var(--border-strong);
-  background: var(--bg-card-hover);
+  background-color: var(--action-secondary);
+  color: var(--action-secondary-text);
+  border-color: var(--border-hairline);
 }
 
-/* Outline Button */
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--action-secondary-hover);
+  border-color: var(--border-strong);
+}
+
 .btn-outline {
-  background: transparent;
+  background-color: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--border-hairline);
+  border-color: var(--border-hairline);
 }
-.btn-outline:hover {
-  background: var(--bg-subtle);
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--bg-subtle);
   border-color: var(--border-strong);
 }
 
-/* Danger Button */
 .btn-danger {
-  background: rgba(220, 38, 38, 0.08);
-  color: var(--status-masuk);
-  border: 1px solid var(--status-masuk-border);
-}
-.btn-danger:hover {
-  background: #dc2626;
+  background-color: var(--action-danger);
   color: #ffffff;
+  border-color: var(--action-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--action-danger-hover);
+  border-color: var(--action-danger-hover);
 }
 
 .btn-sm {
-  min-height: 36px;
   padding: 0.35rem 0.75rem;
-  font-size: 0.82rem;
-  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
 }
 
 .btn-lg {
-  min-height: 48px;
-  padding: 0.85rem 1.75rem;
-  font-size: 1rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9375rem;
 }
 
-/* Mobile Full-Width Utility */
-@media (max-width: 640px) {
-  .btn-mobile-block {
-    width: 100% !important;
-  }
-}
-
-/* Badges (Dignified Archival Indicators, Zero Candy/Pill AI Slop) */
+/* ==============================================================================
+   Lencana Status & Klasifikasi (Badges)
+   ============================================================================== */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: var(--radius-xs);
-  font-size: 0.74rem;
+  gap: 0.3rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  border: 1px solid var(--border-hairline);
-  line-height: 1.3;
+  padding: 0.18rem 0.55rem;
+  border-radius: var(--radius-xs);
+  line-height: 1.2;
   letter-spacing: 0.02em;
 }
 
 .badge-masuk {
-  background: var(--status-masuk-bg);
+  background-color: var(--status-masuk-bg);
   color: var(--status-masuk);
-  border-color: var(--status-masuk-border);
+  border: 1px solid var(--status-masuk-border);
 }
 
 .badge-diproses {
-  background: var(--status-diproses-bg);
+  background-color: var(--status-diproses-bg);
   color: var(--status-diproses);
-  border-color: var(--status-diproses-border);
+  border: 1px solid var(--status-diproses-border);
 }
 
 .badge-selesai {
-  background: var(--status-selesai-bg);
+  background-color: var(--status-selesai-bg);
   color: var(--status-selesai);
-  border-color: var(--status-selesai-border);
+  border: 1px solid var(--status-selesai-border);
 }
 
 .badge-benda {
-  background: var(--cat-benda-bg);
+  background-color: var(--cat-benda-bg);
   color: var(--cat-benda);
-  border-color: var(--cat-benda-border);
+  border: 1px solid var(--cat-benda-border);
 }
 
 .badge-takbenda {
-  background: var(--cat-takbenda-bg);
+  background-color: var(--cat-takbenda-bg);
   color: var(--cat-takbenda);
-  border-color: var(--cat-takbenda-border);
+  border: 1px solid var(--cat-takbenda-border);
 }
 
-/* Form Controls (Mobile Safe: 16px font-size to prevent iOS zoom, 44px min-height) */
+/* ==============================================================================
+   Formulir Terstandar (Archival Forms)
+   ============================================================================== */
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
   margin-bottom: 1.25rem;
 }
 
 .form-label {
-  font-size: 0.875rem;
+  display: block;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
 }
 
 .form-input, .form-select, .form-textarea {
   width: 100%;
-  min-height: var(--touch-target);
-  background: var(--bg-card);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-sm);
-  padding: 0.65rem 0.95rem;
-  color: var(--text-primary);
-  font-size: 16px; /* Prevents auto-zoom on mobile safari/chrome */
-  font-family: var(--font-sans);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-@media (min-width: 640px) {
-  .form-input, .form-select, .form-textarea {
-    font-size: 0.92rem;
-  }
+  padding: 0.55rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color 0.15s ease;
 }
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
-  outline: none;
-  border-color: var(--action-primary);
-  box-shadow: 0 0 0 2px rgba(154, 52, 18, 0.15);
+  border-color: var(--border-focus);
 }
 
-.form-textarea {
-  min-height: 110px;
-  resize: vertical;
+.form-input::placeholder, .form-textarea::placeholder {
+  color: var(--text-muted);
 }
 
-/* Leaflet Theming & Touch Handling */
-.leaflet-container {
-  width: 100%;
-  height: 100%;
-  border-radius: var(--radius-sm);
-  background: var(--bg-subtle) !important;
-  font-family: var(--font-sans) !important;
-}
-
-[data-theme="dark"] .leaflet-tile {
-  filter: brightness(0.65) invert(1) contrast(3) hue-rotate(200deg) saturate(0.35) !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid var(--border-hairline) !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
-}
-
-.leaflet-popup-tip {
-  background: var(--bg-card) !important;
-}
-
-/* Responsive Structural Classes */
-.heritage-card-img {
-  transition: transform 0.25s ease;
-}
-@media (hover: hover) and (pointer: fine) {
-  .paper-card:hover .heritage-card-img {
-    transform: scale(1.03);
-  }
-}
-
-/* Dossier Grid (Mobile: 1 column, Desktop: 2fr 1fr) */
-.dossier-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .dossier-grid {
-    grid-template-columns: 2fr 1fr;
-    gap: 2rem;
-  }
-}
-
-/* Admin Workbench Row (Mobile: 1 column card, Desktop: thumbnail - details - actions) */
-.admin-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  align-items: stretch;
-}
-
-@media (min-width: 768px) {
-  .admin-row {
-    grid-template-columns: 140px 1fr auto;
-    gap: 1.5rem;
-    align-items: center;
-  }
-}
-
-/* Report Dossier Row (Mobile: stacked, Desktop: 180px 1fr) */
-.report-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .report-row {
-    grid-template-columns: 180px 1fr;
-    gap: 1.5rem;
-  }
-}
-
-/* Form Row (Mobile: 1 column, Desktop: multi-column) */
 .form-row {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .form-row {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-  }
 }
 
 .form-row-2-1 {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 1rem;
 }
 
-@media (min-width: 640px) {
-  .form-row-2-1 {
-    grid-template-columns: 2fr 1fr;
-    gap: 1.25rem;
-  }
-}
-
-/* Analytics Row (Mobile: 1 col, Desktop: 1fr 1fr) */
-.analytics-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .analytics-row {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-}
-
-.analytics-breakdown-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.35rem 0.75rem;
-  align-items: center;
-}
-
-.analytics-breakdown-row .breakdown-bar {
-  grid-column: 1 / -1;
-  width: 100%;
-  order: 3;
-}
-
-.analytics-breakdown-row .breakdown-count {
-  order: 2;
-  text-align: right;
-}
-
-@media (min-width: 640px) {
-  .analytics-breakdown-row {
-    grid-template-columns: 200px 1fr 40px;
-    gap: 1rem;
-  }
-
-  .analytics-breakdown-row .breakdown-bar {
-    grid-column: auto;
-    order: 2;
-  }
-
-  .analytics-breakdown-row .breakdown-count {
-    order: 3;
-  }
-}
-
-.analytics-subgrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .analytics-subgrid {
-    grid-template-columns: 1fr 1fr;
+@media (max-width: 640px) {
+  .form-row, .form-row-2-1 {
+    grid-template-columns: 1fr;
   }
 }
 
 /* ==============================================================================
-   Navbar Button System (Polaris Layout: Logo Left — Center Sections — Log in & Register Right)
-   Standard Full-Width Header with Polaris Button Arrangement
+   Tata Letak Grid Responsif
    ============================================================================== */
-.navbar-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-hairline);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+.grid-cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
 }
 
-.navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 62px;
+.grid-cols-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
 }
 
-@media (min-width: 860px) {
-  .navbar-container {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
+@media (max-width: 960px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.navbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.navbar-center {
-  display: none;
-}
-
-@media (min-width: 860px) {
-  .navbar-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.35rem;
+@media (max-width: 640px) {
+  .grid-cols-2, .grid-cols-3 {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (min-width: 1024px) {
-  .navbar-center {
-    gap: 1.75rem;
-  }
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-@media (min-width: 1024px) {
-  .navbar-right {
-    gap: 1.25rem;
-  }
-}
-
-/* Polaris Center Nav Link with Solid Underline Active State (Zero Layout Shift) */
-.polaris-nav-link {
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  text-decoration: none;
-  padding: 0 0.15rem;
-  height: 62px;
-  cursor: pointer;
-  transition: color 0.15s ease;
-  white-space: nowrap;
-}
-
-.polaris-nav-link:hover {
-  color: var(--text-primary);
-}
-
-.polaris-nav-link.active {
-  color: var(--text-primary);
-}
-
-/* Crisp horizontal underline right under the active link text, aligned with navbar bottom border */
-.polaris-nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
+/* ==============================================================================
+   Tabel Kurasi (Curated Table)
+   ============================================================================== */
+.table-container {
   width: 100%;
-  height: 2px;
-  background-color: transparent;
-  transition: background-color 0.15s ease;
-  border-radius: 1px 1px 0 0;
+  overflow-x: auto;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface);
 }
 
-.polaris-nav-link.active::after {
-  background-color: var(--text-primary);
+.table-curated {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
 }
 
-/* Polaris Log in Text Link (Right Side) */
-.polaris-login-link {
-  font-size: 0.92rem;
+.table-curated th {
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
   font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.table-curated td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-hairline);
   color: var(--text-primary);
-  text-decoration: none;
-  transition: color 0.15s ease, opacity 0.15s ease;
-  white-space: nowrap;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  padding: 0.35rem 0.25rem;
 }
 
-.polaris-login-link:hover {
-  color: var(--action-primary);
-  opacity: 0.85;
+.table-curated tr:last-child td {
+  border-bottom: none;
 }
 
-/* Polaris Register Solid Button (Right Side - Replaced Start Free) */
-.polaris-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  background: var(--text-primary);
-  color: var(--bg-canvas) !important;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 0.52rem 1.25rem;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  line-height: 1.2;
+.table-curated tr:hover td {
+  background-color: var(--bg-subtle);
 }
 
-.polaris-cta-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.polaris-cta-btn:active {
-  transform: translateY(0);
-}
-
-[data-theme="dark"] .polaris-cta-btn {
-  background: #f8fafc;
-  color: #0f172a !important;
-}
-
-/* Desktop-only action items in right group */
-.polaris-desktop-actions {
-  display: none;
-}
-
-@media (min-width: 860px) {
-  .polaris-desktop-actions {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-  }
-  .mobile-menu-btn {
-    display: none !important;
-  }
-}
-
-/* User chip for logged in state */
-.polaris-user-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.65rem;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
-  line-height: 1.2;
-}
-
-.mobile-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: transparent;
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.mobile-menu-btn:hover {
-  background: var(--bg-subtle);
-  border-color: var(--border-strong);
-}
-
-/* Backwards compatibility */
-.desktop-nav {
-  display: none;
-}
-@media (min-width: 860px) {
-  .desktop-nav {
-    display: flex !important;
-  }
-}
-
-/* Mobile Slide-Out Drawer Overlay */
-.mobile-drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 19, 18, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.mobile-drawer-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.mobile-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(85vw, 320px);
-  background: var(--bg-card);
-  border-left: 1px solid var(--border-hairline);
-  z-index: 1001;
-  transform: translateX(100%);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.15);
-}
-
-.mobile-drawer.open {
-  transform: translateX(0);
-}
-
-/* Logo Adaptive Theme Display */
+/* ==============================================================================
+   Tampilan Logo Berdasarkan Tema
+   ============================================================================== */
 .logo-dark-variant {
-  display: none !important;
+  display: none;
 }
-
 .logo-light-variant {
-  display: block !important;
+  display: block;
 }
 
 [data-theme="dark"] .logo-dark-variant {
-  display: block !important;
+  display: block;
 }
-
 [data-theme="dark"] .logo-light-variant {
-  display: none !important;
+  display: none;
 }
 
-/* Print Media Styles */
-.print-only {
-  display: none !important;
+/* ==============================================================================
+   Animasi Halus & Pemutar Audio Wave
+   ============================================================================== */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
+/* ==============================================================================
+   Archival Hero Section & Framing (Nordic-Swiss Curatorial)
+   ============================================================================== */
+.archival-hero-section {
+  padding-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.archival-hero-frame {
+  position: relative;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .archival-hero-frame {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.hero-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-hairline);
+  background-color: var(--bg-subtle);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hero-institution-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.hero-dot-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-selesai);
+  flex-shrink: 0;
+}
+
+.hero-separator {
+  color: var(--border-strong);
+}
+
+.hero-geo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.hero-body {
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.hero-headline {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.25rem 0;
+}
+
+.hero-subline {
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 660px;
+  margin: 0 auto 2.25rem auto;
+}
+
+.hero-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  padding: 0.7rem 1.35rem;
+  font-size: 0.925rem;
+  gap: 0.55rem;
+}
+
+.hero-btn-secondary {
+  padding: 0.7rem 1.35rem;
+  font-size: 0.925rem;
+  gap: 0.55rem;
+}
+
+.hero-btn-count {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.hero-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border-hairline);
+  background-color: var(--bg-subtle);
+}
+
+.hero-metric-item {
+  padding: 1.1rem 1rem;
+  text-align: center;
+  border-right: 1px solid var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hero-metric-item:last-child {
+  border-right: none;
+}
+
+.hero-metric-val {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.hero-metric-lbl {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .hero-metrics-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hero-metric-item:nth-child(2) {
+    border-right: none;
+  }
+  .hero-metric-item:nth-child(1),
+  .hero-metric-item:nth-child(2) {
+    border-bottom: 1px solid var(--border-hairline);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-metrics-strip {
+    grid-template-columns: 1fr;
+  }
+  .hero-metric-item {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  .hero-metric-item:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ==============================================================================
+   Layout Grid Dossier & Form Kuratorial
+   ============================================================================== */
+.dossier-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.75rem;
+}
+
+@media (max-width: 840px) {
+  .dossier-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==============================================================================
+   Standar Cetak Arsip Resmi A4 (BPK Wilayah XVIII Dossier Print)
+   ============================================================================== */
 @media print {
-  .no-print,
-  nav,
-  footer,
-  .btn,
-  button,
-  .leaflet-control-container,
-  .leaflet-container {
+  nav, footer, .no-print, button, input, select {
     display: none !important;
   }
 
-  .print-only {
-    display: block !important;
-  }
-
-  body {
+  body, html {
     background: #ffffff !important;
-    color: #111111 !important;
+    color: #000000 !important;
     font-size: 11pt !important;
-    line-height: 1.4 !important;
   }
 
   .container {
     max-width: 100% !important;
     padding: 0 !important;
-    margin: 0 !important;
   }
 
-  .paper-card {
-    border: 1px solid #ddd !important;
+  .paper-card, .card {
+    border: 1px solid #cccccc !important;
     box-shadow: none !important;
-    background: #ffffff !important;
     break-inside: avoid;
-    page-break-inside: avoid;
   }
 }
