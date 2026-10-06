@@ -217,7 +217,7 @@ export default async function HomePage() {
       </section>
 
       {/* 3. ETALASE ARSIP PILIHAN (Curated Heritage Showcase) */}
-      <section className="container">
+      <section id="katalog-terkini" className="container" style={{ scrollMarginTop: '80px' }}>
         <div
           style={{
             display: 'flex',
