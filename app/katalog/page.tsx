@@ -15,60 +15,129 @@ function KatalogContent() {
   const [authChecked, setAuthChecked] = useState(false);
   const [reports, setReports] = useState<HeritageReportItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedKabupaten, setSelectedKabupaten] = useState(initialKab);
   const [selectedKategori, setSelectedKategori] = useState(initialKat);
   const [selectedStatus, setSelectedStatus] = useState('Semua');
 
-  // Wajib login & paralel fetching data untuk performa maksimal tanpa waterfall delay
+  // 1. Verifikasi otentikasi pengguna secara mandiri (mencegah double-fetch)
   useEffect(() => {
     let isMounted = true;
 
-    async function loadKatalogData() {
+    async function checkAuth() {
       const paramsString = searchParams.toString();
       const targetUrl = '/katalog' + (paramsString ? `?${paramsString}` : '');
       const loginUrl = `/login?redirect=${encodeURIComponent(targetUrl)}`;
 
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) {
+          router.replace(loginUrl);
+          return;
+        }
+        if (isMounted) {
+          setAuthChecked(true);
+        }
+      } catch {
+        router.replace(loginUrl);
+      }
+    }
+
+    checkAuth();
+    return () => {
+      isMounted = false;
+    };
+  }, [router, searchParams]);
+
+  // Sinkronisasi state filter jika parameter URL berubah (misalnya navigasi dari footer/navbar)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const kab = searchParams.get('kabupatenKota') || 'Semua';
+      const kat = searchParams.get('kategori') || 'Semua';
+      const st = searchParams.get('status') || 'Semua';
+      setSelectedKabupaten(kab);
+      setSelectedKategori(kat);
+      if (st !== 'Semua') setSelectedStatus(st);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [searchParams]);
+
+  // 2. Pengambilan data katalog berbasis filter & pagination (hanya berjalan setelah terotentikasi)
+  useEffect(() => {
+    if (!authChecked) return;
+
+    let isMounted = true;
+
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      setPage(1);
+      try {
+        const query = new URLSearchParams();
+        if (selectedStatus !== 'Semua') query.set('status', selectedStatus);
+        if (selectedKabupaten !== 'Semua') query.set('kabupatenKota', selectedKabupaten);
+        if (selectedKategori !== 'Semua') query.set('kategori', selectedKategori);
+        if (searchTerm) query.set('search', searchTerm);
+        query.set('page', '1');
+        query.set('limit', '12');
+
+        const res = await fetch(`/api/reports?${query.toString()}`);
+        if (res.ok && isMounted) {
+          const data = await res.json();
+          setReports(data.reports || []);
+          if (data.pagination) {
+            setHasMore(data.pagination.hasMore);
+            setTotalCount(data.pagination.total);
+          } else {
+            setHasMore(false);
+            setTotalCount(data.reports?.length || 0);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading catalog:', err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }, 200);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [authChecked, searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
+
+  // 3. Muat data tambahan secara inkremental (Pagination / Load More)
+  const handleLoadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    const nextPage = page + 1;
+
+    try {
       const query = new URLSearchParams();
       if (selectedStatus !== 'Semua') query.set('status', selectedStatus);
       if (selectedKabupaten !== 'Semua') query.set('kabupatenKota', selectedKabupaten);
       if (selectedKategori !== 'Semua') query.set('kategori', selectedKategori);
       if (searchTerm) query.set('search', searchTerm);
+      query.set('page', String(nextPage));
+      query.set('limit', '12');
 
-      try {
-        setLoading(true);
-        // Pemanggilan paralel API auth dan API reports sekaligus
-        const [authRes, reportsRes] = await Promise.all([
-          authChecked ? Promise.resolve({ ok: true }) : fetch('/api/auth/me'),
-          fetch(`/api/reports?${query.toString()}`),
-        ]);
-
-        if (!authRes.ok) {
-          router.replace(loginUrl);
-          return;
-        }
-
-        if (isMounted) {
-          setAuthChecked(true);
-          if (reportsRes.ok) {
-            const data = await reportsRes.json();
-            setReports(data.reports || []);
-          }
-        }
-      } catch (err) {
-        console.error('Error loading catalog:', err);
-        if (!authChecked) router.replace(loginUrl);
-      } finally {
-        if (isMounted) setLoading(false);
+      const res = await fetch(`/api/reports?${query.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        setReports((prev) => [...prev, ...(data.reports || [])]);
+        setPage(nextPage);
+        setHasMore(Boolean(data.pagination?.hasMore));
       }
+    } catch (err) {
+      console.error('Error loading more catalog data:', err);
+    } finally {
+      setLoadingMore(false);
     }
-
-    const timer = setTimeout(loadKatalogData, authChecked ? 200 : 0);
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
-  }, [authChecked, router, searchParams, searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
+  };
 
   if (!authChecked) {
     return (
@@ -108,74 +177,75 @@ function KatalogContent() {
           </p>
         </div>
 
-        {/* Filter & Search Bar (Paper White Card, Hairline Border) */}
-        <div className="paper-card" style={{
-          padding: '1.25rem 1.5rem',
-          marginBottom: '2.5rem',
-        }}>
+        {/* Filter Bar */}
+        <div className="paper-card" style={{ padding: '1.25rem 1.5rem', marginBottom: '2.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
             {/* Search Input */}
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Search size={14} />
-                <span>Cari Kata Kunci</span>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Search size={13} style={{ color: 'var(--action-primary)' }} />
+                <span>Cari Objek / Desa</span>
               </label>
               <input
                 type="text"
-                placeholder="Contoh: Pokekea, Tambi, Rampi, Kalamba..."
+                placeholder="Contoh: Pokekea, Baruga, Ganda..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="form-input"
+                style={{ fontSize: '0.875rem' }}
               />
             </div>
 
-            {/* Kabupaten / Kota Dropdown */}
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Wilayah Administratif</label>
+            {/* Filter Kabupaten */}
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>Wilayah Administratif</label>
               <select
                 value={selectedKabupaten}
                 onChange={(e) => setSelectedKabupaten(e.target.value)}
                 className="form-select"
+                style={{ fontSize: '0.875rem' }}
               >
-                <option value="Semua">Semua Wilayah (13 Kab/Kota)</option>
+                <option value="Semua">Seluruh Kabupaten / Kota</option>
                 {SULTENG_KABUPATEN_KOTA.map((kab) => (
                   <option key={kab} value={kab}>{kab}</option>
                 ))}
               </select>
             </div>
 
-            {/* Kategori Dropdown */}
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Kategori</label>
+            {/* Filter Kategori */}
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>Klasifikasi Pusaka</label>
               <select
                 value={selectedKategori}
                 onChange={(e) => setSelectedKategori(e.target.value)}
                 className="form-select"
+                style={{ fontSize: '0.875rem' }}
               >
                 <option value="Semua">Semua Kategori</option>
-                <option value="BENDA">Benda (Fisik / Megalitik)</option>
-                <option value="TAKBENDA">Takbenda (Tradisi Lisan)</option>
+                <option value="BENDA">Benda (Fisik/Megalitik/Struktur)</option>
+                <option value="TAKBENDA">Takbenda (Lisan/Ritual/Musik)</option>
               </select>
             </div>
 
-            {/* Status Dropdown */}
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Status Penyelamatan</label>
+            {/* Filter Status */}
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>Tahap Penanganan</label>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="form-select"
+                style={{ fontSize: '0.875rem' }}
               >
                 <option value="Semua">Semua Status</option>
-                <option value="SELESAI">Selesai / Terverifikasi</option>
-                <option value="DIPROSES">Dalam Penanganan</option>
-                <option value="LAPORAN_MASUK">Antrean Laporan</option>
+                <option value="SELESAI">Terverifikasi (Selesai)</option>
+                <option value="DIPROSES">Dalam Penanganan (Diproses)</option>
+                <option value="LAPORAN_MASUK">Laporan Baru (Masuk)</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* Catalog Results Grid */}
+        {/* Catalog Items Grid */}
         {loading ? (
           <div style={{ textAlign: 'center', padding: '5rem 0' }}>
             <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)', margin: '0 auto 1rem auto' }} />
@@ -185,7 +255,7 @@ function KatalogContent() {
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-                Ditemukan <strong style={{ color: 'var(--text-primary)' }}>{reports.length}</strong> entri arsip
+                Menampilkan <strong style={{ color: 'var(--text-primary)' }}>{reports.length}</strong> dari <strong style={{ color: 'var(--text-primary)' }}>{totalCount || reports.length}</strong> entri arsip
               </span>
             </div>
 
@@ -194,6 +264,27 @@ function KatalogContent() {
                 <HeritageCard key={report.id} report={report} />
               ))}
             </div>
+
+            {hasMore && (
+              <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                <button
+                  type="button"
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="btn btn-secondary"
+                  style={{ minWidth: '180px' }}
+                >
+                  {loadingMore ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>Memuat Data...</span>
+                    </>
+                  ) : (
+                    <span>Muat Lebih Banyak</span>
+                  )}
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <div className="paper-card" style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
@@ -241,7 +332,7 @@ export default function KatalogPage() {
     <React.Suspense
       fallback={
         <div style={{ display: 'flex', justifyContent: 'center', padding: '8rem 0' }}>
-          <Loader2 className="spin" size={32} style={{ color: 'var(--action-primary)' }} />
+          <Loader2 className="animate-spin" size={32} style={{ color: 'var(--action-primary)' }} />
         </div>
       }
     >
@@ -249,4 +340,3 @@ export default function KatalogPage() {
     </React.Suspense>
   );
 }
-

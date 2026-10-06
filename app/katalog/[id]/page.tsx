@@ -58,7 +58,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
 
   return (
     <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
-      <div className="container" style={{ maxWidth: '1080px' }}>
+      <div className="container" style={{ maxWidth: '1040px' }}>
         {/* Official Print Dossier Header (Only visible on print) */}
         <div className="print-only official-print-header" style={{ marginBottom: '1.5rem', borderBottom: '2px solid #222', paddingBottom: '0.85rem' }}>
           <div style={{ textAlign: 'center' }}>
@@ -86,59 +86,58 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.4rem',
-              color: 'var(--action-primary)',
-              fontSize: '0.875rem',
+              color: 'var(--text-secondary)',
+              fontSize: '0.85rem',
               fontWeight: 500,
-              textDecoration: 'none',
             }}
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={15} />
             <span>Kembali ke Katalog</span>
           </Link>
           <PrintDossierButton />
         </div>
 
         {/* Header Metadata */}
-        <div style={{ marginBottom: '2.25rem' }}>
-          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
             <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
               {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
             </span>
-            <span style={{ color: 'var(--border-hairline)', fontSize: '0.85rem' }}>/</span>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+            <span style={{ color: 'var(--border-hairline)' }}>/</span>
+            <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
               {report.kabupatenKota}
             </span>
-            <span style={{ color: 'var(--border-hairline)', fontSize: '0.85rem' }}>/</span>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }} className="mono">
+            <span style={{ color: 'var(--border-hairline)' }}>/</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }} className="mono">
               REG-{report.id.substring(0, 8).toUpperCase()}
             </span>
           </div>
 
           <h1
             style={{
-              fontSize: 'clamp(2rem, 4vw, 2.85rem)',
+              fontSize: 'clamp(1.85rem, 3.5vw, 2.6rem)',
               color: 'var(--text-primary)',
-              marginBottom: '1rem',
-              lineHeight: 1.15,
-              fontWeight: 460,
-              letterSpacing: '-0.028em',
+              marginBottom: '0.85rem',
+              lineHeight: 1.2,
+              fontWeight: 500,
+              letterSpacing: '-0.025em',
             }}
           >
             {report.judulPusaka}
           </h1>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <MapPin size={16} style={{ color: 'var(--action-primary)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <MapPin size={14} style={{ color: 'var(--text-muted)' }} />
               <span>{report.lokasiSpesifik}, {report.kabupatenKota}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Calendar size={16} style={{ color: 'var(--text-muted)' }} />
-              <span>Dilaporkan {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
+              <span>Tercatat {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <User size={16} style={{ color: 'var(--text-muted)' }} />
-              <span>Oleh: {report.pelapor?.nama}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <User size={14} style={{ color: 'var(--text-muted)' }} />
+              <span>Pelapor: {report.pelapor?.nama}</span>
             </div>
           </div>
         </div>
@@ -148,11 +147,11 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
           {hasRestorationComparison ? (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-primary)' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-primary)' }}>
                   Komparasi Visual Pemugaran Cagar Budaya
                 </span>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  Interaktif: Geser handle untuk meninjau
+                  Interaktif: Geser pemisah untuk melihat perubahan
                 </span>
               </div>
               <BeforeAfterSlider
@@ -170,7 +169,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
                 borderRadius: 'var(--radius-sm)',
                 overflow: 'hidden',
                 border: '1px solid var(--border-hairline)',
-                background: 'var(--bg-surface)',
+                backgroundColor: 'var(--bg-surface)',
                 position: 'relative',
               }}
             >
@@ -186,16 +185,14 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
               <div
                 style={{
                   position: 'absolute',
-                  top: '16px',
-                  left: '16px',
-                  background: 'rgba(12, 20, 33, 0.85)',
-                  backdropFilter: 'blur(8px)',
+                  top: '12px',
+                  left: '12px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
                   color: '#ffffff',
-                  padding: '0.35rem 0.75rem',
+                  padding: '0.25rem 0.65rem',
                   borderRadius: 'var(--radius-xs)',
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  letterSpacing: '0.02em',
                 }}
               >
                 Foto Kondisi Awal Saat Dilaporkan
@@ -215,7 +212,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
           </div>
         )}
 
-        {/* Workflow State Machine Stepper */}
+        {/* Workflow Stepper */}
         <div style={{ marginBottom: '2.5rem' }}>
           <WorkflowStepper
             currentStatus={report.status}
@@ -227,16 +224,16 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
         {/* Two-Column Information Dossier */}
         <div className="dossier-grid">
           {/* Main Column: Descriptions & Notes */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Crisis Description */}
-            <div className="paper-card" style={{ padding: 'clamp(1.25rem, 3vw, 2rem)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                <AlertCircle size={18} style={{ color: 'var(--action-primary)' }} />
-                <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
-                  Deskripsi Ancaman & Krisis Cagar Budaya
+            <div className="paper-card" style={{ padding: 'clamp(1.25rem, 3vw, 1.75rem)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <AlertCircle size={16} style={{ color: 'var(--status-masuk)' }} />
+                <h2 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 600, margin: 0 }}>
+                  Deskripsi Ancaman & Kondisi Lapangan
                 </h2>
               </div>
-              <p style={{ fontSize: '0.95rem', lineHeight: '1.75', color: 'var(--text-secondary)', whiteSpace: 'pre-line', margin: 0 }}>
+              <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: 'var(--text-secondary)', whiteSpace: 'pre-line', margin: 0 }}>
                 {report.deskripsiKrisis}
               </p>
             </div>
@@ -246,26 +243,26 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
               <div
                 className="paper-card"
                 style={{
-                  padding: 'clamp(1.25rem, 3vw, 2rem)',
-                  borderLeft: '3px solid var(--action-emerald)',
+                  padding: 'clamp(1.25rem, 3vw, 1.75rem)',
+                  borderLeft: '3px solid var(--status-selesai)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                  <ShieldCheck size={18} style={{ color: 'var(--action-emerald)' }} />
-                  <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
-                    Catatan Investigasi & Tindakan Konservator Wilayah
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <ShieldCheck size={16} style={{ color: 'var(--status-selesai)' }} />
+                  <h2 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', fontWeight: 600, margin: 0 }}>
+                    Catatan Investigasi & Tindakan Konservator
                   </h2>
                 </div>
-                <p style={{ fontSize: '0.95rem', lineHeight: '1.75', color: 'var(--text-secondary)', whiteSpace: 'pre-line', margin: 0 }}>
+                <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: 'var(--text-secondary)', whiteSpace: 'pre-line', margin: 0 }}>
                   {report.catatanPenanganan}
                 </p>
                 {report.admin && (
                   <div
                     style={{
-                      marginTop: '1.5rem',
-                      paddingTop: '1rem',
+                      marginTop: '1.25rem',
+                      paddingTop: '0.85rem',
                       borderTop: '1px solid var(--border-hairline)',
-                      fontSize: '0.825rem',
+                      fontSize: '0.8rem',
                       color: 'var(--text-muted)',
                     }}
                   >
@@ -281,18 +278,18 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
           </div>
 
           {/* Sidebar Column: Geolocation & Registry Facts */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* Geolocation Card */}
-            <div className="paper-card" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '1rem' }}>
-                <Compass size={17} style={{ color: 'var(--action-primary)' }} />
-                <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
-                  Titik Geospasial Sulteng
+            <div className="paper-card" style={{ padding: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.85rem' }}>
+                <Compass size={15} style={{ color: 'var(--text-primary)' }} />
+                <h3 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600, margin: 0 }}>
+                  Titik Geospasial Situs
                 </h3>
               </div>
 
-              <div style={{ fontSize: '0.875rem', marginBottom: '0.85rem' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.2rem' }}>
+              <div style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.15rem' }}>
                   Wilayah Administratif
                 </div>
                 <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
@@ -300,11 +297,11 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
                 </div>
               </div>
 
-              <div style={{ fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.2rem' }}>
+              <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginBottom: '0.15rem' }}>
                   Koordinat GPS
                 </div>
-                <div className="mono" style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
+                <div className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   Lat: {report.latitude ?? '-'} <br />
                   Lng: {report.longitude ?? '-'}
                 </div>
@@ -312,34 +309,32 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
 
               {/* Mini Map */}
               {report.latitude && report.longitude && (
-                <div style={{ height: '200px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
-                  <SultengMap reports={[report as unknown as HeritageReportItem]} height="200px" selectedId={report.id} />
+                <div style={{ height: '180px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
+                  <SultengMap reports={[report as unknown as HeritageReportItem]} height="180px" selectedId={report.id} />
                 </div>
               )}
             </div>
 
             {/* Preservation Registry Card */}
-            <div className="paper-card" style={{ padding: '1.5rem', fontSize: '0.875rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '1.15rem' }}>
-                <FileText size={17} style={{ color: 'var(--action-primary)' }} />
-                <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 500, margin: 0 }}>
+            <div className="paper-card" style={{ padding: '1.25rem', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '1rem' }}>
+                <FileText size={15} style={{ color: 'var(--text-primary)' }} />
+                <h3 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600, margin: 0 }}>
                   Informasi Registri
                 </h3>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Status Registri:</span>
                   <span
-                    style={{
-                      fontWeight: 500,
-                      fontSize: '0.8rem',
-                      padding: '0.2rem 0.55rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: report.status === 'SELESAI' ? 'var(--status-selesai-bg)' : 'var(--status-proses-bg)',
-                      color: report.status === 'SELESAI' ? 'var(--status-selesai)' : 'var(--status-proses)',
-                      border: `1px solid ${report.status === 'SELESAI' ? 'var(--status-selesai-border)' : 'var(--status-proses-border)'}`,
-                    }}
+                    className={`badge ${
+                      report.status === 'SELESAI'
+                        ? 'badge-selesai'
+                        : report.status === 'DIPROSES'
+                        ? 'badge-diproses'
+                        : 'badge-masuk'
+                    }`}
                   >
                     {report.status}
                   </span>
@@ -347,13 +342,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Kategori:</span>
                   <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-                    {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Benda'}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Tingkat Ancaman:</span>
-                  <span style={{ color: 'var(--action-primary)', fontWeight: 500 }}>
-                    Kritis (Prioritas Lapangan)
+                    {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
                   </span>
                 </div>
               </div>
