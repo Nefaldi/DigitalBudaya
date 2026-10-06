@@ -11,7 +11,7 @@ import {
   X,
   LogOut,
   FileText,
-  ShieldCheck,
+  LogIn,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -174,13 +174,13 @@ export default function Navbar() {
               <span>Lapor Pusaka</span>
             </Link>
 
-            {/* Button 2: Solid Dark Pill with ShieldCheck icon (CMS) */}
+            {/* Button 2: Solid Dark Pill with LogIn icon (Masuk) */}
             <Link
               href={cmsHref}
               className="mantikole-action-pill mantikole-action-pill-primary"
             >
-              <ShieldCheck size={13} />
-              <span>CMS</span>
+              <LogIn size={13} />
+              <span>Masuk</span>
             </Link>
 
             {/* Optional Logout pill for logged in users */}
@@ -225,7 +225,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Bottom Dual Action Buttons in Drawer - Exactly matching Mantikole */}
+          {/* Bottom Dual Action Buttons in Drawer */}
           <div
             style={{
               paddingTop: '0.5rem',
@@ -261,8 +261,8 @@ export default function Navbar() {
                 borderRadius: '0.75rem',
               }}
             >
-              <ShieldCheck size={14} />
-              <span>Portal CMS</span>
+              <LogIn size={14} />
+              <span>Masuk</span>
             </Link>
 
             {user && (
