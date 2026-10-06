@@ -29,7 +29,7 @@ function getServerSnapshot(): 'light' | 'dark' {
   return 'light';
 }
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ pill = false }: { pill?: boolean }) {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggleTheme = () => {
@@ -49,9 +49,9 @@ export default function ThemeToggle() {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '36px',
-        height: '36px',
-        borderRadius: 'var(--radius-sm)',
+        width: pill ? '32px' : '36px',
+        height: pill ? '32px' : '36px',
+        borderRadius: pill ? '9999px' : 'var(--radius-sm)',
         background: 'transparent',
         border: '1px solid var(--border-hairline)',
         color: 'var(--text-primary)',

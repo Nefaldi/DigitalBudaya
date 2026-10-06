@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Navbar />
-        <main style={{ flexGrow: 1 }}>{children}</main>
+        <main style={{ flexGrow: 1, paddingTop: '64px' }}>{children}</main>
         <Footer />
       </body>
     </html>
