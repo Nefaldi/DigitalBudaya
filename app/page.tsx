@@ -230,7 +230,7 @@ export default async function HomePage() {
         >
           <div>
             <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
-              Koleksi Arsip Terverifikasi
+              Katalog Terkini
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
               Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
