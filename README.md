@@ -104,12 +104,14 @@ Sistem dirancang dengan optimasi khusus untuk beroperasi di bawah batasan paket 
    - Menggunakan port 6543 (PgBouncer Transaction Pooler) untuk mencegah koneksi habis pada lingkungan serverless.
 4. **Optimasi Font & Aset Statis:**
    - Tipografi Google Fonts (`Plus Jakarta Sans` dan `JetBrains Mono`) diimpor melalui modul bawaan `next/font/google` di `app/layout.tsx`. Font disimpan lokal saat build untuk mencegah layout shift (CLS = 0) dan menghilangkan network waterfall ke domain pihak ketiga.
+5. **In-Memory Rate Limiting:**
+   - Rate limiting diimplementasikan secara modular pada `lib/rateLimit.ts` dengan penanda interval `timer.unref()` untuk memastikan siklus pembersihan memori tidak menghambat proses serverless atau graceful shutdown.
 
 ---
 
 ## Identitas Visual & Sistem Desain
 
-Antarmuka menggunakan sistem desain editorial museum dengan sudut kuratorial (`border-radius: 3px - 8px`), tipografi terstruktur, dan penyesuaian tema terang/gelap berbasis logo resmi.
+Antarmuka mengadopsi filosofi **Nordic-Swiss Cultural Archival / Contemporary Curatorial Minimal**. Pendekatan ini menonjolkan bobot data, hierarki informasi yang ketat, dan menghapus seluruh ornamen artifisial (*anti-AI slop*, zero visual emojis).
 
 ### 1. Logo Resmi
 - Simbol: Perisai Tadulako melindungi Arca Megalitikum Palindo (Lembah Bada, Kabupaten Poso).
@@ -118,30 +120,37 @@ Antarmuka menggunakan sistem desain editorial museum dengan sudut kuratorial (`b
   - `public/logo-transparent.png` (Varian navy untuk tema terang).
   - `public/logo-light-transparent.png` (Varian gading `#f8fafc` untuk tema gelap dan footer).
 
-### 2. Spesifikasi Palet Warna
+### 2. Spesifikasi Palet Warna & Tipografi
 
-| Elemen Token | Light Mode (Editorial Archive) | Dark Mode (Oceanic Basalt) | Keterangan |
+| Elemen Token | Light Mode (Archival Parchment) | Dark Mode (Obsidian Ink) | Keterangan |
 |---|---|---|---|
-| `--color-brand` | `#142948` | `#5b8ec9` | Warna utama perisai logo, kontras WCAG AAA di kedua tema |
-| `--bg-canvas` | `#f8fafc` | `#0c1421` | Kanvas latar bebas silau |
-| `--bg-card` | `#ffffff` | `#131f32` | Permukaan panel kartu |
-| `--border-hairline` | `#e2e8f0` | `#1e2f49` | Garis batas tipis 1px |
-| `--text-primary` | `#0f172a` | `#f8fafc` | Teks utama dengan kontras tinggi |
-| `--text-muted` | `#64748b` | `#94a3b8` | Teks pendukung / metadata |
-| Status Masuk | `#9c6634` (Sandstone) | `#c49658` | Aksen batu purba Besoa |
-| Status Selesai | `#1e4030` (Conifer) | `#4e8268` | Aksen vegetasi Lore Lindu |
-| Status Kritis | `#8c351e` (Terracotta) | `#b84c30` | Aksen tenun Donggala |
+| `--color-brand` | `#142948` | `#7FA2C7` | Warna utama perisai logo, kontras WCAG AAA |
+| `--bg-canvas` | `#FAFAFA` | `#111215` | Kanvas latar bertekstur kertas arsip |
+| `--bg-card` | `#FFFFFF` | `#18191E` | Permukaan panel kartu kuratorial |
+| `--border-hairline` | `#E4E4E7` | `#27272A` | Garis batas struktural 1px |
+| `--text-primary` | `#09090B` | `#F4F4F5` | Teks utama dengan kontras tinggi |
+| `--text-muted` | `#71717A` | `#A1A1AA` | Teks pendukung / metadata registri |
+| Status Masuk | `#991B1B` (Merah Bata) | `#F87171` | Status registrasi awal masuk |
+| Status Diproses | `#92400E` (Ambar Emas) | `#FBBF24` | Status dalam penanganan konservator |
+| Status Selesai | `#166534` (Zamrud Lembah) | `#4ADE80` | Status terverifikasi dan selesai dipugar |
+
+- **Tipografi Utama:** `Plus Jakarta Sans` untuk teks kuratorial, antarmuka, dan judul.
+- **Tipografi Monospace:** `JetBrains Mono` untuk nomor inventaris, koordinat GPS, dan metadata tanggal.
+- **Format Cetak Dokumen A4:** Dukungan CSS `@media print` untuk mencetak dossier berkas cagar budaya secara resmi tanpa elemen navigasi browser.
 
 ---
 
 ## Fitur Sistem
 
-- **Katalog Geospasial Publik:** Direktori pencarian pusaka mencakup 13 Kabupaten/Kota se-Sulawesi Tengah dengan filter kategori (Benda vs Takbenda), status konservasi, dan pencarian teks *case-insensitive*.
-- **Peta Interaktif Leaflet:** Pembatasan wilayah spesifik Sulteng (119.0°E - 124.5°E, -3.8°S - 2.2°N) dengan penanda pin SVG bertema perisai Tadulako.
-- **Before-After Slider:** Komponen komparasi visual interaktif geser untuk membandingkan kondisi kerusakan awal dengan hasil pemugaran fisik atau digitalisasi 3D.
-- **Audio Wave Player:** Pemutar audio HTML5 untuk pelestarian Warisan Budaya Takbenda (WBTB), sastra tutur lisan, dan rekaman dialek bahasa daerah yang terancam punah.
-- **State Machine Konservasi:** Alur penanganan terstruktur: `LAPORAN_MASUK` -> `DIPROSES` (dikunci oleh Konservator Wilayah) -> `SELESAI`.
-- **Manajemen Pengguna & Analitik:** Panel Superadmin untuk promosi peran pengguna serta visualisasi agregat sebaran cagar budaya per kabupaten/kota.
+- **Framed Archival Hero & Live Metrics:** Tampilan beranda berbingkai arsip resmi BPK Wilayah XVIII dengan indikator registri aktif dan metrik kuantitatif langsung dari basis data.
+- **Katalog Geospasial Publik:** Direktori pencarian pusaka mencakup 13 Kabupaten/Kota se-Sulawesi Tengah dengan sinkronisasi parameter URL dua arah, filter kategori, status konservasi, dan pencarian teks *case-insensitive*.
+- **Peta Interaktif Leaflet:** Pembatasan wilayah spesifik Sulteng (119.0°E - 124.5°E, -3.8°S - 2.2°N) dengan penanda pin SVG bertema perisai Tadulako dan lompatan langsung dari navigasi (`/#peta`).
+- **Before-After Slider Modern:** Komponen komparasi visual interaktif dengan Pointer Capture API, dukungan sentuh mobile, dan penempatan posisi instan via klik.
+- **Dossier Lembar Arsip & Cetak Fisik:** Halaman detail dua kolom yang memuat metadata registrasi, peta lokasi terverifikasi, dan tombol cetak dossier A4.
+- **Audio Wave Player:** Pemutar audio HTML5 untuk pelestarian Warisan Budaya Takbenda (WBTB), sastra tutur lisan, dan rekaman dialek daerah.
+- **Formulir Laporan Lapangan:** Input data komprehensif, kompresi foto klien otomatis, penanda GPS interaktif, dan peringatan draf offline berbasis penyimpanan lokal.
+- **Meja Kerja Konservator (Admin):** Alur verifikasi laporan, pengambilan alih investigasi, serta pengunggahan foto restorasi dan rekaman audio.
+- **Panel Tata Kelola & Analitik (Superadmin):** Visualisasi sebaran lengkap 13 Kabupaten/Kota se-Sulawesi Tengah dan manajemen akun dengan kontrol RBAC.
 
 ---
 
@@ -156,28 +165,32 @@ DigitalBudaya/
 │   │   ├── auth/              # login, register, me, logout
 │   │   ├── reports/           # CRUD katalog & laporan cagar budaya
 │   │   ├── upload/            # Upload foto & audio ke Cloudinary
-│   │   └── users/             # Manajemen user (Superadmin)
+│   │   └── users/             # Manajemen user & profil akun
+│   │       ├── [id]/          # Operasi per pengguna (Superadmin)
+│   │       └── profile/       # GET/PATCH profil pengguna login
 │   ├── katalog/               # Direktori publik geospasial
 │   │   └── [id]/              # Dossier detail pusaka & slider pemugaran
 │   ├── login/                 # Halaman autentikasi login
 │   ├── pelapor/               # Portal pelapor masyarakat (/pelapor)
-│   │   └── lapor/             # Form pelaporan dengan kompresor kanvas & peta
+│   │   ├── lapor/             # Form pelaporan dengan kompresor kanvas & peta
+│   │   └── profil/            # Manajemen profil & riwayat pelapor
 │   ├── register/              # Halaman pendaftaran pelapor
 │   ├── superadmin/            # Panel kontrol provinsi
-│   │   ├── analytics/         # Visualisasi sebaran 13 Kab/Kota
+│   │   ├── analytics/         # Visualisasi sebaran lengkap 13 Kab/Kota
 │   │   └── users/             # Manajemen akun & peran pengguna
-│   ├── globals.css            # Desain sistem CSS tanpa framework utilitas eksternal
+│   ├── globals.css            # Sistem desain CSS arsip minimal (anti-AI slop)
 │   ├── layout.tsx             # Root layout (next/font & Leaflet CSS bundle)
-│   └── page.tsx               # Beranda sistem & metrik provinsi
+│   └── page.tsx               # Beranda berbingkai kuratorial & metrik live
 │
 ├── components/                # Komponen antarmuka mandiri
 │   ├── AudioWavePlayer.tsx    # Pemutar audio WBTB
-│   ├── BeforeAfterSlider.tsx  # Slider komparasi foto restorasi
-│   ├── Footer.tsx             # Footer dengan varian logo dark
-│   ├── HeritageCard.tsx       # Kartu katalog cagar budaya
+│   ├── BeforeAfterSlider.tsx  # Slider komparasi foto (Pointer Capture API)
+│   ├── Footer.tsx             # Footer institusional 4 kolom
+│   ├── HeritageCard.tsx       # Kartu katalog cagar budaya (rasio 16:10)
 │   ├── ImageCompressorUpload.tsx # Kompresor gambar HTML5 canvas
 │   ├── MapPicker.tsx          # Penentu titik koordinat laporan
-│   ├── Navbar.tsx             # Navigasi responsif (desktop & mobile drawer)
+│   ├── Navbar.tsx             # Navigasi responsif (56px fixed, jump to #peta)
+│   ├── PrintDossierButton.tsx # Tombol cetak berkas arsip resmi A4
 │   ├── SultengMap.tsx         # Peta spasial cagar budaya (Leaflet)
 │   ├── ThemeToggle.tsx        # Toggle tema terang / gelap
 │   └── WorkflowStepper.tsx    # Indikator alur status penanganan
@@ -187,13 +200,14 @@ DigitalBudaya/
 │   ├── cloudinary.ts          # Driver upload stream Cloudinary SDK
 │   ├── imageUtils.ts          # Optimasi format & ukuran URL Cloudinary
 │   ├── prisma.ts              # Singleton PrismaClient
+│   ├── rateLimit.ts           # Rate limiter memori dengan unref lifecycle
 │   └── sultengLocations.ts    # Validasi koordinat batas wilayah Sulteng
 │
 ├── prisma/
 │   ├── schema.prisma          # Definisi skema model database
 │   └── seed.ts                # Seeder akun demo & contoh data cagar budaya
 │
-├── public/                    # Berkas aset statis (logo resmi format transparan)
+├── public/                    # Berkas aset statis (logo resmi transparan)
 ├── next.config.ts             # Konfigurasi remote domain gambar Next.js
 └── README.md                  # Dokumentasi teknis proyek
 ```
@@ -217,8 +231,11 @@ Spesifikasi lengkap muatan permintaan dan respons dapat dilihat pada [API_DOCUME
 | `DELETE` | `/api/reports/[id]` | Pembatalan atau penghapusan laporan | Pelapor / Superadmin |
 | `POST` | `/api/upload` | Upload media foto/audio ke Cloudinary | Terautentikasi |
 | `GET` | `/api/users` | Daftar semua akun pengguna | Superadmin |
+| `POST` | `/api/users` | Pembuatan akun baru dengan relasi count | Superadmin |
 | `PATCH` | `/api/users/[id]` | Perubahan peran pengguna (Role Promotion) | Superadmin |
 | `DELETE` | `/api/users/[id]` | Penonaktifan / penghapusan akun pengguna | Superadmin |
+| `GET` | `/api/users/profile` | Mengambil profil dan statistik pelapor aktif | Terautentikasi |
+| `PATCH` | `/api/users/profile` | Memperbarui nama/password pengguna aktif | Terautentikasi |
 | `GET` | `/api/analytics` | Ringkasan statistik agregat se-provinsi | Admin & Superadmin |
 
 ---
