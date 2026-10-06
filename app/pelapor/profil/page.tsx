@@ -76,6 +76,7 @@ export default function PelaporProfilPage() {
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = '/login';
     }
   };
@@ -88,7 +89,7 @@ export default function PelaporProfilPage() {
         const res = await fetch('/api/users/profile');
         if (!res.ok) {
           if (res.status === 401) {
-            router.push('/login');
+            router.push('/login?redirect=/pelapor/profil');
             return;
           }
           throw new Error('Gagal memuat profil');

@@ -41,7 +41,7 @@ export default function LaporPusakaPage() {
       try {
         const res = await fetch('/api/auth/me');
         if (!res.ok) {
-          router.push('/login');
+          router.push('/login?redirect=/pelapor/lapor');
           return;
         }
         const data = await res.json();
@@ -57,7 +57,7 @@ export default function LaporPusakaPage() {
           setUserRole(data.user.role);
         }
       } catch {
-        router.push('/login');
+        router.push('/login?redirect=/pelapor/lapor');
       }
     }
     checkAuth();

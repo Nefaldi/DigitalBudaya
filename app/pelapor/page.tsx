@@ -40,6 +40,8 @@ export default function PelaporDashboardPage() {
   const [editLng, setEditLng] = useState<number | null>(null);
   const [updatingReport, setUpdatingReport] = useState(false);
   const [editError, setEditError] = useState('');
+  const [reportToDelete, setReportToDelete] = useState<HeritageReportItem | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function PelaporDashboardPage() {
         // 1. Get Me
         const authRes = await fetch('/api/auth/me');
         if (!authRes.ok) {
-          router.push('/login');
+          router.push('/login?redirect=/pelapor');
           return;
         }
         const authData = await authRes.json();
@@ -80,21 +82,24 @@ export default function PelaporDashboardPage() {
     };
   }, [router]);
 
-  const handleDeleteReport = async (id: string) => {
-    if (!confirm('Apakah Anda yakin ingin membatalkan dan menghapus laporan ini?')) return;
-
+  const confirmDeleteReport = async () => {
+    if (!reportToDelete) return;
+    const id = reportToDelete.id;
     setDeletingId(id);
+    setFeedback(null);
     try {
       const res = await fetch(`/api/reports/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Gagal membatalkan laporan');
+        setFeedback({ type: 'error', message: data.error || 'Gagal membatalkan laporan' });
       } else {
         setReports((prev) => prev.filter((r) => r.id !== id));
+        setFeedback({ type: 'success', message: 'Laporan berhasil dibatalkan.' });
+        setReportToDelete(null);
       }
     } catch (err) {
       console.error('Delete error:', err);
-      alert('Terjadi kesalahan saat menghapus laporan');
+      setFeedback({ type: 'error', message: 'Terjadi kesalahan saat membatalkan laporan.' });
     } finally {
       setDeletingId(null);
     }
@@ -214,6 +219,31 @@ export default function PelaporDashboardPage() {
             </p>
           </div>
         </div>
+
+        {feedback && (
+          <div
+            style={{
+              padding: '0.85rem 1.25rem',
+              borderRadius: 'var(--radius-sm)',
+              marginBottom: '2rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: feedback.type === 'success' ? 'var(--status-selesai-bg)' : 'var(--status-masuk-bg)',
+              color: feedback.type === 'success' ? 'var(--status-selesai)' : 'var(--status-masuk)',
+              border: `1px solid ${feedback.type === 'success' ? 'var(--status-selesai-border)' : 'var(--status-masuk-border)'}`,
+              fontSize: '0.875rem',
+            }}
+          >
+            <span>{feedback.message}</span>
+            <button
+              onClick={() => setFeedback(null)}
+              style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+            >
+              Tutup
+            </button>
+          </div>
+        )}
 
         {/* Quick Stats Metric Cards */}
         <div className="grid-cols-3" style={{ marginBottom: '2.5rem' }}>
@@ -416,7 +446,7 @@ export default function PelaporDashboardPage() {
                                 <span>Koreksi</span>
                               </button>
                               <button
-                                onClick={() => handleDeleteReport(report.id)}
+                                onClick={() => setReportToDelete(report)}
                                 disabled={deletingId === report.id}
                                 className="btn btn-danger btn-sm"
                               >
@@ -677,6 +707,49 @@ export default function PelaporDashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal: Batalkan Laporan */}
+      {reportToDelete && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem',
+          }}
+        >
+          <div className="paper-card" style={{ maxWidth: '440px', width: '100%', padding: '1.75rem' }}>
+            <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '0.5rem', fontWeight: 600 }}>
+              Konfirmasi Pembatalan Laporan
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+              Apakah Anda yakin ingin membatalkan laporan <strong>&ldquo;{reportToDelete.judulPusaka}&rdquo;</strong>? Tindakan ini tidak dapat diurungkan.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button
+                type="button"
+                disabled={Boolean(deletingId)}
+                onClick={() => setReportToDelete(null)}
+                className="btn btn-secondary btn-sm"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={Boolean(deletingId)}
+                onClick={confirmDeleteReport}
+                className="btn btn-danger btn-sm"
+              >
+                {deletingId ? 'Menghapus...' : 'Ya, Batalkan Laporan'}
+              </button>
+            </div>
           </div>
         </div>
       )}
