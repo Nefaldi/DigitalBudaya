@@ -37,6 +37,7 @@ export default function AdminWorkbenchPage() {
   const [actionError, setActionError] = useState('');
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const [audioUploadError, setAudioUploadError] = useState('');
+  const [workbenchFeedback, setWorkbenchFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const router = useRouter();
 
@@ -47,7 +48,7 @@ export default function AdminWorkbenchPage() {
       try {
         const authRes = await fetch('/api/auth/me');
         if (!authRes.ok) {
-          router.push('/login');
+          router.push('/login?redirect=/admin');
           return;
         }
         const authData = await authRes.json();
@@ -92,6 +93,7 @@ export default function AdminWorkbenchPage() {
   };
 
   const handleTakeOwnership = async (reportId: string) => {
+    setWorkbenchFeedback(null);
     try {
       const res = await fetch(`/api/reports/${reportId}`, {
         method: 'PATCH',
@@ -100,12 +102,14 @@ export default function AdminWorkbenchPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Gagal mengambil alih laporan');
+        setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal mengambil alih laporan' });
       } else {
         setReports((prev) => prev.map((r) => (r.id === reportId ? data.report : r)));
+        setWorkbenchFeedback({ type: 'success', message: 'Laporan berhasil diambil alih untuk penanganan konservasi.' });
       }
     } catch (err) {
       console.error('Take ownership error:', err);
+      setWorkbenchFeedback({ type: 'error', message: 'Terjadi kesalahan saat memproses laporan.' });
     }
   };
 
@@ -125,7 +129,7 @@ export default function AdminWorkbenchPage() {
     }
 
     if (file.size > 4.5 * 1024 * 1024) {
-      setAudioUploadError('Ukuran berkas audio maksimal 4.5 MB (Batas Serverless).');
+      setAudioUploadError('Ukuran berkas audio maksimal 4.5 MB.');
       return;
     }
 
@@ -260,6 +264,31 @@ export default function AdminWorkbenchPage() {
             </p>
           </div>
         </div>
+
+        {workbenchFeedback && (
+          <div
+            style={{
+              padding: '0.85rem 1.25rem',
+              borderRadius: 'var(--radius-sm)',
+              marginBottom: '1.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: workbenchFeedback.type === 'success' ? 'var(--status-selesai-bg)' : 'var(--status-masuk-bg)',
+              color: workbenchFeedback.type === 'success' ? 'var(--status-selesai)' : 'var(--status-masuk)',
+              border: `1px solid ${workbenchFeedback.type === 'success' ? 'var(--status-selesai-border)' : 'var(--status-masuk-border)'}`,
+              fontSize: '0.875rem',
+            }}
+          >
+            <span>{workbenchFeedback.message}</span>
+            <button
+              onClick={() => setWorkbenchFeedback(null)}
+              style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+            >
+              Tutup
+            </button>
+          </div>
+        )}
 
         {/* Tab Filters */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>

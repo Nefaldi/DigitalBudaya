@@ -42,6 +42,7 @@ export default function UserManagementPage() {
   const [newRole, setNewRole] = useState<UserRole>('ADMIN');
   const [creatingUser, setCreatingUser] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [userToDelete, setUserToDelete] = useState<{ id: string; nama: string } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function UserManagementPage() {
       try {
         const authRes = await fetch('/api/auth/me');
         if (!authRes.ok) {
-          router.push('/login');
+          router.push('/login?redirect=/superadmin/users');
           return;
         }
         const authData = await authRes.json();
@@ -111,13 +112,13 @@ export default function UserManagementPage() {
     }
   };
 
-  const handleDeleteUser = async (userId: string, userNama: string) => {
-    if (userId === currentUser?.id) {
-      alert('Anda tidak dapat menghapus akun Superadmin Anda sendiri!');
-      return;
-    }
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    const { id: userId, nama: userNama } = userToDelete;
 
-    if (!confirm(`Apakah Anda yakin ingin menghapus akun pengguna "${userNama}" secara permanen?`)) {
+    if (userId === currentUser?.id) {
+      setFeedback({ type: 'error', message: 'Anda tidak dapat menghapus akun Superadmin Anda sendiri.' });
+      setUserToDelete(null);
       return;
     }
 
@@ -133,6 +134,7 @@ export default function UserManagementPage() {
 
       setUsers((prev) => prev.filter((u) => u.id !== userId));
       setFeedback({ type: 'success', message: `Pengguna "${userNama}" berhasil dihapus.` });
+      setUserToDelete(null);
     } catch (err: unknown) {
       setFeedback({ type: 'error', message: err instanceof Error ? err.message : 'Gagal menghapus pengguna.' });
     } finally {
@@ -393,7 +395,7 @@ export default function UserManagementPage() {
                   <td style={{ padding: '1rem 1.25rem', textAlign: 'right' }}>
                     {user.id !== currentUser?.id ? (
                       <button
-                        onClick={() => handleDeleteUser(user.id, user.nama)}
+                        onClick={() => setUserToDelete({ id: user.id, nama: user.nama })}
                         disabled={deletingId === user.id}
                         className="btn btn-danger btn-sm"
                         style={{ padding: '0.4rem 0.65rem' }}
@@ -565,6 +567,50 @@ export default function UserManagementPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete User Confirmation Modal */}
+      {userToDelete && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem',
+          }}
+        >
+          <div className="paper-card" style={{ maxWidth: '440px', width: '100%', padding: '1.75rem' }}>
+            <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '0.5rem', fontWeight: 600 }}>
+              Konfirmasi Hapus Akun
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+              Apakah Anda yakin ingin menghapus akun pengguna <strong>&ldquo;{userToDelete.nama}&rdquo;</strong> secara permanen? Seluruh riwayat laporan terkait akan dibersihkan.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button
+                type="button"
+                disabled={Boolean(deletingId)}
+                onClick={() => setUserToDelete(null)}
+                className="btn btn-secondary btn-sm"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={Boolean(deletingId)}
+                onClick={confirmDeleteUser}
+                className="btn btn-danger btn-sm"
+              >
+                {deletingId ? 'Menghapus...' : 'Ya, Hapus Akun'}
+              </button>
+            </div>
           </div>
         </div>
       )}

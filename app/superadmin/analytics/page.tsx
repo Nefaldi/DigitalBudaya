@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import {
   BarChart3,
   Users,
@@ -41,7 +42,7 @@ export default function AnalyticsDashboardPage() {
       try {
         const authRes = await fetch('/api/auth/me');
         if (!authRes.ok) {
-          router.push('/login');
+          router.push('/login?redirect=/superadmin/analytics');
           return;
         }
         const authData = await authRes.json();
@@ -63,6 +64,17 @@ export default function AnalyticsDashboardPage() {
     }
     fetchAnalytics();
   }, [router]);
+
+  const fullKabupatenBreakdown = useMemo(() => {
+    if (!data) return [];
+    return SULTENG_KABUPATEN_KOTA.map((name) => {
+      const found = data.kabupatenBreakdown?.find((item) => item.kabupatenKota === name);
+      return {
+        kabupatenKota: name,
+        count: found ? found.count : 0,
+      };
+    }).sort((a, b) => b.count - a.count);
+  }, [data]);
 
   if (loading || !data) {
     return (
@@ -318,7 +330,7 @@ export default function AnalyticsDashboardPage() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {data.kabupatenBreakdown.map((kab) => (
+            {fullKabupatenBreakdown.map((kab) => (
               <div
                 key={kab.kabupatenKota}
                 className="analytics-breakdown-row"
