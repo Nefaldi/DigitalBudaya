@@ -1,42 +1,28 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
+import { UserSession } from '@/types';
 import {
-  Shield,
-  Compass,
-  BarChart3,
-  Users,
-  LogOut,
   Menu,
   X,
-  MapPin,
-  GitBranch,
-  FileText,
+  LogOut,
+  Compass,
   FilePlus,
+  Shield,
+  BarChart3,
+  User,
 } from 'lucide-react';
-import { UserSession } from '@/types';
 
 export default function Navbar() {
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('beranda');
-  const isManualScroll = useRef(false);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
-
-  const isSubPage = pathname.startsWith('/pelapor/lapor') || pathname.startsWith('/pelapor/profil');
-  const backHref =
-    user?.role === 'SUPERADMIN'
-      ? '/superadmin/analytics'
-      : user?.role === 'ADMIN'
-      ? '/admin'
-      : '/pelapor';
 
   useEffect(() => {
     async function checkAuth() {
@@ -48,8 +34,7 @@ export default function Navbar() {
         } else {
           setUser(null);
         }
-      } catch (err) {
-        console.error('Error fetching session:', err);
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -58,974 +43,370 @@ export default function Navbar() {
     checkAuth();
   }, [pathname]);
 
-  // Observer teroptimasi (menggunakan requestAnimationFrame) untuk mendeteksi seksi landingpage tanpa reflow thrashing
-  useEffect(() => {
-    if (pathname !== '/') return;
-
-    const sections = ['beranda', 'peta', 'katalog', 'alur-kerja', 'statistik'];
-    let ticking = false;
-
-    const updateActiveSection = () => {
-      if (isManualScroll.current) {
-        ticking = false;
-        return;
-      }
-
-      const scrollY = window.scrollY + 100;
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY;
-          if (top <= scrollY) {
-            setActiveSection(sections[i]);
-            ticking = false;
-            return;
-          }
-        }
-      }
-      setActiveSection('beranda');
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateActiveSection);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    updateActiveSection();
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    };
-  }, [pathname]);
-
-  // Tutup drawer mobile saat navigasi berubah
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
-    setMobileMenuOpen(false);
-  }
-
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
       await fetch('/api/auth/me', { method: 'POST' });
-    } catch (err) {
-      console.error('Logout error:', err);
+    } catch {
+      // Ignore
     } finally {
       setUser(null);
-      // Hard redirect to clear all SPA router cache/session state and land cleanly on the login page
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = '/login';
     }
   };
 
-  // Navigasi scroll yang halus, stabil tanpa bentrok dengan router Next.js
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    if (pathname === '/') {
-      e.preventDefault();
-      isManualScroll.current = true;
-      setActiveSection(id);
-
-      if (id === 'beranda') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        const el = document.getElementById(id);
-        if (el) {
-          const navHeight = 62;
-          const targetY = el.getBoundingClientRect().top + window.scrollY - navHeight;
-          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-        }
-      }
-
-      // Kunci selama durasi smooth scroll agar underline tidak loncat-loncat
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-      scrollTimeout.current = setTimeout(() => {
-        isManualScroll.current = false;
-      }, 850);
-    }
-  };
-
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case 'SUPERADMIN':
-        return <span className="badge badge-diproses">Superadmin</span>;
-      case 'ADMIN':
-        return <span className="badge badge-selesai">Konservator</span>;
-      default:
-        return <span className="badge badge-benda">Pelapor</span>;
-    }
-  };
-
-  const dashboardHomeUrl = user
-    ? user.role === 'SUPERADMIN'
-      ? '/superadmin/analytics'
-      : user.role === 'ADMIN'
-      ? '/admin'
-      : '/pelapor'
-    : '/';
+  const navLinks = [
+    { label: 'Katalog', href: '/katalog', active: pathname.startsWith('/katalog'), icon: Compass },
+    { label: 'Peta', href: '/#peta', active: false },
+    { label: 'Lapor', href: user?.role === 'ADMIN' ? '/admin' : user?.role === 'SUPERADMIN' ? '/superadmin/analytics' : user ? '/pelapor/lapor' : '/login?redirect=/pelapor/lapor', active: pathname.startsWith('/pelapor/lapor'), icon: FilePlus },
+  ];
 
   return (
-    <>
-      {/* Header Standar Full-Width (Bentuk Asli Tanpa Glitch) */}
-      <header className="navbar-header">
-        <div className="container navbar-container">
-          {/* 1. BAGIAN KIRI: Logo & Identitas Brand DigiCulture Care */}
-          <div className="navbar-left">
-            <Link
-              href={pathname === '/' ? '/' : dashboardHomeUrl}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.65rem',
-                textDecoration: 'none',
-              }}
-            >
-              <div
+    <header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        backgroundColor: 'var(--bg-surface)',
+        borderBottom: '1px solid var(--border-hairline)',
+        height: '56px',
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Brand Logo & Name */}
+        <Link
+          href="/"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.65rem',
+            fontWeight: 600,
+            fontSize: '1rem',
+            letterSpacing: '-0.02em',
+          }}
+        >
+          <div style={{ position: 'relative', width: '28px', height: '28px' }}>
+            <Image
+              src="/logo-transparent.png"
+              alt="Logo"
+              width={28}
+              height={28}
+              priority
+              className="logo-light-variant"
+              style={{ objectFit: 'contain' }}
+            />
+            <Image
+              src="/logo-light-transparent.png"
+              alt="Logo"
+              width={28}
+              height={28}
+              priority
+              className="logo-dark-variant"
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
+          <span style={{ color: 'var(--text-primary)' }}>DigitalBudaya</span>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              color: 'var(--text-muted)',
+              fontWeight: 400,
+              paddingLeft: '0.25rem',
+              borderLeft: '1px solid var(--border-hairline)',
+            }}
+          >
+            Sulawesi Tengah
+          </span>
+        </Link>
+
+        {/* Desktop Navigation Links */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }} className="no-print">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }} className="desktop-nav">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
                 style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: 'var(--radius-xs)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
+                  fontSize: '0.85rem',
+                  fontWeight: link.active ? 600 : 500,
+                  color: link.active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  padding: '0.4rem 0.75rem',
+                  borderRadius: 'var(--radius-sm)',
+                  backgroundColor: link.active ? 'var(--bg-subtle)' : 'transparent',
+                  transition: 'background-color 0.12s ease, color 0.12s ease',
                 }}
               >
-                <Image
-                  src="/logo-transparent.png"
-                  alt="DigiCulture Care Logo"
-                  width={36}
-                  height={36}
-                  priority
-                  className="logo-light-variant"
-                  style={{ width: '36px', height: '36px', objectFit: 'contain' }}
-                />
-                <Image
-                  src="/logo-light-transparent.png"
-                  alt="DigiCulture Care Logo"
-                  width={36}
-                  height={36}
-                  priority
-                  className="logo-dark-variant"
-                  style={{ width: '36px', height: '36px', objectFit: 'contain' }}
-                />
-              </div>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', lineHeight: 1.15 }}>
-                  <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-                    DigiCulture
-                  </span>
-                  <span style={{ color: 'var(--action-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                    Care
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', letterSpacing: '0.02em' }}>
-                  Sulawesi Tengah Heritage
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          {/* 2. BAGIAN TENGAH: Navigasi (Role Dashboard saat Login vs Landingpage saat Tamu/di Landingpage) */}
-          {user && pathname !== '/' ? (
-            <nav className="navbar-center" aria-label="Navigasi Dashboard Role">
-              {user.role === 'SUPERADMIN' && (
-                <>
-                  <Link
-                    href="/superadmin/analytics"
-                    className={`polaris-nav-link ${pathname.startsWith('/superadmin/analytics') ? 'active' : ''}`}
-                  >
-                    Analitik Provinsi
-                  </Link>
-                  <Link
-                    href="/superadmin/users"
-                    className={`polaris-nav-link ${pathname.startsWith('/superadmin/users') ? 'active' : ''}`}
-                  >
-                    Manajemen Pengguna
-                  </Link>
-                  <Link
-                    href="/admin"
-                    className={`polaris-nav-link ${pathname === '/admin' ? 'active' : ''}`}
-                  >
-                    Workbench Konservator
-                  </Link>
-                  <Link
-                    href="/katalog"
-                    className={`polaris-nav-link ${pathname.startsWith('/katalog') ? 'active' : ''}`}
-                  >
-                    Katalog Budaya
-                  </Link>
-                </>
-              )}
-
-              {user.role === 'ADMIN' && (
-                <>
-                  <Link
-                    href="/admin"
-                    className={`polaris-nav-link ${pathname === '/admin' ? 'active' : ''}`}
-                  >
-                    Workbench Konservator
-                  </Link>
-                  <Link
-                    href="/superadmin/analytics"
-                    className={`polaris-nav-link ${pathname.startsWith('/superadmin/analytics') ? 'active' : ''}`}
-                  >
-                    Analitik Wilayah
-                  </Link>
-                  <Link
-                    href="/katalog"
-                    className={`polaris-nav-link ${pathname.startsWith('/katalog') ? 'active' : ''}`}
-                  >
-                    Katalog Budaya
-                  </Link>
-                </>
-              )}
-
-              {user.role === 'PELAPOR' && (
-                <>
-                  <Link
-                    href="/pelapor"
-                    className={`polaris-nav-link ${pathname === '/pelapor' ? 'active' : ''}`}
-                  >
-                    Laporan Saya
-                  </Link>
-                  <Link
-                    href="/katalog"
-                    className={`polaris-nav-link ${pathname.startsWith('/katalog') ? 'active' : ''}`}
-                  >
-                    Katalog Budaya
-                  </Link>
-                  <Link
-                    href="/pelapor/lapor"
-                    className={`polaris-nav-link ${pathname.startsWith('/pelapor/lapor') ? 'active' : ''}`}
-                  >
-                    Lapor
-                  </Link>
-                </>
-              )}
-            </nav>
-          ) : (
-            <nav className="navbar-center" aria-label="Navigasi Bagian Landingpage">
-              <Link
-                href="/#beranda"
-                onClick={(e) => scrollToSection(e, 'beranda')}
-                className={`polaris-nav-link ${pathname === '/' && activeSection === 'beranda' ? 'active' : ''}`}
-              >
-                Beranda
+                {link.label}
               </Link>
+            ))}
 
-              <Link
-                href="/#peta"
-                onClick={(e) => scrollToSection(e, 'peta')}
-                className={`polaris-nav-link ${pathname === '/' && activeSection === 'peta' ? 'active' : ''}`}
-              >
-                Peta Sebaran
-              </Link>
-
-              <Link
-                href={pathname === '/' ? '/#katalog' : '/katalog'}
-                onClick={(e) => scrollToSection(e, 'katalog')}
-                className={`polaris-nav-link ${
-                  (pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog') ? 'active' : ''
-                }`}
-              >
-                Katalog Terkini
-              </Link>
-
-              <Link
-                href="/#alur-kerja"
-                onClick={(e) => scrollToSection(e, 'alur-kerja')}
-                className={`polaris-nav-link ${pathname === '/' && activeSection === 'alur-kerja' ? 'active' : ''}`}
-              >
-                Alur Kerja
-              </Link>
-
-              <Link
-                href="/#statistik"
-                onClick={(e) => scrollToSection(e, 'statistik')}
-                className={`polaris-nav-link ${pathname === '/' && activeSection === 'statistik' ? 'active' : ''}`}
-              >
-                Statistik
-              </Link>
-            </nav>
-          )}
-
-          {/* 3. BAGIAN KANAN: Tombol Aksi & Autentikasi (Tombol Keluar selalu tersedia saat terautentikasi) */}
-          <div className="navbar-right">
-            {!loading && user ? (
-              <div className="polaris-desktop-actions">
-                {/* Tombol Teks Beranda jika sedang di luar landing page */}
-                {pathname !== '/' && (
-                  <Link
-                    href="/"
-                    className="polaris-login-link"
-                    title="Kembali ke Beranda"
-                  >
-                    Beranda
-                  </Link>
-                )}
-
-                {/* Tombol Solid CTA Aksi: Dashboard saat landingpage, Kembali saat form/profil, Profil saat dashboard */}
-                {pathname === '/' ? (
-                  <Link
-                    href={user.role === 'ADMIN' ? '/admin' : user.role === 'SUPERADMIN' ? '/superadmin/analytics' : '/pelapor'}
-                    className="polaris-cta-btn"
-                    title="Masuk ke Dashboard"
-                  >
-                    {user.role === 'ADMIN' ? 'Workbench' : user.role === 'SUPERADMIN' ? 'Analitik' : 'Pelapor'}
-                  </Link>
-                ) : isSubPage ? (
-                  <Link
-                    href={backHref}
-                    className="polaris-cta-btn"
-                    title="Kembali ke Dashboard"
-                  >
-                    Kembali
-                  </Link>
-                ) : (
-                  <Link href="/pelapor/profil" className="polaris-cta-btn" title="Profil Akun">
-                    Profil
-                  </Link>
-                )}
-
-                {/* Tombol Keluar: Selalu tampil di semua halaman saat user terautentikasi */}
-                <button
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="polaris-login-link"
-                  title={`Keluar dari akun (${user.nama})`}
+            {/* Role-Specific Workbenches */}
+            {user?.role === 'SUPERADMIN' && (
+              <>
+                <Link
+                  href="/superadmin/analytics"
                   style={{
-                    opacity: isLoggingOut ? 0.6 : 1,
-                    cursor: isLoggingOut ? 'wait' : 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: pathname.startsWith('/superadmin/analytics') ? 600 : 500,
+                    color: pathname.startsWith('/superadmin/analytics') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: pathname.startsWith('/superadmin/analytics') ? 'var(--bg-subtle)' : 'transparent',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.35rem',
-                    color: 'var(--status-masuk)',
-                    fontWeight: 500,
                   }}
                 >
-                  <LogOut size={14} />
-                  <span>{isLoggingOut ? 'Keluar...' : 'Keluar'}</span>
-                </button>
-              </div>
-            ) : !loading ? (
-              <div className="polaris-desktop-actions">
-                {/* Masuk (Teks Polos seperti di referensi) */}
-                <Link href="/login" className="polaris-login-link">
-                  Masuk
+                  <BarChart3 size={14} />
+                  <span>Analitik</span>
                 </Link>
-
-                {/* Daftar (Tombol Solid menggantikan Start Free) */}
-                <Link href="/register" className="polaris-cta-btn">
-                  Daftar
+                <Link
+                  href="/superadmin/users"
+                  style={{
+                    fontSize: '0.85rem',
+                    fontWeight: pathname.startsWith('/superadmin/users') ? 600 : 500,
+                    color: pathname.startsWith('/superadmin/users') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: pathname.startsWith('/superadmin/users') ? 'var(--bg-subtle)' : 'transparent',
+                  }}
+                >
+                  <span>Pengguna</span>
                 </Link>
-              </div>
-            ) : (
-              <div className="polaris-desktop-actions" style={{ width: '140px', height: '36px' }} />
+              </>
             )}
 
-            {/* Theme Toggle (Hadir di Desktop & Mobile) */}
+            {user?.role === 'ADMIN' && (
+              <Link
+                href="/admin"
+                style={{
+                  fontSize: '0.85rem',
+                  fontWeight: pathname.startsWith('/admin') ? 600 : 500,
+                  color: pathname.startsWith('/admin') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  padding: '0.4rem 0.75rem',
+                  borderRadius: 'var(--radius-sm)',
+                  backgroundColor: pathname.startsWith('/admin') ? 'var(--bg-subtle)' : 'transparent',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <Shield size={14} />
+                <span>Konservator</span>
+              </Link>
+            )}
+
+            {user?.role === 'PELAPOR' && (
+              <>
+                <Link
+                  href="/pelapor"
+                  style={{
+                    fontSize: '0.85rem',
+                    fontWeight: pathname === '/pelapor' ? 600 : 500,
+                    color: pathname === '/pelapor' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: pathname === '/pelapor' ? 'var(--bg-subtle)' : 'transparent',
+                  }}
+                >
+                  <span>Laporan Saya</span>
+                </Link>
+                <Link
+                  href="/pelapor/profil"
+                  style={{
+                    fontSize: '0.85rem',
+                    fontWeight: pathname.startsWith('/pelapor/profil') ? 600 : 500,
+                    color: pathname.startsWith('/pelapor/profil') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: pathname.startsWith('/pelapor/profil') ? 'var(--bg-subtle)' : 'transparent',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <User size={14} />
+                  <span>Profil</span>
+                </Link>
+              </>
+            )}
+          </div>
+
+          <div style={{ width: '1px', height: '20px', backgroundColor: 'var(--border-hairline)', margin: '0 0.5rem' }} className="desktop-nav" />
+
+          {/* Action & Sesi */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ThemeToggle />
 
-            {/* Mobile Hamburger Button */}
+            {!loading && (
+              <>
+                {user ? (
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="btn btn-outline btn-sm desktop-nav"
+                    style={{ fontSize: '0.8rem' }}
+                    title={`Keluar (${user.nama})`}
+                  >
+                    <LogOut size={13} />
+                    <span>{isLoggingOut ? 'Keluar...' : 'Keluar'}</span>
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="btn btn-primary btn-sm desktop-nav"
+                    style={{ fontSize: '0.8rem' }}
+                  >
+                    <span>Masuk</span>
+                  </Link>
+                )}
+              </>
+            )}
+
+            {/* Mobile Menu Toggle Button */}
             <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="mobile-menu-btn"
-              aria-label="Buka menu navigasi"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="btn btn-outline btn-sm mobile-toggle"
+              aria-label="Menu"
+              style={{ padding: '0.4rem', border: '1px solid var(--border-hairline)' }}
             >
-              <Menu size={19} />
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
-        </div>
-      </header>
+        </nav>
+      </div>
 
-      {/* Mobile Drawer (Native Touch Drawer Experience) */}
-      <div
-        className={`mobile-drawer-overlay ${mobileMenuOpen ? 'open' : ''}`}
-        onClick={() => setMobileMenuOpen(false)}
-        aria-hidden="true"
-      />
-      <div className={`mobile-drawer ${mobileMenuOpen ? 'open' : ''}`}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-hairline)', paddingBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div
+          className="mobile-drawer"
+          style={{
+            position: 'absolute',
+            top: '56px',
+            left: 0,
+            right: 0,
+            backgroundColor: 'var(--bg-surface)',
+            borderBottom: '1px solid var(--border-hairline)',
+            padding: '1rem 1.25rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            zIndex: 999,
+          }}
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
               style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: 'var(--radius-xs)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                color: 'var(--text-primary)',
+                padding: '0.5rem 0',
+                borderBottom: '1px solid var(--border-hairline)',
               }}
             >
-              <Image
-                src="/logo-transparent.png"
-                alt="DigiCulture Care Logo"
-                width={32}
-                height={32}
-                className="logo-light-variant"
-                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
-              />
-              <Image
-                src="/logo-light-transparent.png"
-                alt="DigiCulture Care Logo"
-                width={32}
-                height={32}
-                className="logo-dark-variant"
-                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
-              />
-            </div>
-            <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '1rem' }}>
-              DigiCulture <span style={{ color: 'var(--action-primary)' }}>Care</span>
-            </span>
-          </div>
-          <button
-            onClick={() => setMobileMenuOpen(false)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              padding: '0.25rem',
-            }}
-            aria-label="Tutup menu"
-          >
-            <X size={22} />
-          </button>
-        </div>
+              {link.label}
+            </Link>
+          ))}
 
-        {/* User Status Bar in Mobile Drawer */}
-        {user && (
-          <div
-            style={{
-              background: 'var(--bg-subtle)',
-              border: '1px solid var(--border-hairline)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '0.85rem 1rem',
-              marginBottom: '1.25rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                {user.nama}
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {user.email}
-              </div>
-            </div>
-            {getRoleBadge(user.role)}
-          </div>
-        )}
-
-        {/* Navigation Links */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexGrow: 1 }}>
-          {user && pathname !== '/' ? (
+          {user?.role === 'SUPERADMIN' && (
             <>
-              <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.25rem 0.75rem' }}>
-                Navigasi Dashboard
-              </div>
-
-              {/* Fitur Berdasarkan Role */}
-              {user.role === 'PELAPOR' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <Link
-                    href="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname === '/' ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname === '/' ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Compass size={16} />
-                    <span>Beranda</span>
-                  </Link>
-                  <Link
-                    href="/pelapor"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname === '/pelapor' ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname === '/pelapor' ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname === '/pelapor' ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <FileText size={16} />
-                    <span>Laporan Saya</span>
-                  </Link>
-                  <Link
-                    href="/katalog"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/katalog') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/katalog') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/katalog') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Compass size={16} />
-                    <span>Katalog Budaya</span>
-                  </Link>
-                  <Link
-                    href="/pelapor/lapor"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/pelapor/lapor') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/pelapor/lapor') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/pelapor/lapor') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <FilePlus size={16} />
-                    <span>Lapor</span>
-                  </Link>
-                  {isSubPage ? (
-                    <Link
-                      href={backHref}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                    >
-                      Kembali
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/pelapor/profil"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                    >
-                      Profil
-                    </Link>
-                  )}
-                </div>
-              )}
-
-              {user.role === 'ADMIN' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <Link
-                    href="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname === '/' ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname === '/' ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Compass size={16} />
-                    <span>Beranda</span>
-                  </Link>
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/admin') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/admin') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/admin') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Shield size={16} />
-                    <span>Workbench Konservator</span>
-                  </Link>
-                  <Link
-                    href="/superadmin/analytics"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/superadmin/analytics') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/superadmin/analytics') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/superadmin/analytics') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <BarChart3 size={16} />
-                    <span>Analitik Wilayah</span>
-                  </Link>
-                  <Link
-                    href="/katalog"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/katalog') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/katalog') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/katalog') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Compass size={16} />
-                    <span>Katalog Budaya</span>
-                  </Link>
-                  {isSubPage ? (
-                    <Link
-                      href={backHref}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                    >
-                      Kembali
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/pelapor/profil"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                    >
-                      Profil
-                    </Link>
-                  )}
-                </div>
-              )}
-
-              {user.role === 'SUPERADMIN' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <Link
-                    href="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname === '/' ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname === '/' ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname === '/' ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Compass size={16} />
-                    <span>Beranda</span>
-                  </Link>
-                  <Link
-                    href="/superadmin/analytics"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/superadmin/analytics') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/superadmin/analytics') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/superadmin/analytics') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <BarChart3 size={16} />
-                    <span>Analitik Provinsi</span>
-                  </Link>
-                  <Link
-                    href="/superadmin/users"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/superadmin/users') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/superadmin/users') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/superadmin/users') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Users size={16} />
-                    <span>Manajemen Pengguna</span>
-                  </Link>
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname === '/admin' ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname === '/admin' ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname === '/admin' ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Shield size={16} />
-                    <span>Workbench Konservator</span>
-                  </Link>
-                  <Link
-                    href="/katalog"
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 0.9rem',
-                      borderRadius: 'var(--radius-sm)',
-                      background: pathname.startsWith('/katalog') ? 'var(--color-brand-soft)' : 'transparent',
-                      color: pathname.startsWith('/katalog') ? 'var(--action-primary)' : 'var(--text-primary)',
-                      fontWeight: pathname.startsWith('/katalog') ? 600 : 500,
-                      fontSize: '0.92rem',
-                    }}
-                  >
-                    <Compass size={16} />
-                    <span>Katalog Budaya</span>
-                  </Link>
-                  {isSubPage ? (
-                    <Link
-                      href={backHref}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                    >
-                      Kembali
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/pelapor/profil"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ marginTop: '0.65rem', width: '100%', justifyContent: 'center' }}
-                    >
-                      Profil
-                    </Link>
-                  )}
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.25rem 0.75rem' }}>
-                Bagian Landingpage
-              </div>
-
               <Link
-                href="/#beranda"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, 'beranda');
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '0.65rem 0.9rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/' && activeSection === 'beranda' ? 'var(--color-brand-soft)' : 'transparent',
-                  color: pathname === '/' && activeSection === 'beranda' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/' && activeSection === 'beranda' ? 600 : 500,
-                  fontSize: '0.92rem',
-                }}
+                href="/superadmin/analytics"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ fontSize: '0.9rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-hairline)' }}
               >
-                Beranda
+                Analitik Provinsi
               </Link>
-
               <Link
-                href="/#peta"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, 'peta');
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.65rem 0.9rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/' && activeSection === 'peta' ? 'var(--color-brand-soft)' : 'transparent',
-                  color: pathname === '/' && activeSection === 'peta' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/' && activeSection === 'peta' ? 600 : 500,
-                  fontSize: '0.92rem',
-                }}
+                href="/superadmin/users"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ fontSize: '0.9rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-hairline)' }}
               >
-                <MapPin size={16} />
-                <span>Peta Sebaran</span>
+                Manajemen Pengguna
               </Link>
-
-              <Link
-                href={pathname === '/' ? '/#katalog' : '/katalog'}
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, 'katalog');
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.65rem 0.9rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: ((pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog')) ? 'var(--color-brand-soft)' : 'transparent',
-                  color: ((pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog')) ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: ((pathname === '/' && activeSection === 'katalog') || pathname.startsWith('/katalog')) ? 600 : 500,
-                  fontSize: '0.92rem',
-                }}
-              >
-                <Compass size={16} />
-                <span>Katalog Terkini</span>
-              </Link>
-
-              <Link
-                href="/#alur-kerja"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, 'alur-kerja');
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.65rem 0.9rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/' && activeSection === 'alur-kerja' ? 'var(--color-brand-soft)' : 'transparent',
-                  color: pathname === '/' && activeSection === 'alur-kerja' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/' && activeSection === 'alur-kerja' ? 600 : 500,
-                  fontSize: '0.92rem',
-                }}
-              >
-                <GitBranch size={16} />
-                <span>Alur Kerja Penyelamatan</span>
-              </Link>
-
-              <Link
-                href="/#statistik"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, 'statistik');
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.65rem 0.9rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: pathname === '/' && activeSection === 'statistik' ? 'var(--color-brand-soft)' : 'transparent',
-                  color: pathname === '/' && activeSection === 'statistik' ? 'var(--action-primary)' : 'var(--text-primary)',
-                  fontWeight: pathname === '/' && activeSection === 'statistik' ? 600 : 500,
-                  fontSize: '0.92rem',
-                }}
-              >
-                <BarChart3 size={16} />
-                <span>Statistik & Metrik</span>
-              </Link>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1.25rem' }}>
-                {user ? (
-                  <>
-                    <Link
-                      href={user.role === 'ADMIN' ? '/admin' : user.role === 'SUPERADMIN' ? '/superadmin/analytics' : '/pelapor'}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      {user.role === 'ADMIN' ? 'Workbench' : user.role === 'SUPERADMIN' ? 'Analitik' : 'Pelapor'}
-                    </Link>
-                    <button
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        handleLogout();
-                      }}
-                      disabled={isLoggingOut}
-                      className="btn btn-outline"
-                      style={{ width: '100%', color: 'var(--status-masuk)', borderColor: 'var(--border-hairline)' }}
-                    >
-                      {isLoggingOut ? 'Keluar...' : 'Keluar'}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="btn btn-outline"
-                      style={{ width: '100%' }}
-                    >
-                      Masuk
-                    </Link>
-                    <Link
-                      href="/register"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="polaris-cta-btn"
-                      style={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      Daftar
-                    </Link>
-                  </>
-                )}
-              </div>
             </>
           )}
-        </div>
 
-        {/* Mobile Logout Button at Drawer Bottom (saat di dalam dashboard) */}
-        {user && pathname !== '/' && (
-          <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-hairline)' }}>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                handleLogout();
-              }}
-              disabled={isLoggingOut}
-              className="btn btn-outline"
-              style={{
-                width: '100%',
-                color: 'var(--status-masuk)',
-                borderColor: 'var(--border-hairline)',
-                opacity: isLoggingOut ? 0.6 : 1,
-              }}
+          {user?.role === 'ADMIN' && (
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ fontSize: '0.9rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-hairline)' }}
             >
-              <LogOut size={16} />
-              <span>{isLoggingOut ? 'Keluar...' : 'Keluar Akun'}</span>
-            </button>
+              Workbench Konservator
+            </Link>
+          )}
+
+          {user?.role === 'PELAPOR' && (
+            <>
+              <Link
+                href="/pelapor"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ fontSize: '0.9rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-hairline)' }}
+              >
+                Laporan Saya
+              </Link>
+              <Link
+                href="/pelapor/profil"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ fontSize: '0.9rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-hairline)' }}
+              >
+                Profil Akun
+              </Link>
+            </>
+          )}
+
+          <div style={{ paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="btn btn-outline btn-sm"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <LogOut size={14} />
+                <span>Keluar Akun ({user.nama})</span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-primary btn-sm"
+                style={{ width: '100%', textAlign: 'center' }}
+              >
+                Masuk ke Akun
+              </Link>
+            )}
           </div>
-        )}
-      </div>
-    </>
+        </div>
+      )}
+
+      {/* Media Queries inline for mobile toggle */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          :global(.desktop-nav) {
+            display: none !important;
+          }
+          :global(.mobile-toggle) {
+            display: inline-flex !important;
+          }
+        }
+        @media (min-width: 769px) {
+          :global(.mobile-toggle) {
+            display: none !important;
+          }
+          :global(.mobile-drawer) {
+            display: none !important;
+          }
+        }
+      `}</style>
+    </header>
   );
 }

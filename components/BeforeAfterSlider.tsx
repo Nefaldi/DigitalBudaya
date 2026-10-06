@@ -17,8 +17,8 @@ export default function BeforeAfterSlider({
   afterLabel = 'Hasil Restorasi / Digitalisasi',
 }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
-  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return;
@@ -28,28 +28,34 @@ export default function BeforeAfterSlider({
     setSliderPosition(percent);
   }, []);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length > 0) {
-      handleMove(e.touches[0].clientX);
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    handleMove(e.clientX);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDraggingRef.current) {
+      handleMove(e.clientX);
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging) {
-      handleMove(e.clientX);
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = false;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      // Ignore if pointer already released
     }
   };
 
   return (
     <div
       ref={containerRef}
-      onMouseDown={() => setIsDragging(true)}
-      onMouseUp={() => setIsDragging(false)}
-      onMouseLeave={() => setIsDragging(false)}
-      onMouseMove={handleMouseMove}
-      onTouchStart={() => setIsDragging(true)}
-      onTouchEnd={() => setIsDragging(false)}
-      onTouchMove={handleTouchMove}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
       style={{
         position: 'relative',
         width: '100%',
@@ -60,7 +66,7 @@ export default function BeforeAfterSlider({
         cursor: 'ew-resize',
         userSelect: 'none',
         background: 'var(--bg-subtle)',
-        touchAction: 'pan-y', // allows vertical page scroll while sliding horizontally
+        touchAction: 'none',
       }}
     >
       {/* Background: After Image (Digitalized/Restored) */}
@@ -82,7 +88,7 @@ export default function BeforeAfterSlider({
           background: 'var(--status-selesai-bg)',
           border: '1px solid var(--status-selesai-border)',
           backdropFilter: 'blur(6px)',
-          color: 'var(--status-selesai-text)',
+          color: 'var(--status-selesai)',
           padding: '0.25rem 0.65rem',
           borderRadius: 'var(--radius-xs)',
           fontSize: '0.72rem',
@@ -119,7 +125,7 @@ export default function BeforeAfterSlider({
             background: 'var(--status-masuk-bg)',
             border: '1px solid var(--status-masuk-border)',
             backdropFilter: 'blur(6px)',
-            color: 'var(--status-masuk-text)',
+            color: 'var(--status-masuk)',
             padding: '0.25rem 0.65rem',
             borderRadius: 'var(--radius-xs)',
             fontSize: '0.72rem',
@@ -131,7 +137,7 @@ export default function BeforeAfterSlider({
         </div>
       </div>
 
-      {/* Draggable Divider Handle (Enlarged for touch ergonomics on mobile) */}
+      {/* Draggable Divider Handle */}
       <div
         style={{
           position: 'absolute',
@@ -157,22 +163,23 @@ export default function BeforeAfterSlider({
         />
         <div
           style={{
-            width: '38px',
-            height: '38px',
+            width: '36px',
+            height: '36px',
             borderRadius: '50%',
             background: 'var(--action-primary)',
             color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '14px',
+            fontSize: '12px',
             fontWeight: 600,
             border: '2px solid #ffffff',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
             zIndex: 2,
+            letterSpacing: '1px',
           }}
         >
-          ↔
+          | |
         </div>
       </div>
 

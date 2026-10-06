@@ -3,159 +3,119 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 
 export default function Footer() {
-  const pathname = usePathname();
-  const isDashboard =
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/pelapor') ||
-    pathname.startsWith('/superadmin');
-
-  const brandHref = isDashboard
-    ? pathname.startsWith('/superadmin')
-      ? '/superadmin/analytics'
-      : pathname.startsWith('/admin')
-      ? '/admin'
-      : '/pelapor'
-    : '/';
-
   return (
     <footer
+      className="no-print"
       style={{
-        background: '#0c192c',
-        color: '#f8fafc',
-        paddingTop: '48px',
-        paddingBottom: '36px',
+        backgroundColor: 'var(--bg-surface)',
+        borderTop: '1px solid var(--border-hairline)',
+        paddingTop: '2.5rem',
+        paddingBottom: '2.5rem',
         marginTop: 'auto',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
       }}
     >
       <div className="container">
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '2.5rem',
-            paddingBottom: '36px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: '2rem',
+            paddingBottom: '2rem',
+            borderBottom: '1px solid var(--border-hairline)',
           }}
         >
-          {/* Brand Info */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1rem' }}>
-              <Link href={brandHref} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+          {/* Identity */}
+          <div style={{ maxWidth: '380px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.75rem' }}>
+              <div style={{ position: 'relative', width: '28px', height: '28px' }}>
+                <Image
+                  src="/logo-transparent.png"
+                  alt="Logo"
+                  width={28}
+                  height={28}
+                  className="logo-light-variant"
+                  style={{ objectFit: 'contain' }}
+                />
                 <Image
                   src="/logo-light-transparent.png"
-                  alt="DigiCulture Care Logo"
-                  width={36}
-                  height={36}
-                  style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+                  alt="Logo"
+                  width={28}
+                  height={28}
+                  className="logo-dark-variant"
+                  style={{ objectFit: 'contain' }}
                 />
-                <span style={{ fontSize: '1.15rem', fontWeight: 600, color: '#ffffff', letterSpacing: '-0.02em' }}>
-                  DigiCulture Care
-                </span>
-              </Link>
+              </div>
+              <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                DigitalBudaya
+              </span>
             </div>
-            <p style={{ fontSize: '0.875rem', lineHeight: '1.6', color: 'rgba(255, 255, 255, 0.72)', marginBottom: '1.25rem', maxWidth: '340px' }}>
-              Platform digital pelestarian dan pengarsipan cagar budaya Sulawesi Tengah.
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              Sistem inventarisasi dan penyelamatan cagar budaya kebendaan serta warisan takbenda di 13 kabupaten dan kota Provinsi Sulawesi Tengah.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Navigasi Arsip */}
           <div>
-            <h4 style={{ color: '#ffffff', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.02em' }}>
-              Navigasi
-            </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
-              {!isDashboard && (
-                <li>
-                  <Link href="/" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                    Beranda
-                  </Link>
-                </li>
-              )}
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Arsip & Layanan
+            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
               <li>
-                <Link href="/katalog" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                  Katalog Terpadu
+                <Link href="/katalog" style={{ color: 'var(--text-secondary)' }}>
+                  Katalog Cagar Budaya
                 </Link>
               </li>
               <li>
-                <Link href="/katalog?kategori=BENDA" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                  Cagar Budaya Benda
+                <Link href="/katalog?kategori=BENDA" style={{ color: 'var(--text-secondary)' }}>
+                  Pusaka Benda (Megalitik & Arsitektur)
                 </Link>
               </li>
               <li>
-                <Link href="/katalog?kategori=TAKBENDA" style={{ color: 'rgba(255, 255, 255, 0.75)', transition: 'color 0.15s ease' }}>
-                  Warisan Takbenda
+                <Link href="/katalog?kategori=TAKBENDA" style={{ color: 'var(--text-secondary)' }}>
+                  Warisan Takbenda (Tradisi Lisan)
                 </Link>
               </li>
               <li>
-                <Link href="/login" style={{ color: 'var(--color-sandstone)', fontWeight: 500 }}>
-                  Laporkan Cagar Budaya →
+                <Link href="/pelapor/lapor" style={{ color: 'var(--text-secondary)' }}>
+                  Formulir Laporan Lapangan
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* 13 Wilayah Administratif Sulteng */}
-          <div>
-            <h4 style={{ color: '#ffffff', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.02em' }}>
-              13 Kabupaten / Kota
-            </h4>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0.4rem',
-                fontSize: '0.78rem',
-              }}
-            >
-              {SULTENG_KABUPATEN_KOTA.map((kab) => (
-                <Link
-                  key={kab}
-                  href={`/katalog?kabupatenKota=${encodeURIComponent(kab)}`}
-                  style={{
-                    padding: '0.3rem 0.55rem',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: 'var(--radius-sm)',
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {kab}
-                </Link>
-              ))}
+          {/* Instansi Pembina */}
+          <div style={{ maxWidth: '300px' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Instansi Pembina
             </div>
+            <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              Balai Pelestarian Kebudayaan (BPK) Wilayah XVIII & Dinas Kebudayaan Provinsi Sulawesi Tengah.
+            </p>
           </div>
         </div>
 
-        {/* Bottom Credits */}
+        {/* Bottom Bar */}
         <div
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            paddingTop: '24px',
-            fontSize: '0.8rem',
-            color: 'rgba(255, 255, 255, 0.55)',
-            gap: '0.75rem',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            paddingTop: '1.5rem',
+            fontSize: '0.78rem',
+            color: 'var(--text-muted)',
           }}
         >
           <div>
-            © {new Date().getFullYear()} DigiCulture Care • Sulawesi Tengah.
+            &copy; {new Date().getFullYear()} DigitalBudaya Sulawesi Tengah. Seluruh hak cipta dilindungi.
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.78rem', flexWrap: 'wrap' }}>
-            <span>Lembah Besoa</span>
-            <span>•</span>
-            <span>Dataran Lore</span>
-            <span>•</span>
-            <span>Lembah Bada</span>
-            <span>•</span>
-            <span>Soura Kaili</span>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <span>Standar Pencatatan Ditjen Kebudayaan RI</span>
           </div>
         </div>
       </div>

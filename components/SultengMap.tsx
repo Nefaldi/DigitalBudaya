@@ -92,7 +92,7 @@ export default function SultengMap({
                 ${rep.lokasiSpesifik}
               </div>
               <a href="/katalog/${rep.id}" style="display:inline-block;background:#142948;color:#ffffff;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:500;text-decoration:none;">
-                Lihat Detail →
+                Buka Dossier Arsip
               </a>
             </div>
           `;

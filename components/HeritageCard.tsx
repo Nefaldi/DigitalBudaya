@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Volume2, ShieldCheck, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
+import { MapPin, Volume2, ArrowRight } from 'lucide-react';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 
 export interface HeritageReportItem {
@@ -27,161 +27,157 @@ export interface HeritageReportItem {
 
 export default function HeritageCard({ report }: { report: HeritageReportItem }) {
   const displayImage = report.fotoDigitalisasi || report.fotoKondisiAwal;
-  const isRestored = Boolean(report.fotoDigitalisasi);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'SELESAI':
-        return (
-          <span className="badge badge-selesai">
-            <ShieldCheck size={12} />
-            <span>Terverifikasi</span>
-          </span>
-        );
+        return <span className="badge badge-selesai">Terverifikasi</span>;
       case 'DIPROSES':
-        return (
-          <span className="badge badge-diproses">
-            <Clock size={12} />
-            <span>Ditangani</span>
-          </span>
-        );
+        return <span className="badge badge-diproses">Diproses</span>;
       default:
-        return (
-          <span className="badge badge-masuk">
-            <AlertTriangle size={12} />
-            <span>Antrean</span>
-          </span>
-        );
+        return <span className="badge badge-masuk">Laporan Masuk</span>;
     }
   };
 
   return (
-    <div className="paper-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: 0, overflow: 'hidden' }}>
+    <article
+      className="paper-card paper-card-interactive"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        overflow: 'hidden',
+      }}
+    >
       {/* Photograph Container */}
-      <div style={{ position: 'relative', width: '100%', height: '210px', overflow: 'hidden', background: 'var(--bg-subtle)' }}>
+      <Link
+        href={`/katalog/${report.id}`}
+        style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '16/10',
+          overflow: 'hidden',
+          backgroundColor: 'var(--bg-subtle)',
+          display: 'block',
+        }}
+      >
         <Image
           src={optimizeCloudinaryUrl(displayImage, 600)}
           alt={report.judulPusaka}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           unoptimized
-          style={{
-            objectFit: 'cover',
-          }}
-          className="heritage-card-img"
+          style={{ objectFit: 'cover' }}
         />
 
-        {/* Top Badges */}
-        <div style={{
-          position: 'absolute',
-          top: '12px',
-          left: '12px',
-          right: '12px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          pointerEvents: 'none',
-        }}>
-          <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`} style={{ backdropFilter: 'blur(8px)' }}>
+        {/* Minimal Category & Audio Markers */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '8px',
+            left: '8px',
+            right: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pointerEvents: 'none',
+          }}
+        >
+          <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
             {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Benda'}
           </span>
 
-          {isRestored && (
-            <span style={{
-              background: 'rgba(38, 82, 57, 0.92)',
-              color: '#ffffff',
-              fontSize: '0.68rem',
-              fontWeight: 500,
-              padding: '0.2rem 0.55rem',
-              borderRadius: 'var(--radius-xs)',
-              letterSpacing: '0.02em',
-            }}>
-              Terdigitalisasi
+          {report.rekamanAudioUrl && (
+            <span
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                color: '#ffffff',
+                fontSize: '0.7rem',
+                fontWeight: 500,
+                padding: '0.15rem 0.45rem',
+                borderRadius: 'var(--radius-xs)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+              }}
+            >
+              <Volume2 size={11} />
+              <span>Audio</span>
             </span>
           )}
         </div>
-
-        {/* Audio Indicator */}
-        {report.rekamanAudioUrl && (
-          <div style={{
-            position: 'absolute',
-            bottom: '10px',
-            right: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            background: 'rgba(140, 53, 30, 0.92)',
-            backdropFilter: 'blur(6px)',
-            color: '#ffffff',
-            padding: '0.2rem 0.55rem',
-            borderRadius: 'var(--radius-xs)',
-            fontSize: '0.72rem',
-            fontWeight: 500,
-          }}>
-            <Volume2 size={12} />
-            <span>Audio</span>
-          </div>
-        )}
-      </div>
+      </Link>
 
       {/* Content Section */}
-      <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-        {/* Status & Location Row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', gap: '0.5rem' }}>
+      <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        {/* Status & Region Row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', gap: '0.5rem' }}>
           {getStatusBadge(report.status)}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-            <MapPin size={12} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+            <MapPin size={11} />
             <span>{report.kabupatenKota}</span>
-          </div>
+          </span>
         </div>
 
         {/* Heritage Title */}
-        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.35rem', color: 'var(--text-primary)', fontWeight: 500 }}>
-          {report.judulPusaka}
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.35rem 0', lineHeight: 1.35 }}>
+          <Link href={`/katalog/${report.id}`} style={{ color: 'inherit' }}>
+            {report.judulPusaka}
+          </Link>
         </h3>
 
-        {/* Specific Location subtitle */}
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+        {/* Specific Location */}
+        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.65rem' }}>
           {report.lokasiSpesifik}
         </div>
 
         {/* Description snippet */}
-        <p style={{
-          fontSize: '0.86rem',
-          lineHeight: '1.5',
-          color: 'var(--text-secondary)',
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden',
-          marginBottom: '1.25rem',
-          flexGrow: 1,
-        }}>
+        <p
+          style={{
+            fontSize: '0.84rem',
+            lineHeight: 1.5,
+            color: 'var(--text-secondary)',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            margin: '0 0 1rem 0',
+            flexGrow: 1,
+          }}
+        >
           {report.deskripsiKrisis}
         </p>
 
-        {/* Card Footer Action */}
-        <div style={{
-          borderTop: '1px solid var(--border-subtle)',
-          paddingTop: '0.85rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+        {/* Footer Row */}
+        <div
+          style={{
+            borderTop: '1px solid var(--border-hairline)',
+            paddingTop: '0.75rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '0.78rem',
+          }}
+        >
+          <span style={{ color: 'var(--text-muted)' }}>
             {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
 
           <Link
             href={`/katalog/${report.id}`}
-            className="link-editorial"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.84rem' }}
+            style={{
+              color: 'var(--text-primary)',
+              fontWeight: 500,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+            }}
           >
-            <span>Detail</span>
+            <span>Buka Arsip</span>
             <ArrowRight size={13} />
           </Link>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
