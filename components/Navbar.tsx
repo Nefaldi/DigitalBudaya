@@ -10,13 +10,8 @@ import {
   Menu,
   X,
   LogOut,
-  Compass,
-  FilePlus,
-  Shield,
-  BarChart3,
-  User,
-  LogIn,
-  MapPin,
+  FileText,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -75,6 +70,27 @@ export default function Navbar() {
     }
   };
 
+  // Center navigation rail (clean text typography without icons inside rail, matching Mantikole)
+  const navLinks = [
+    { label: 'Beranda', href: '/', active: pathname === '/' },
+    { label: 'Katalog', href: '/katalog', active: pathname.startsWith('/katalog') },
+    { label: 'Peta', href: '/#peta', active: false },
+  ];
+
+  if (user?.role === 'SUPERADMIN') {
+    navLinks.push(
+      { label: 'Analitik', href: '/superadmin/analytics', active: pathname.startsWith('/superadmin/analytics') },
+      { label: 'Pengguna', href: '/superadmin/users', active: pathname.startsWith('/superadmin/users') }
+    );
+  } else if (user?.role === 'ADMIN') {
+    navLinks.push({ label: 'Workbench', href: '/admin', active: pathname.startsWith('/admin') });
+  } else if (user?.role === 'PELAPOR') {
+    navLinks.push(
+      { label: 'Laporan Saya', href: '/pelapor', active: pathname === '/pelapor' },
+      { label: 'Profil', href: '/pelapor/profil', active: pathname.startsWith('/pelapor/profil') }
+    );
+  }
+
   const laporHref =
     user?.role === 'ADMIN'
       ? '/admin'
@@ -83,6 +99,15 @@ export default function Navbar() {
       : user
       ? '/pelapor/lapor'
       : '/login?redirect=/pelapor/lapor';
+
+  const cmsHref =
+    user?.role === 'ADMIN'
+      ? '/admin'
+      : user?.role === 'SUPERADMIN'
+      ? '/superadmin/analytics'
+      : user
+      ? '/pelapor'
+      : '/login';
 
   return (
     <header className="mantikole-header-wrapper no-print">
@@ -123,135 +148,65 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Center Pill Navigation Rail (Desktop) */}
+        {/* Center Pill Navigation Rail (Desktop) - Clean typography text pills */}
         <nav className="mantikole-nav-rail">
-          <Link
-            href="/katalog"
-            className={`mantikole-nav-item ${
-              pathname.startsWith('/katalog') ? 'is-active' : ''
-            }`}
-          >
-            <Compass size={13} />
-            <span>Katalog</span>
-          </Link>
-
-          <Link
-            href="/#peta"
-            className="mantikole-nav-item"
-          >
-            <MapPin size={13} />
-            <span>Peta</span>
-          </Link>
-
-          <Link
-            href={laporHref}
-            className={`mantikole-nav-item ${
-              pathname.startsWith('/pelapor/lapor') ? 'is-active' : ''
-            }`}
-          >
-            <FilePlus size={13} />
-            <span>Lapor</span>
-          </Link>
-
-          {/* Role-Specific Navigation */}
-          {user?.role === 'SUPERADMIN' && (
-            <>
-              <Link
-                href="/superadmin/analytics"
-                className={`mantikole-nav-item ${
-                  pathname.startsWith('/superadmin/analytics') ? 'is-active' : ''
-                }`}
-              >
-                <BarChart3 size={13} />
-                <span>Analitik</span>
-              </Link>
-              <Link
-                href="/superadmin/users"
-                className={`mantikole-nav-item ${
-                  pathname.startsWith('/superadmin/users') ? 'is-active' : ''
-                }`}
-              >
-                <User size={13} />
-                <span>Pengguna</span>
-              </Link>
-            </>
-          )}
-
-          {user?.role === 'ADMIN' && (
+          {navLinks.map((link) => (
             <Link
-              href="/admin"
-              className={`mantikole-nav-item ${
-                pathname.startsWith('/admin') ? 'is-active' : ''
-              }`}
+              key={link.href}
+              href={link.href}
+              className={`mantikole-nav-item ${link.active ? 'is-active' : ''}`}
             >
-              <Shield size={13} />
-              <span>Konservator</span>
+              {link.label}
             </Link>
-          )}
-
-          {user?.role === 'PELAPOR' && (
-            <>
-              <Link
-                href="/pelapor"
-                className={`mantikole-nav-item ${
-                  pathname === '/pelapor' ? 'is-active' : ''
-                }`}
-              >
-                <span>Laporan Saya</span>
-              </Link>
-              <Link
-                href="/pelapor/profil"
-                className={`mantikole-nav-item ${
-                  pathname.startsWith('/pelapor/profil') ? 'is-active' : ''
-                }`}
-              >
-                <User size={13} />
-                <span>Profil</span>
-              </Link>
-            </>
-          )}
+          ))}
         </nav>
 
-        {/* Action Controls & Sesi (Right) */}
+        {/* Action Buttons Section (Right) - Exactly matching Mantikole dual button layout */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+          {/* Desktop Dual Action Buttons (Outline Pill + Solid Pill) */}
+          <div className="mantikole-desktop-action" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Button 1: White Outline Pill with FileText icon (Lapor Pusaka / Lacak Resi) */}
+            <Link
+              href={laporHref}
+              className="mantikole-action-pill mantikole-action-pill-outline"
+            >
+              <FileText size={13} className="text-slate-600 dark:text-zinc-400" />
+              <span>Lapor Pusaka</span>
+            </Link>
+
+            {/* Button 2: Solid Dark Pill with ShieldCheck icon (CMS) */}
+            <Link
+              href={cmsHref}
+              className="mantikole-action-pill mantikole-action-pill-primary"
+            >
+              <ShieldCheck size={13} />
+              <span>CMS</span>
+            </Link>
+
+            {/* Optional Logout pill for logged in users */}
+            {!loading && user && (
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="mantikole-action-pill mantikole-action-pill-outline"
+                style={{ color: 'var(--action-danger)', padding: '0.38rem 0.65rem' }}
+                title={`Keluar Akun (${user.nama})`}
+              >
+                <LogOut size={13} />
+                <span>{isLoggingOut ? '...' : 'Keluar'}</span>
+              </button>
+            )}
+          </div>
+
           <ThemeToggle pill />
 
-          {!loading && (
-            <>
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="mantikole-action-pill mantikole-action-pill-outline mantikole-desktop-action"
-                  title={`Keluar (${user.nama})`}
-                >
-                  <LogOut size={13} />
-                  <span>{isLoggingOut ? 'Keluar...' : 'Keluar'}</span>
-                </button>
-              ) : (
-                <div
-                  className="mantikole-desktop-action"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-                >
-                  <Link
-                    href="/login"
-                    className="mantikole-action-pill mantikole-action-pill-primary"
-                  >
-                    <LogIn size={13} />
-                    <span>Masuk</span>
-                  </Link>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile Menu Hamburger Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="mantikole-action-pill mantikole-action-pill-outline mantikole-mobile-toggle-btn"
+            className="p-1.5 text-slate-700 hover:text-slate-950 focus:outline-none dark:text-zinc-300 dark:hover:text-white mantikole-mobile-toggle-btn"
             aria-label="Toggle Menu"
           >
-            {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
@@ -259,111 +214,58 @@ export default function Navbar() {
       {/* Floating Mobile Drawer Card */}
       {mobileMenuOpen && (
         <div className="mantikole-mobile-drawer">
-          <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`mantikole-mobile-item ${pathname === '/' ? 'mantikole-mobile-item-active' : ''}`}
-          >
-            <span>Beranda</span>
-          </Link>
-          <Link
-            href="/katalog"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`mantikole-mobile-item ${
-              pathname.startsWith('/katalog') ? 'mantikole-mobile-item-active' : ''
-            }`}
-          >
-            <Compass size={15} />
-            <span>Katalog Warisan</span>
-          </Link>
-          <Link
-            href="/#peta"
-            onClick={() => setMobileMenuOpen(false)}
-            className="mantikole-mobile-item"
-          >
-            <MapPin size={15} />
-            <span>Peta Interaktif</span>
-          </Link>
-          <Link
-            href={laporHref}
-            onClick={() => setMobileMenuOpen(false)}
-            className={`mantikole-mobile-item ${
-              pathname.startsWith('/pelapor/lapor') ? 'mantikole-mobile-item-active' : ''
-            }`}
-          >
-            <FilePlus size={15} />
-            <span>Lapor Pusaka Baru</span>
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mantikole-mobile-item ${link.active ? 'mantikole-mobile-item-active' : ''}`}
+            >
+              {link.label}
+            </Link>
+          ))}
 
-          {/* Role Workbenches in Mobile Drawer */}
-          {user?.role === 'SUPERADMIN' && (
-            <div style={{ paddingTop: '0.4rem', borderTop: '1px solid var(--border-hairline)' }}>
-              <Link
-                href="/superadmin/analytics"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`mantikole-mobile-item ${
-                  pathname.startsWith('/superadmin/analytics') ? 'mantikole-mobile-item-active' : ''
-                }`}
-              >
-                <BarChart3 size={15} />
-                <span>Analitik Provinsi</span>
-              </Link>
-              <Link
-                href="/superadmin/users"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`mantikole-mobile-item ${
-                  pathname.startsWith('/superadmin/users') ? 'mantikole-mobile-item-active' : ''
-                }`}
-              >
-                <User size={15} />
-                <span>Manajemen Pengguna</span>
-              </Link>
-            </div>
-          )}
+          {/* Bottom Dual Action Buttons in Drawer - Exactly matching Mantikole */}
+          <div
+            style={{
+              paddingTop: '0.5rem',
+              borderTop: '1px solid var(--border-hairline)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
+          >
+            <Link
+              href={laporHref}
+              onClick={() => setMobileMenuOpen(false)}
+              className="mantikole-action-pill mantikole-action-pill-outline"
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                padding: '0.55rem',
+                borderRadius: '0.75rem',
+              }}
+            >
+              <FileText size={14} className="text-slate-600 dark:text-zinc-400" />
+              <span>Lapor Pusaka Budaya</span>
+            </Link>
 
-          {user?.role === 'ADMIN' && (
-            <div style={{ paddingTop: '0.4rem', borderTop: '1px solid var(--border-hairline)' }}>
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`mantikole-mobile-item ${
-                  pathname.startsWith('/admin') ? 'mantikole-mobile-item-active' : ''
-                }`}
-              >
-                <Shield size={15} />
-                <span>Workbench Konservator</span>
-              </Link>
-            </div>
-          )}
+            <Link
+              href={cmsHref}
+              onClick={() => setMobileMenuOpen(false)}
+              className="mantikole-action-pill mantikole-action-pill-primary"
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                padding: '0.55rem',
+                borderRadius: '0.75rem',
+              }}
+            >
+              <ShieldCheck size={14} />
+              <span>Portal CMS</span>
+            </Link>
 
-          {user?.role === 'PELAPOR' && (
-            <div style={{ paddingTop: '0.4rem', borderTop: '1px solid var(--border-hairline)' }}>
-              <Link
-                href="/pelapor"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`mantikole-mobile-item ${
-                  pathname === '/pelapor' ? 'mantikole-mobile-item-active' : ''
-                }`}
-              >
-                <FilePlus size={15} />
-                <span>Laporan Saya</span>
-              </Link>
-              <Link
-                href="/pelapor/profil"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`mantikole-mobile-item ${
-                  pathname.startsWith('/pelapor/profil') ? 'mantikole-mobile-item-active' : ''
-                }`}
-              >
-                <User size={15} />
-                <span>Profil Akun</span>
-              </Link>
-            </div>
-          )}
-
-          {/* Auth Action in Mobile Drawer */}
-          <div style={{ paddingTop: '0.5rem', borderTop: '1px solid var(--border-hairline)' }}>
-            {user ? (
+            {user && (
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -371,21 +273,17 @@ export default function Navbar() {
                 }}
                 disabled={isLoggingOut}
                 className="mantikole-action-pill mantikole-action-pill-outline"
-                style={{ width: '100%', justifyContent: 'center', padding: '0.55rem' }}
+                style={{
+                  width: '100%',
+                  justifyContent: 'center',
+                  padding: '0.55rem',
+                  borderRadius: '0.75rem',
+                  color: 'var(--action-danger)',
+                }}
               >
                 <LogOut size={14} />
-                <span>Keluar ({user.nama})</span>
+                <span>Keluar Akun ({user.nama})</span>
               </button>
-            ) : (
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mantikole-action-pill mantikole-action-pill-primary"
-                style={{ width: '100%', justifyContent: 'center', padding: '0.55rem' }}
-              >
-                <LogIn size={14} />
-                <span>Masuk ke Akun</span>
-              </Link>
             )}
           </div>
         </div>
