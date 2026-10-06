@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
 import { isWithinSulteng } from '@/lib/sultengLocations';
+import { checkRateLimit } from '@/lib/rateLimit';
 import { Prisma, KategoriPusaka, StatusPenyelamatan } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
@@ -12,6 +13,13 @@ export async function GET(req: NextRequest) {
     const kategoriParam = searchParams.get('kategori');
     const search = searchParams.get('search');
     const myReports = searchParams.get('myReports') === 'true';
+
+    // Pagination parameters
+    const pageParam = parseInt(searchParams.get('page') || '1', 10);
+    const limitParam = parseInt(searchParams.get('limit') || '100', 10);
+    const page = Math.max(1, isNaN(pageParam) ? 1 : pageParam);
+    const limit = Math.min(100, Math.max(1, isNaN(limitParam) ? 100 : limitParam));
+    const skip = (page - 1) * limit;
 
     const currentUser = getAuthenticatedUser(req);
 
@@ -49,17 +57,30 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const reports = await prisma.heritageReport.findMany({
-      where,
-      include: {
-        pelapor: { select: { id: true, nama: true, email: true } },
-        admin: { select: { id: true, nama: true, email: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 100,
-    });
+    const [totalCount, reports] = await Promise.all([
+      prisma.heritageReport.count({ where }),
+      prisma.heritageReport.findMany({
+        where,
+        include: {
+          pelapor: { select: { id: true, nama: true, email: true } },
+          admin: { select: { id: true, nama: true, email: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+    ]);
 
-    return NextResponse.json({ reports });
+    return NextResponse.json({
+      reports,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit),
+        hasMore: skip + reports.length < totalCount,
+      },
+    });
   } catch (error) {
     console.error('Error fetching reports:', error);
     return NextResponse.json({ error: 'Gagal mengambil data laporan' }, { status: 500 });
@@ -75,6 +96,16 @@ export async function POST(req: NextRequest) {
 
     if (user.role !== 'PELAPOR') {
       return NextResponse.json({ error: 'Fitur pelaporan hanya tersedia untuk peran Pelapor' }, { status: 403 });
+    }
+
+    // Rate limiting pembuatan laporan baru (maksimal 5 laporan per menit per pengguna)
+    const rateLimit = checkRateLimit(`report-create:${user.id}`, { maxRequests: 5, intervalMs: 60_000 });
+    if (!rateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak pengiriman laporan. Silakan tunggu ${retrySeconds} detik sebelum mengirimkan laporan kembali.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
     }
 
     const body = await req.json();

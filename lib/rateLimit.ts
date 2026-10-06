@@ -11,7 +11,7 @@ const rateLimitStore = new Map<string, RateLimitRecord>();
 
 // Bersihkan data kedaluwarsa secara berkala setiap 5 menit
 if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
+  const timer = setInterval(() => {
     const now = Date.now();
     for (const [key, record] of rateLimitStore.entries()) {
       record.timestamps = record.timestamps.filter((ts) => now - ts < 300_000);
@@ -20,6 +20,9 @@ if (typeof setInterval !== 'undefined') {
       }
     }
   }, 300_000);
+  if (timer && typeof (timer as unknown as { unref?: () => void }).unref === 'function') {
+    (timer as unknown as { unref: () => void }).unref();
+  }
 }
 
 export function checkRateLimit(

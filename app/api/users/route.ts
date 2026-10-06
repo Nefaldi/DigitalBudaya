@@ -90,6 +90,12 @@ export async function POST(req: NextRequest) {
         role: true,
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            laporanDikirim: true,
+            laporanDiproses: true,
+          },
+        },
       },
     });
 

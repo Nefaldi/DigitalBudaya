@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary';
 import { getAuthenticatedUser } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function POST(req: NextRequest) {
   try {
     const user = getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Harap login terlebih dahulu untuk mengunggah berkas' }, { status: 401 });
+    }
+
+    // Rate limiting unggah berkas (maksimal 10 berkas per menit per pengguna)
+    const rateLimit = checkRateLimit(`upload:${user.id}`, { maxRequests: 10, intervalMs: 60_000 });
+    if (!rateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak permintaan unggah berkas. Silakan coba kembali dalam ${retrySeconds} detik.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
     }
 
     const formData = await req.formData();
@@ -17,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Berkas file tidak ditemukan dalam form-data' }, { status: 400 });
     }
 
-    // Limit ukuran file untuk mematuhi Vercel Free Tier Serverless (Maksimal 4.5 MB)
+    // Limit ukuran file maksimal 4.5 MB
     const MAX_FILE_SIZE = 4.5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
