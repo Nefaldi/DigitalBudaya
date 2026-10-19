@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
@@ -7,6 +6,7 @@ import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import FeaturedCarousel, { CarouselSlideItem } from '@/components/FeaturedCarousel';
 import SultengMap from '@/components/SultengMap';
+import HeroBackground from '@/components/HeroBackground';
 import { ArrowRight, FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
 
 export const revalidate = 60;
@@ -111,18 +111,8 @@ export default async function HomePage() {
     <div className="homepage-root">
       {/* 1. HERO SECTION: Full-screen Mantikole-style Immersive Hero */}
       <section className="mantikole-hero-section">
-        {/* Static Background Image (Rumah Adat Banawa - Souraja) without scroll animation */}
-        <div className="mantikole-hero-bg-wrap" aria-hidden="true">
-          <Image
-            src="/Rumahadata.webp"
-            alt="Rumah Adat Banawa (Souraja) Sulawesi Tengah"
-            fill
-            priority
-            sizes="100vw"
-            className="mantikole-hero-bg-img"
-          />
-          <div className="mantikole-hero-overlay" />
-        </div>
+        {/* Dynamic Zoom-In and Scroll Zoom-Out Background (Rumah Adat Banawa - Souraja) */}
+        <HeroBackground src="/rumahadat.jpeg" alt="Rumah Adat Banawa (Souraja) Sulawesi Tengah" />
 
         {/* Center Content Container */}
         <div className="mantikole-hero-content">

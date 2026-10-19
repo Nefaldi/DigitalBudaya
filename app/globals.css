@@ -491,7 +491,7 @@ a {
   background-color: #09090b;
 }
 
-/* Static Background Image Wrapper — STRICTLY NO SCROLL ANIMATION */
+/* Background Image Wrapper with Initial Zoom-In and Scroll Zoom-Out */
 .mantikole-hero-bg-wrap {
   position: absolute;
   inset: 0;
@@ -502,15 +502,25 @@ a {
   overflow: hidden;
 }
 
+.mantikole-hero-zoom-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.28); /* Tampilan awal diperbesar (zoomed in) */
+  transform-origin: center 40%;
+  will-change: transform;
+  transition: transform 0.08s ease-out;
+}
+
 .mantikole-hero-bg-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 36%;
+  object-position: center 38%;
   filter: brightness(0.92) contrast(1.05);
-  /* Static background: no scroll-driven scale, no transform animations */
 }
 
 /* Cinematic Dark Gradient Overlay with smooth transition to canvas */
