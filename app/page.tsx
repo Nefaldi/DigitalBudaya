@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
@@ -107,11 +108,30 @@ export default async function HomePage() {
       : '/login?redirect=/pelapor/lapor';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem', paddingBottom: '6rem' }}>
+    <div className="homepage-root">
+      {/* Homepage Ambient Top Backdrop */}
+      <div className="homepage-hero-backdrop" aria-hidden="true">
+        <div className="homepage-hero-backdrop-img" />
+        <div className="homepage-hero-backdrop-gradient" />
+      </div>
+
       {/* 1. HERO SECTION: Curatorial Archival Frame */}
       <section className="archival-hero-section">
         <div className="container">
           <div className="archival-hero-frame">
+            {/* Background Image Layer (Rumah Adat Kaili - Souraja) */}
+            <div className="hero-bg-layer" aria-hidden="true">
+              <Image
+                src="/Rumahadata.webp"
+                alt="Rumah Adat Banawa (Souraja) Sulawesi Tengah"
+                fill
+                priority
+                sizes="(max-width: 1200px) 100vw, 1160px"
+                className="hero-bg-image"
+              />
+              <div className="hero-bg-overlay" />
+            </div>
+
             {/* Top Frame Meta Bar */}
             <div className="hero-meta-bar">
               <div className="hero-institution-pill">
