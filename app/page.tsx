@@ -7,7 +7,7 @@ import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import FeaturedCarousel, { CarouselSlideItem } from '@/components/FeaturedCarousel';
 import SultengMap from '@/components/SultengMap';
-import { ArrowRight, FilePlus, MapPin, Compass } from 'lucide-react';
+import { ArrowRight, FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -109,92 +109,154 @@ export default async function HomePage() {
 
   return (
     <div className="homepage-root">
-      {/* Homepage Ambient Top Backdrop */}
-      <div className="homepage-hero-backdrop" aria-hidden="true">
-        <div className="homepage-hero-backdrop-img" />
-        <div className="homepage-hero-backdrop-gradient" />
-      </div>
+      {/* 1. HERO SECTION: Full-screen Mantikole-style Immersive Hero */}
+      <section className="mantikole-hero-section">
+        {/* Static Background Image (Rumah Adat Banawa - Souraja) without scroll animation */}
+        <div className="mantikole-hero-bg-wrap" aria-hidden="true">
+          <Image
+            src="/Rumahadata.webp"
+            alt="Rumah Adat Banawa (Souraja) Sulawesi Tengah"
+            fill
+            priority
+            sizes="100vw"
+            className="mantikole-hero-bg-img"
+          />
+          <div className="mantikole-hero-overlay" />
+        </div>
 
-      {/* 1. HERO SECTION: Curatorial Archival Frame */}
-      <section className="archival-hero-section">
-        <div className="container">
-          <div className="archival-hero-frame">
-            {/* Background Image Layer (Rumah Adat Kaili - Souraja) */}
-            <div className="hero-bg-layer" aria-hidden="true">
-              <Image
-                src="/Rumahadata.webp"
-                alt="Rumah Adat Banawa (Souraja) Sulawesi Tengah"
-                fill
-                priority
-                sizes="(max-width: 1200px) 100vw, 1160px"
-                className="hero-bg-image"
-              />
-              <div className="hero-bg-overlay" />
+        {/* Center Content Container */}
+        <div className="mantikole-hero-content">
+          {/* Institutional Badge Pill */}
+          <div className="mantikole-hero-badge">
+            <span className="mantikole-hero-badge-dot" />
+            <span>Balai Pelestarian Kebudayaan Wilayah XVIII</span>
+            <span className="mantikole-hero-badge-sep">/</span>
+            <span className="mono">0°54′S 119°52′E • SULAWESI TENGAH</span>
+          </div>
+
+          {/* Main Giant Headline */}
+          <h1 className="mantikole-hero-title">
+            DIGICULTURE
+          </h1>
+
+          {/* Slogan */}
+          <p className="mantikole-hero-slogan">
+            Sistem Preservasi & Digitalisasi Cagar Budaya Sulawesi Tengah
+          </p>
+
+          {/* Subtitle */}
+          <p className="mantikole-hero-subtitle">
+            Dokumentasi terverifikasi megalitikum lembah purba, arsitektur pusaka, dan tradisi lisan di 13 kabupaten/kota untuk perlindungan arsip budaya komparatif.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="mantikole-hero-actions">
+            <Link href={catalogHref} className="mantikole-hero-btn-primary">
+              <span>Telusuri Katalog Terkini</span>
+              <span className="mantikole-hero-btn-count mono">[{totalVerified}]</span>
+              <ArrowRight size={15} />
+            </Link>
+
+            <Link href={laporHref} className="mantikole-hero-btn-secondary">
+              <FilePlus size={15} />
+              <span>
+                {user?.role === 'ADMIN'
+                  ? 'Meja Kerja Konservator'
+                  : user?.role === 'SUPERADMIN'
+                  ? 'Analitik Provinsi'
+                  : 'Kirim Laporan Temuan'}
+              </span>
+            </Link>
+          </div>
+
+          {/* Scroll Down Indicator */}
+          <div className="mantikole-hero-scroll-wrap">
+            <a href="#ringkasan-preservasi" className="mantikole-hero-scroll">
+              <span>scroll ke bawah</span>
+              <ChevronDown size={16} className="mantikole-scroll-icon" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. STATISTIK & POTENSI WILAYAH (Mantikole Stat Cards) */}
+      <section id="ringkasan-preservasi" className="container" style={{ scrollMarginTop: '90px' }}>
+        <div className="mantikole-stats-header">
+          <div className="mantikole-section-tag">
+            <span className="mantikole-tag-dot" />
+            <span className="mono">RINGKASAN PRESERVASI PROVINSI</span>
+          </div>
+          <h2 className="mantikole-stats-title">
+            Cakupan Dokumentasi & Warisan Budaya
+          </h2>
+          <p className="mantikole-stats-desc">
+            Agregasi data digitalisasi cagar budaya resmi Balai Pelestarian Kebudayaan Wilayah XVIII se-Sulawesi Tengah.
+          </p>
+        </div>
+
+        <div className="mantikole-stats-grid">
+          <div className="mantikole-stat-card">
+            <div className="mantikole-stat-top">
+              <span className="mantikole-stat-lbl">ARSIP TERVERIFIKASI</span>
+              <div className="mantikole-stat-icon-wrap">
+                <Landmark size={18} />
+              </div>
             </div>
+            <div className="mantikole-stat-val-row">
+              <span className="mantikole-stat-val mono">{totalVerified}</span>
+              <span className="mantikole-stat-unit">Dossier</span>
+            </div>
+            <p className="mantikole-stat-text">
+              Objek cagar budaya yang telah diautentikasi dan terverifikasi secara formal oleh tim kurator.
+            </p>
+          </div>
 
-            {/* Top Frame Meta Bar */}
-            <div className="hero-meta-bar">
-              <div className="hero-institution-pill">
-                <span className="hero-dot-indicator" />
-                <span>Balai Pelestarian Kebudayaan Wilayah XVIII</span>
-                <span className="hero-separator">/</span>
-                <span className="mono" style={{ color: 'var(--text-primary)' }}>SULTENG ARCHIVE</span>
-              </div>
-              <div className="hero-geo-tag mono">
-                <Compass size={13} style={{ color: 'var(--action-primary)' }} />
-                <span>0°54′S 119°52′E • SULAWESI TENGAH</span>
+          <div className="mantikole-stat-card">
+            <div className="mantikole-stat-top">
+              <span className="mantikole-stat-lbl">KABUPATEN & KOTA</span>
+              <div className="mantikole-stat-icon-wrap">
+                <Compass size={18} />
               </div>
             </div>
+            <div className="mantikole-stat-val-row">
+              <span className="mantikole-stat-val mono">13</span>
+              <span className="mantikole-stat-unit">Wilayah</span>
+            </div>
+            <p className="mantikole-stat-text">
+              Sebaran titik cagar budaya di seluruh kabupaten/kota dari Lore Lindu hingga Kepulauan Banggai.
+            </p>
+          </div>
 
-            {/* Main Editorial Hero Body */}
-            <div className="hero-body">
-              <h1 className="hero-headline">
-                Sistem Preservasi & Digitalisasi Cagar Budaya Sulawesi Tengah
-              </h1>
-              <p className="hero-subline">
-                Dokumentasi terverifikasi megalitikum lembah purba, arsitektur pusaka, dan tradisi lisan di 13 kabupaten/kota untuk perlindungan arsip budaya komparatif.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="hero-actions">
-                <Link href={catalogHref} className="btn btn-primary btn-lg hero-btn-primary">
-                  <span>Telusuri Registri Publik</span>
-                  <span className="hero-btn-count mono">[{totalVerified}]</span>
-                  <ArrowRight size={15} />
-                </Link>
-
-                <Link href={laporHref} className="btn btn-secondary btn-lg hero-btn-secondary">
-                  <FilePlus size={15} />
-                  <span>
-                    {user?.role === 'ADMIN'
-                      ? 'Meja Kerja Konservator'
-                      : user?.role === 'SUPERADMIN'
-                      ? 'Analitik Provinsi'
-                      : 'Kirim Laporan Temuan'}
-                  </span>
-                </Link>
+          <div className="mantikole-stat-card">
+            <div className="mantikole-stat-top">
+              <span className="mantikole-stat-lbl">CAGAR BUDAYA BENDA</span>
+              <div className="mantikole-stat-icon-wrap">
+                <Layers size={18} />
               </div>
             </div>
+            <div className="mantikole-stat-val-row">
+              <span className="mantikole-stat-val mono">{countBenda}</span>
+              <span className="mantikole-stat-unit">Situs & Objek</span>
+            </div>
+            <p className="mantikole-stat-text">
+              Patung megalit purba, arsitektur Banawa/Souraja, benteng kolonial, dan artefak fisik.
+            </p>
+          </div>
 
-            {/* Bottom Integrated Metrics Strip */}
-            <div className="hero-metrics-strip">
-              <div className="hero-metric-item">
-                <span className="hero-metric-val mono">{totalVerified}</span>
-                <span className="hero-metric-lbl">Arsip Terverifikasi</span>
-              </div>
-              <div className="hero-metric-item">
-                <span className="hero-metric-val mono">13</span>
-                <span className="hero-metric-lbl">Kabupaten & Kota</span>
-              </div>
-              <div className="hero-metric-item">
-                <span className="hero-metric-val mono">{countBenda} Benda</span>
-                <span className="hero-metric-lbl">Megalit & Bangunan</span>
-              </div>
-              <div className="hero-metric-item">
-                <span className="hero-metric-val mono">{countTakbenda} Takbenda</span>
-                <span className="hero-metric-lbl">Bahasa & Tradisi Tutur</span>
+          <div className="mantikole-stat-card">
+            <div className="mantikole-stat-top">
+              <span className="mantikole-stat-lbl">WARISAN TAKBENDA</span>
+              <div className="mantikole-stat-icon-wrap">
+                <Sparkles size={18} />
               </div>
             </div>
+            <div className="mantikole-stat-val-row">
+              <span className="mantikole-stat-val mono">{countTakbenda}</span>
+              <span className="mantikole-stat-unit">Tradisi Tutur</span>
+            </div>
+            <p className="mantikole-stat-text">
+              Bahasa daerah, seni pertunjukan tradisional, ritus adat, dan sistem pengetahuan lokal.
+            </p>
           </div>
         </div>
       </section>
