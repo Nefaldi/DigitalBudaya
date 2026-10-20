@@ -131,7 +131,7 @@ export default async function HomePage() {
 
           {/* Slogan */}
           <p className="mantikole-hero-slogan">
-            Sistem Preservasi & Digitalisasi Cagar Budaya Sulawesi Tengah
+            Digitalisasi Warisan Budaya Sulteng yang Terancam Dilupakan
           </p>
 
           {/* Subtitle */}
