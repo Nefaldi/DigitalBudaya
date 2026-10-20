@@ -111,8 +111,8 @@ export default async function HomePage() {
     <div className="homepage-root">
       {/* 1. HERO SECTION: Full-screen Mantikole-style Immersive Hero */}
       <section className="mantikole-hero-section">
-        {/* Dynamic Zoom-In and Scroll Zoom-Out Background (Rumah Adat Banawa - Souraja) */}
-        <HeroBackground src="/rumahadat.jpeg" alt="Rumah Adat Banawa (Souraja) Sulawesi Tengah" />
+        {/* Dynamic Zoom-In and Scroll Zoom-Out Background (Rumah Adat Souraja) */}
+        <HeroBackground src="/rumahsouraja.jpeg" alt="Rumah Adat Souraja Sulawesi Tengah" />
 
         {/* Center Content Container */}
         <div className="mantikole-hero-content">
