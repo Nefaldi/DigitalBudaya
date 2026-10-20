@@ -4,29 +4,11 @@ import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
-import FeaturedCarousel, { CarouselSlideItem } from '@/components/FeaturedCarousel';
 import SultengMap from '@/components/SultengMap';
 import HeroBackground from '@/components/HeroBackground';
 import { ArrowRight, FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
 
 export const revalidate = 60;
-
-function formatRelativeTime(dateInput: string | Date): string {
-  const now = new Date();
-  const date = new Date(dateInput);
-  const diffInSeconds = Math.max(0, Math.floor((now.getTime() - date.getTime()) / 1000));
-
-  if (diffInSeconds < 60) return 'Baru saja';
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return `${diffInMinutes} menit yang lalu`;
-  const diffInHours = Math.floor(diffInSeconds / 60);
-  if (diffInHours < 24) return `${diffInHours} jam yang lalu`;
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 30) return `${diffInDays} hari yang lalu`;
-  const diffInMonths = Math.floor(diffInDays / 30);
-  if (diffInMonths < 12) return `${diffInMonths} bulan yang lalu`;
-  return `${Math.floor(diffInMonths / 12)} tahun yang lalu`;
-}
 
 export default async function HomePage() {
   const cookieStore = await cookies();
@@ -37,10 +19,9 @@ export default async function HomePage() {
   let totalVerified = 0;
   let countBenda = 0;
   let countTakbenda = 0;
-  let carouselItems: CarouselSlideItem[] = [];
 
   try {
-    const [rawReports, count, bendaCount, takbendaCount, latestDbReports] = await Promise.all([
+    const [rawReports, count, bendaCount, takbendaCount] = await Promise.all([
       prisma.heritageReport.findMany({
         where: { status: 'SELESAI' },
         include: {
@@ -59,14 +40,6 @@ export default async function HomePage() {
       prisma.heritageReport.count({
         where: { kategori: 'TAKBENDA' },
       }),
-      prisma.heritageReport.findMany({
-        include: {
-          pelapor: { select: { id: true, nama: true, email: true } },
-          admin: { select: { id: true, nama: true, email: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-      }),
     ]);
 
     totalVerified = count;
@@ -76,22 +49,6 @@ export default async function HomePage() {
       ...r,
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
-    }));
-
-    const spotlightReports = rawReports.length >= 2 ? rawReports : latestDbReports;
-    carouselItems = spotlightReports.map((r) => ({
-      id: r.id,
-      title: r.judulPusaka,
-      category:
-        r.kategori === 'BENDA'
-          ? (r.status === 'SELESAI' ? 'BENDA PUSAKA' : 'CAGAR BUDAYA')
-          : (r.status === 'SELESAI' ? 'TRADISI TAKBENDA' : 'WARISAN TUTUR'),
-      categoryColor: r.kategori === 'BENDA' ? '#18181b' : '#166534',
-      imageUrl: r.fotoDigitalisasi || r.fotoKondisiAwal,
-      timeAgo: formatRelativeTime(r.createdAt),
-      author: r.pelapor?.nama || 'Kontributor Budaya',
-      href: `/katalog/${r.id}`,
-      location: r.kabupatenKota,
     }));
   } catch (error) {
     console.error('Error fetching home data:', error);
@@ -241,44 +198,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 2. SOROTAN UTAMA / FEATURED HEADLINE BANNER (Carousel) */}
-      <section className="container">
-        <div
-          style={{
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--status-masuk)',
-                display: 'inline-block',
-              }}
-            />
-            <span
-              className="mono"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                color: 'var(--text-muted)',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Sorotan Berita & Pusaka Budaya
-            </span>
-          </div>
-        </div>
-        <FeaturedCarousel items={carouselItems} />
-      </section>
-
-      {/* 3. ETALASE ARSIP PILIHAN (Curated Heritage Showcase) */}
+      {/* 2. ETALASE ARSIP PILIHAN (Curated Heritage Showcase) */}
       <section id="katalog-terkini" className="container" style={{ scrollMarginTop: '80px' }}>
         <div
           style={{
