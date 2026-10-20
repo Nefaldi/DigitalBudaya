@@ -126,7 +126,7 @@ export default async function HomePage() {
 
           {/* Main Giant Headline */}
           <h1 className="mantikole-hero-title">
-            DIGICULTURE
+            DIGICULTURE CARE
           </h1>
 
           {/* Slogan */}
