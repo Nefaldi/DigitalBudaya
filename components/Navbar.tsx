@@ -70,24 +70,24 @@ export default function Navbar() {
     }
   };
 
-  // Center navigation rail (clean text typography without icons inside rail, matching Mantikole)
+  // Center navigation rail (active shape stays exclusively on Beranda)
   const navLinks = [
-    { label: 'Beranda', href: '/', active: pathname === '/' },
+    { label: 'Beranda', href: '/', active: true },
     { label: 'Statistik', href: '/#statistik', active: false },
     { label: 'Peta', href: '/#peta', active: false },
   ];
 
   if (user?.role === 'SUPERADMIN') {
     navLinks.push(
-      { label: 'Analitik', href: '/superadmin/analytics', active: pathname.startsWith('/superadmin/analytics') },
-      { label: 'Pengguna', href: '/superadmin/users', active: pathname.startsWith('/superadmin/users') }
+      { label: 'Analitik', href: '/superadmin/analytics', active: false },
+      { label: 'Pengguna', href: '/superadmin/users', active: false }
     );
   } else if (user?.role === 'ADMIN') {
-    navLinks.push({ label: 'Workbench', href: '/admin', active: pathname.startsWith('/admin') });
+    navLinks.push({ label: 'Workbench', href: '/admin', active: false });
   } else if (user?.role === 'PELAPOR') {
     navLinks.push(
-      { label: 'Laporan Saya', href: '/pelapor', active: pathname === '/pelapor' },
-      { label: 'Profil', href: '/pelapor/profil', active: pathname.startsWith('/pelapor/profil') }
+      { label: 'Laporan Saya', href: '/pelapor', active: false },
+      { label: 'Profil', href: '/pelapor/profil', active: false }
     );
   }
 

@@ -1325,11 +1325,12 @@ a {
 
 .mantikole-nav-item:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: transparent;
 }
 
 [data-theme="dark"] .mantikole-nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  background-color: transparent;
 }
 
 .mantikole-nav-item.is-active {
