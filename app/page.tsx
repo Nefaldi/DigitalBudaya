@@ -116,14 +116,6 @@ export default async function HomePage() {
 
         {/* Center Content Container */}
         <div className="mantikole-hero-content">
-          {/* Institutional Badge Pill */}
-          <div className="mantikole-hero-badge">
-            <span className="mantikole-hero-badge-dot" />
-            <span>Balai Pelestarian Kebudayaan Wilayah XVIII</span>
-            <span className="mantikole-hero-badge-sep">/</span>
-            <span className="mono">0°54′S 119°52′E • SULAWESI TENGAH</span>
-          </div>
-
           {/* Main Giant Headline */}
           <h1 className="mantikole-hero-title">
             DIGICULTURE CARE
