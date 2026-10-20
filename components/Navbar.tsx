@@ -73,7 +73,7 @@ export default function Navbar() {
   // Center navigation rail (clean text typography without icons inside rail, matching Mantikole)
   const navLinks = [
     { label: 'Beranda', href: '/', active: pathname === '/' },
-    { label: 'Katalog Terkini', href: '/#katalog-terkini', active: false },
+    { label: 'Statistik', href: '/#statistik', active: false },
     { label: 'Peta', href: '/#peta', active: false },
   ];
 

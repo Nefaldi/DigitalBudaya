@@ -161,7 +161,7 @@ export default async function HomePage() {
 
           {/* Scroll Down Indicator */}
           <div className="mantikole-hero-scroll-wrap">
-            <a href="#ringkasan-preservasi" className="mantikole-hero-scroll">
+            <a href="#statistik" className="mantikole-hero-scroll">
               <span>scroll ke bawah</span>
               <ChevronDown size={16} className="mantikole-scroll-icon" />
             </a>
@@ -170,7 +170,7 @@ export default async function HomePage() {
       </section>
 
       {/* 2. STATISTIK & POTENSI WILAYAH (Mantikole Stat Cards) */}
-      <section id="ringkasan-preservasi" className="container" style={{ scrollMarginTop: '90px' }}>
+      <section id="statistik" className="container" style={{ scrollMarginTop: '90px' }}>
         <div className="mantikole-stats-header">
           <div className="mantikole-section-tag">
             <span className="mantikole-tag-dot" />
