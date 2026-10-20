@@ -20,6 +20,7 @@ export default function Navbar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>('/');
   const pathname = usePathname();
 
   useEffect(() => {
@@ -30,6 +31,41 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Track active section on homepage via scroll and hash changes
+  useEffect(() => {
+    if (pathname !== '/') return;
+
+    const updateActiveByHashOrScroll = () => {
+      const hash = window.location.hash;
+      const scrollY = window.scrollY;
+
+      const petaEl = document.getElementById('peta');
+      const statistikEl = document.getElementById('statistik');
+
+      const petaTop = petaEl ? petaEl.offsetTop - 240 : Infinity;
+      const statistikTop = statistikEl ? statistikEl.offsetTop - 240 : Infinity;
+
+      if (petaEl && scrollY >= petaTop) {
+        setActiveSection('/#peta');
+      } else if (statistikEl && scrollY >= statistikTop) {
+        setActiveSection('/#statistik');
+      } else if (scrollY <= 50 && (hash === '#statistik' || hash === '#peta')) {
+        setActiveSection(`/${hash}`);
+      } else {
+        setActiveSection('/');
+      }
+    };
+
+    updateActiveByHashOrScroll();
+    window.addEventListener('scroll', updateActiveByHashOrScroll, { passive: true });
+    window.addEventListener('hashchange', updateActiveByHashOrScroll);
+
+    return () => {
+      window.removeEventListener('scroll', updateActiveByHashOrScroll);
+      window.removeEventListener('hashchange', updateActiveByHashOrScroll);
+    };
+  }, [pathname]);
 
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
@@ -70,24 +106,41 @@ export default function Navbar() {
     }
   };
 
-  // Center navigation rail (active shape stays exclusively on Beranda)
+  const isLinkActive = (href: string) => {
+    if (pathname === '/') {
+      if (href === '/') {
+        return activeSection === '/';
+      }
+      if (href.startsWith('/#')) {
+        return activeSection === href;
+      }
+      return false;
+    }
+
+    if (href === '/' || href.startsWith('/#')) {
+      return false;
+    }
+    return pathname === href || pathname.startsWith(href + '/');
+  };
+
+  // Center navigation rail links
   const navLinks = [
-    { label: 'Beranda', href: '/', active: true },
-    { label: 'Statistik', href: '/#statistik', active: false },
-    { label: 'Peta', href: '/#peta', active: false },
+    { label: 'Beranda', href: '/' },
+    { label: 'Statistik', href: '/#statistik' },
+    { label: 'Peta', href: '/#peta' },
   ];
 
   if (user?.role === 'SUPERADMIN') {
     navLinks.push(
-      { label: 'Analitik', href: '/superadmin/analytics', active: false },
-      { label: 'Pengguna', href: '/superadmin/users', active: false }
+      { label: 'Analitik', href: '/superadmin/analytics' },
+      { label: 'Pengguna', href: '/superadmin/users' }
     );
   } else if (user?.role === 'ADMIN') {
-    navLinks.push({ label: 'Workbench', href: '/admin', active: false });
+    navLinks.push({ label: 'Workbench', href: '/admin' });
   } else if (user?.role === 'PELAPOR') {
     navLinks.push(
-      { label: 'Laporan Saya', href: '/pelapor', active: false },
-      { label: 'Profil', href: '/pelapor/profil', active: false }
+      { label: 'Laporan Saya', href: '/pelapor' },
+      { label: 'Profil', href: '/pelapor/profil' }
     );
   }
 
@@ -150,15 +203,23 @@ export default function Navbar() {
 
         {/* Center Pill Navigation Rail (Desktop) - Clean typography text pills */}
         <nav className="mantikole-nav-rail">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`mantikole-nav-item ${link.active ? 'is-active' : ''}`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isLinkActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => {
+                  if (link.href.startsWith('/#') || link.href === '/') {
+                    setActiveSection(link.href);
+                  }
+                }}
+                className={`mantikole-nav-item ${active ? 'is-active' : ''}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Action Buttons Section (Right) - Exactly matching Mantikole dual button layout */}
@@ -214,16 +275,24 @@ export default function Navbar() {
       {/* Floating Mobile Drawer Card */}
       {mobileMenuOpen && (
         <div className="mantikole-mobile-drawer">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`mantikole-mobile-item ${link.active ? 'mantikole-mobile-item-active' : ''}`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isLinkActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => {
+                  if (link.href.startsWith('/#') || link.href === '/') {
+                    setActiveSection(link.href);
+                  }
+                  setMobileMenuOpen(false);
+                }}
+                className={`mantikole-mobile-item ${active ? 'is-active' : ''}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
           {/* Bottom Dual Action Buttons in Drawer */}
           <div
