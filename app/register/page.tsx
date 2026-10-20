@@ -37,7 +37,7 @@ function RegisterForm() {
         throw new Error(data.error || 'Gagal mendaftar akun');
       }
 
-      router.push(targetRedirect || '/');
+      router.push(targetRedirect && targetRedirect !== '/' ? targetRedirect : '/pelapor');
       router.refresh();
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Terjadi kesalahan saat registrasi.');

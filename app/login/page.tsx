@@ -39,19 +39,24 @@ function LoginForm() {
       // Redirect according to role & target redirect
       const role = data.user?.role;
       if (role === 'SUPERADMIN') {
-        if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+        if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
           router.push(targetRedirect);
         } else {
           router.push('/superadmin/analytics');
         }
       } else if (role === 'ADMIN') {
-        if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+        if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
           router.push(targetRedirect);
         } else {
           router.push('/admin');
         }
       } else {
-        router.push(targetRedirect || '/');
+        // PELAPOR role dedicated dashboard
+        if (targetRedirect && targetRedirect !== '/') {
+          router.push(targetRedirect);
+        } else {
+          router.push('/pelapor');
+        }
       }
       router.refresh();
     } catch (err: unknown) {
@@ -69,19 +74,24 @@ function LoginForm() {
           const data = await res.json();
           const role = data.user?.role;
           if (role === 'SUPERADMIN') {
-            if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+            if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
               router.replace(targetRedirect);
             } else {
               router.replace('/superadmin/analytics');
             }
           } else if (role === 'ADMIN') {
-            if (targetRedirect && !targetRedirect.startsWith('/pelapor/lapor')) {
+            if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
               router.replace(targetRedirect);
             } else {
               router.replace('/admin');
             }
           } else {
-            router.replace(targetRedirect || '/');
+            // PELAPOR role dedicated dashboard
+            if (targetRedirect && targetRedirect !== '/') {
+              router.replace(targetRedirect);
+            } else {
+              router.replace('/pelapor');
+            }
           }
         }
       } catch {
