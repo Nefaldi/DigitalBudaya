@@ -25,7 +25,12 @@ export interface HeritageReportItem {
   admin?: { id: string; nama: string; email: string } | null;
 }
 
-export default function HeritageCard({ report }: { report: HeritageReportItem }) {
+export interface HeritageCardProps {
+  report: HeritageReportItem;
+  hideOpenArchive?: boolean;
+}
+
+export default function HeritageCard({ report, hideOpenArchive = false }: HeritageCardProps) {
   const displayImage = report.fotoDigitalisasi || report.fotoKondisiAwal;
 
   const getStatusBadge = (status: string) => {
@@ -163,19 +168,21 @@ export default function HeritageCard({ report }: { report: HeritageReportItem })
             {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
 
-          <Link
-            href={`/katalog/${report.id}`}
-            style={{
-              color: 'var(--text-primary)',
-              fontWeight: 500,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-            }}
-          >
-            <span>Buka Arsip</span>
-            <ArrowRight size={13} />
-          </Link>
+          {!hideOpenArchive && (
+            <Link
+              href={`/katalog/${report.id}`}
+              style={{
+                color: 'var(--text-primary)',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+              }}
+            >
+              <span>Buka Arsip</span>
+              <ArrowRight size={13} />
+            </Link>
+          )}
         </div>
       </div>
     </article>

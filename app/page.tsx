@@ -6,7 +6,7 @@ import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import SultengMap from '@/components/SultengMap';
 import HeroBackground from '@/components/HeroBackground';
-import { ArrowRight, FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
+import { FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -202,43 +202,23 @@ export default async function HomePage() {
       <section id="katalog-terkini" className="container" style={{ scrollMarginTop: '80px' }}>
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
             marginBottom: '1.75rem',
             borderBottom: '1px solid var(--border-hairline)',
             paddingBottom: '0.75rem',
           }}
         >
-          <div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
-              Katalog Terkini
-            </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-              Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
-            </p>
-          </div>
-
-          <Link
-            href={catalogHref}
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 500,
-              color: 'var(--text-primary)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-            }}
-          >
-            <span>Seluruh Katalog</span>
-            <ArrowRight size={14} />
-          </Link>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
+            Katalog Terkini
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+            Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
+          </p>
         </div>
 
         {reports.length > 0 ? (
           <div className="grid-cols-3">
             {reports.map((report) => (
-              <HeritageCard key={report.id} report={report} />
+              <HeritageCard key={report.id} report={report} hideOpenArchive />
             ))}
           </div>
         ) : (

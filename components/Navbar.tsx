@@ -45,16 +45,20 @@ export default function Navbar() {
       const scrollY = window.scrollY;
 
       const petaEl = document.getElementById('peta');
+      const terkiniEl = document.getElementById('katalog-terkini');
       const statistikEl = document.getElementById('statistik');
 
       const petaTop = petaEl ? petaEl.offsetTop - 240 : Infinity;
+      const terkiniTop = terkiniEl ? terkiniEl.offsetTop - 240 : Infinity;
       const statistikTop = statistikEl ? statistikEl.offsetTop - 240 : Infinity;
 
       if (petaEl && scrollY >= petaTop) {
         setActiveSection('/#peta');
+      } else if (terkiniEl && scrollY >= terkiniTop) {
+        setActiveSection('/#katalog-terkini');
       } else if (statistikEl && scrollY >= statistikTop) {
         setActiveSection('/#statistik');
-      } else if (scrollY <= 50 && (hash === '#statistik' || hash === '#peta')) {
+      } else if (scrollY <= 50 && (hash === '#statistik' || hash === '#katalog-terkini' || hash === '#peta')) {
         setActiveSection(`/${hash}`);
       } else {
         setActiveSection('/');
@@ -144,8 +148,8 @@ export default function Navbar() {
     navLinks = [
       { label: 'Beranda', href: '/' },
       { label: 'Statistik', href: '/#statistik' },
+      { label: 'Terkini', href: '/#katalog-terkini' },
       { label: 'Peta', href: '/#peta' },
-      { label: 'Katalog', href: '/katalog' },
     ];
   } else if (user.role === 'PELAPOR') {
     // Dedicated features for Pelapor (Sahabat Budaya)
