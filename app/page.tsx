@@ -135,8 +135,6 @@ export default async function HomePage() {
           <div className="mantikole-hero-actions">
             <Link href={catalogHref} className="mantikole-hero-btn-primary">
               <span>Telusuri Katalog Terkini</span>
-              <span className="mantikole-hero-btn-count mono">[{totalVerified}]</span>
-              <ArrowRight size={15} />
             </Link>
 
             <Link href={laporHref} className="mantikole-hero-btn-secondary">
