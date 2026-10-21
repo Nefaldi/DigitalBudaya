@@ -1,9 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound, redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
+import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import AudioWavePlayer from '@/components/AudioWavePlayer';
@@ -17,7 +15,6 @@ import {
   Calendar,
   User,
   ShieldCheck,
-  ArrowLeft,
   FileText,
   AlertCircle,
   Compass,
@@ -28,14 +25,6 @@ export const revalidate = 60;
 export default async function HeritageDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
-
-  // Wajib login untuk melihat detail arsip katalog cagar budaya
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-  const currentUser = token ? verifyToken(token) : null;
-  if (!currentUser) {
-    redirect(`/login?redirect=${encodeURIComponent(`/katalog/${id}`)}`);
-  }
 
   let report = null;
   try {
@@ -91,7 +80,6 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
               fontWeight: 500,
             }}
           >
-            <ArrowLeft size={15} />
             <span>Kembali ke Katalog</span>
           </Link>
           <PrintDossierButton />

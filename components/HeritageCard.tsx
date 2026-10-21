@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Volume2, ArrowRight } from 'lucide-react';
+import { MapPin, Volume2 } from 'lucide-react';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 
 export interface HeritageReportItem {
@@ -180,7 +180,6 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
               }}
             >
               <span>Buka Arsip</span>
-              <ArrowRight size={13} />
             </Link>
           )}
         </div>

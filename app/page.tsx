@@ -6,7 +6,7 @@ import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import SultengMap from '@/components/SultengMap';
 import HeroBackground from '@/components/HeroBackground';
-import { FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
+import { FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers, BookOpen } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -54,7 +54,7 @@ export default async function HomePage() {
     console.error('Error fetching home data:', error);
   }
 
-  const catalogHref = user ? '/katalog' : '/login?redirect=/katalog';
+  const catalogHref = '/katalog';
   const laporHref =
     user?.role === 'SUPERADMIN'
       ? '/superadmin/analytics'
@@ -66,35 +66,36 @@ export default async function HomePage() {
 
   return (
     <div className="homepage-root">
-      {/* 1. HERO SECTION: Full-screen Mantikole-style Immersive Hero */}
-      <section className="mantikole-hero-section">
+      {/* 1. HERO SECTION: Full-screen DigiCulture-style Immersive Hero */}
+      <section className="digiculture-hero-section">
         {/* Dynamic Zoom-In and Scroll Zoom-Out Background (Rumah Adat Souraja) */}
-        <HeroBackground src="/rumahsouraja.jpeg" alt="Rumah Adat Souraja Sulawesi Tengah" />
+        <HeroBackground src="/rumahadatsouraja.jpeg" alt="Rumah Adat Souraja Sulawesi Tengah" />
 
         {/* Center Content Container */}
-        <div className="mantikole-hero-content">
+        <div className="digiculture-hero-content">
           {/* Main Giant Headline */}
-          <h1 className="mantikole-hero-title">
+          <h1 className="digiculture-hero-title">
             DIGICULTURE CARE
           </h1>
 
           {/* Slogan */}
-          <p className="mantikole-hero-slogan">
+          <p className="digiculture-hero-slogan">
             Digitalisasi Warisan Budaya Sulteng yang Terancam Dilupakan
           </p>
 
           {/* Subtitle */}
-          <p className="mantikole-hero-subtitle">
-            Dokumentasi terverifikasi megalitikum lembah purba, arsitektur pusaka, dan tradisi lisan di 13 kabupaten/kota untuk perlindungan arsip budaya komparatif.
+          <p className="digiculture-hero-subtitle">
+            Platform Penyelamatan & Dokumentasi Warisan Budaya Sulawesi Tengah
           </p>
 
           {/* Action Buttons */}
-          <div className="mantikole-hero-actions">
-            <Link href={catalogHref} className="mantikole-hero-btn-primary">
-              <span>Telusuri Katalog Terkini</span>
+          <div className="digiculture-hero-actions">
+            <Link href={catalogHref} className="digiculture-hero-btn-primary">
+              <BookOpen size={15} />
+              <span>Telusuri Katalog Budaya</span>
             </Link>
 
-            <Link href={laporHref} className="mantikole-hero-btn-secondary">
+            <Link href={laporHref} className="digiculture-hero-btn-secondary">
               <FilePlus size={15} />
               <span>
                 {user?.role === 'ADMIN'
@@ -107,91 +108,91 @@ export default async function HomePage() {
           </div>
 
           {/* Scroll Down Indicator */}
-          <div className="mantikole-hero-scroll-wrap">
-            <a href="#statistik" className="mantikole-hero-scroll">
+          <div className="digiculture-hero-scroll-wrap">
+            <a href="#statistik" className="digiculture-hero-scroll">
               <span>scroll ke bawah</span>
-              <ChevronDown size={16} className="mantikole-scroll-icon" />
+              <ChevronDown size={16} className="digiculture-scroll-icon" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* 2. STATISTIK & POTENSI WILAYAH (Mantikole Stat Cards) */}
+      {/* 2. STATISTIK & POTENSI WILAYAH (DigiCulture Stat Cards) */}
       <section id="statistik" className="container" style={{ scrollMarginTop: '90px' }}>
-        <div className="mantikole-stats-header">
-          <div className="mantikole-section-tag">
-            <span className="mantikole-tag-dot" />
+        <div className="digiculture-stats-header">
+          <div className="digiculture-section-tag">
+            <span className="digiculture-tag-dot" />
             <span className="mono">RINGKASAN PRESERVASI PROVINSI</span>
           </div>
-          <h2 className="mantikole-stats-title">
+          <h2 className="digiculture-stats-title">
             Cakupan Dokumentasi & Warisan Budaya
           </h2>
-          <p className="mantikole-stats-desc">
+          <p className="digiculture-stats-desc">
             Agregasi data digitalisasi cagar budaya resmi Balai Pelestarian Kebudayaan Wilayah XVIII se-Sulawesi Tengah.
           </p>
         </div>
 
-        <div className="mantikole-stats-grid">
-          <div className="mantikole-stat-card">
-            <div className="mantikole-stat-top">
-              <span className="mantikole-stat-lbl">ARSIP TERVERIFIKASI</span>
-              <div className="mantikole-stat-icon-wrap">
+        <div className="digiculture-stats-grid">
+          <div className="digiculture-stat-card">
+            <div className="digiculture-stat-top">
+              <span className="digiculture-stat-lbl">ARSIP TERVERIFIKASI</span>
+              <div className="digiculture-stat-icon-wrap">
                 <Landmark size={18} />
               </div>
             </div>
-            <div className="mantikole-stat-val-row">
-              <span className="mantikole-stat-val mono">{totalVerified}</span>
-              <span className="mantikole-stat-unit">Dossier</span>
+            <div className="digiculture-stat-val-row">
+              <span className="digiculture-stat-val mono">{totalVerified}</span>
+              <span className="digiculture-stat-unit">Dossier</span>
             </div>
-            <p className="mantikole-stat-text">
+            <p className="digiculture-stat-text">
               Objek cagar budaya yang telah diautentikasi dan terverifikasi secara formal oleh tim kurator.
             </p>
           </div>
 
-          <div className="mantikole-stat-card">
-            <div className="mantikole-stat-top">
-              <span className="mantikole-stat-lbl">KABUPATEN & KOTA</span>
-              <div className="mantikole-stat-icon-wrap">
+          <div className="digiculture-stat-card">
+            <div className="digiculture-stat-top">
+              <span className="digiculture-stat-lbl">KABUPATEN & KOTA</span>
+              <div className="digiculture-stat-icon-wrap">
                 <Compass size={18} />
               </div>
             </div>
-            <div className="mantikole-stat-val-row">
-              <span className="mantikole-stat-val mono">13</span>
-              <span className="mantikole-stat-unit">Wilayah</span>
+            <div className="digiculture-stat-val-row">
+              <span className="digiculture-stat-val mono">13</span>
+              <span className="digiculture-stat-unit">Wilayah</span>
             </div>
-            <p className="mantikole-stat-text">
+            <p className="digiculture-stat-text">
               Sebaran titik cagar budaya di seluruh kabupaten/kota dari Lore Lindu hingga Kepulauan Banggai.
             </p>
           </div>
 
-          <div className="mantikole-stat-card">
-            <div className="mantikole-stat-top">
-              <span className="mantikole-stat-lbl">CAGAR BUDAYA BENDA</span>
-              <div className="mantikole-stat-icon-wrap">
+          <div className="digiculture-stat-card">
+            <div className="digiculture-stat-top">
+              <span className="digiculture-stat-lbl">CAGAR BUDAYA BENDA</span>
+              <div className="digiculture-stat-icon-wrap">
                 <Layers size={18} />
               </div>
             </div>
-            <div className="mantikole-stat-val-row">
-              <span className="mantikole-stat-val mono">{countBenda}</span>
-              <span className="mantikole-stat-unit">Situs & Objek</span>
+            <div className="digiculture-stat-val-row">
+              <span className="digiculture-stat-val mono">{countBenda}</span>
+              <span className="digiculture-stat-unit">Situs & Objek</span>
             </div>
-            <p className="mantikole-stat-text">
+            <p className="digiculture-stat-text">
               Patung megalit purba, arsitektur Banawa/Souraja, benteng kolonial, dan artefak fisik.
             </p>
           </div>
 
-          <div className="mantikole-stat-card">
-            <div className="mantikole-stat-top">
-              <span className="mantikole-stat-lbl">WARISAN TAKBENDA</span>
-              <div className="mantikole-stat-icon-wrap">
+          <div className="digiculture-stat-card">
+            <div className="digiculture-stat-top">
+              <span className="digiculture-stat-lbl">WARISAN TAKBENDA</span>
+              <div className="digiculture-stat-icon-wrap">
                 <Sparkles size={18} />
               </div>
             </div>
-            <div className="mantikole-stat-val-row">
-              <span className="mantikole-stat-val mono">{countTakbenda}</span>
-              <span className="mantikole-stat-unit">Tradisi Tutur</span>
+            <div className="digiculture-stat-val-row">
+              <span className="digiculture-stat-val mono">{countTakbenda}</span>
+              <span className="digiculture-stat-unit">Tradisi Tutur</span>
             </div>
-            <p className="mantikole-stat-text">
+            <p className="digiculture-stat-text">
               Bahasa daerah, seni pertunjukan tradisional, ritus adat, dan sistem pengetahuan lokal.
             </p>
           </div>

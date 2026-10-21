@@ -10,12 +10,8 @@ import {
   Menu,
   X,
   LogOut,
-  FileText,
-  FilePlus,
   LogIn,
-  Shield,
-  ShieldAlert,
-  UserCheck,
+  User,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -140,24 +136,37 @@ export default function Navbar() {
     return false;
   };
 
+  const isKatalogPage = pathname === '/katalog' || pathname.startsWith('/katalog/');
+  const isLoginPage = pathname === '/login';
+
   // Center navigation rail strictly contains features of each respective role
   let navLinks: Array<{ label: string; href: string }> = [];
 
   if (!user) {
-    // Public / Guest features
-    navLinks = [
-      { label: 'Beranda', href: '/' },
-      { label: 'Statistik', href: '/#statistik' },
-      { label: 'Terkini', href: '/#katalog-terkini' },
-      { label: 'Peta', href: '/#peta' },
-    ];
+    if (pathname === '/') {
+      // Fitur khusus landing page (tanpa tombol Katalog Budaya di navbar)
+      navLinks = [
+        { label: 'Beranda', href: '/' },
+        { label: 'Statistik', href: '/#statistik' },
+        { label: 'Terkini', href: '/#katalog-terkini' },
+        { label: 'Peta', href: '/#peta' },
+      ];
+    } else if (isKatalogPage || isLoginPage) {
+      // Pada laman katalog budaya & halaman login, tombol navbar tengah dihilangkan
+      navLinks = [];
+    } else {
+      // Halaman di luar landing page lainnya
+      navLinks = [
+        { label: 'Beranda', href: '/' },
+        { label: 'Katalog Budaya', href: '/katalog' },
+      ];
+    }
   } else if (user.role === 'PELAPOR') {
     // Dedicated features for Pelapor (Sahabat Budaya)
     navLinks = [
       { label: 'Laporan Saya', href: '/pelapor' },
       { label: 'Buat Laporan', href: '/pelapor/lapor' },
       { label: 'Katalog Budaya', href: '/katalog' },
-      { label: 'Profil Saya', href: '/pelapor/profil' },
     ];
   } else if (user.role === 'ADMIN') {
     // Dedicated features for Admin (Konservator Wilayah)
@@ -165,7 +174,6 @@ export default function Navbar() {
       { label: 'Workbench Verifikasi', href: '/admin' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
       { label: 'Katalog Pusaka', href: '/katalog' },
-      { label: 'Profil Saya', href: '/pelapor/profil' },
     ];
   } else if (user.role === 'SUPERADMIN') {
     // Dedicated features for Superadmin (Pimpinan & Eksekutif)
@@ -174,7 +182,6 @@ export default function Navbar() {
       { label: 'Kelola Pengguna', href: '/superadmin/users' },
       { label: 'Workbench Admin', href: '/admin' },
       { label: 'Katalog Pusaka', href: '/katalog' },
-      { label: 'Profil Saya', href: '/pelapor/profil' },
     ];
   }
 
@@ -188,134 +195,136 @@ export default function Navbar() {
       : '/';
 
   return (
-    <header className="mantikole-header-wrapper no-print">
+    <header className="digiculture-header-wrapper no-print">
       <div
-        className={`mantikole-nav-container ${
-          scrolled ? 'mantikole-nav-scrolled' : 'mantikole-nav-unscrolled'
+        className={`digiculture-nav-container ${
+          scrolled ? 'digiculture-nav-scrolled' : 'digiculture-nav-unscrolled'
         }`}
       >
-        {/* Brand Logo & Title (Links to Role Home for Authenticated, or Landing Page for Guest) */}
-        <Link
-          href={brandHref}
-          className="group"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}
-          title={user ? `Kembali ke Beranda ${user.role}` : 'DigitalBudaya Sulawesi Tengah'}
-        >
-          <div className="mantikole-logo-badge">
-            <Image
-              src="/logo-transparent.png"
-              alt="DigitalBudaya Logo"
-              width={24}
-              height={24}
-              priority
-              className="logo-light-variant"
-              style={{ objectFit: 'contain' }}
-            />
-            <Image
-              src="/logo-light-transparent.png"
-              alt="DigitalBudaya Logo"
-              width={24}
-              height={24}
-              priority
-              className="logo-dark-variant"
-              style={{ objectFit: 'contain' }}
-            />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span className="mantikole-brand-title">DigitalBudaya</span>
-            <span className="mantikole-brand-subtitle">Sulawesi Tengah</span>
-          </div>
-        </Link>
+        {/* Brand Logo & Title for Guest, or Profile Icon & Account Name for Authenticated Users */}
+        <div className="digiculture-nav-left">
+          {user ? (
+            <Link
+              href="/pelapor/profil"
+              className="group"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}
+              title={`Profil Akun ${
+                user.role === 'SUPERADMIN'
+                  ? 'Superadmin'
+                  : user.role === 'ADMIN'
+                  ? 'Konservator'
+                  : 'Pelapor'
+              }: ${user.nama}`}
+            >
+              <div
+                className="digiculture-logo-badge"
+                style={{
+                  color: 'var(--text-primary)',
+                  borderColor: pathname === '/pelapor/profil' ? 'var(--action-primary)' : 'var(--border-hairline)',
+                }}
+              >
+                <User size={16} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span className="digiculture-brand-title" style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.nama}
+                </span>
+                <span className="digiculture-brand-subtitle">
+                  {user.role === 'SUPERADMIN'
+                    ? 'Superadmin'
+                    : user.role === 'ADMIN'
+                    ? 'Konservator'
+                    : 'Pelapor'}
+                </span>
+              </div>
+            </Link>
+          ) : (
+            <Link
+              href={brandHref}
+              className="group"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}
+              title="Digiculture Care"
+            >
+              <div className="digiculture-logo-badge">
+                <Image
+                  src="/logo-transparent.png"
+                  alt="Digiculture Care Logo"
+                  width={24}
+                  height={24}
+                  priority
+                  className="logo-light-variant"
+                  style={{ objectFit: 'contain' }}
+                />
+                <Image
+                  src="/logo-light-transparent.png"
+                  alt="Digiculture Care Logo"
+                  width={24}
+                  height={24}
+                  priority
+                  className="logo-dark-variant"
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span className="digiculture-brand-title">Digiculture Care</span>
+              </div>
+            </Link>
+          )}
+        </div>
 
         {/* Center Pill Navigation Rail - Exclusively filtered per role */}
-        <nav className="mantikole-nav-rail">
-          {navLinks.map((link) => {
-            const active = isLinkActive(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => {
-                  if (link.href.startsWith('/#') || link.href === '/') {
-                    setActiveSection(link.href);
-                  }
-                }}
-                className={`mantikole-nav-item ${active ? 'is-active' : ''}`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="digiculture-nav-center">
+          {navLinks.length > 0 && (
+            <nav className="digiculture-nav-rail">
+              {navLinks.map((link) => {
+                const active = isLinkActive(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => {
+                      if (link.href.startsWith('/#') || link.href === '/') {
+                        setActiveSection(link.href);
+                      }
+                    }}
+                    className={`digiculture-nav-item ${active ? 'is-active' : ''}`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
+        </div>
 
         {/* Action Buttons Section (Right) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        <div className="digiculture-nav-right">
           {/* Desktop Actions */}
-          <div className="mantikole-desktop-action" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="digiculture-desktop-action" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {!loading && !user ? (
-              <>
-                {/* Guest Button 1: Outline Pill Lapor Pusaka */}
+              isKatalogPage || isLoginPage ? (
                 <Link
-                  href="/login?redirect=/pelapor/lapor"
-                  className="mantikole-action-pill mantikole-action-pill-outline"
+                  href="/"
+                  className="digiculture-action-pill digiculture-action-pill-primary"
                 >
-                  <FileText size={13} className="text-slate-600 dark:text-zinc-400" />
-                  <span>Lapor Pusaka</span>
+                  <span>Kembali</span>
                 </Link>
-
-                {/* Guest Button 2: Solid Pill Masuk */}
+              ) : (
                 <Link
                   href="/login"
-                  className="mantikole-action-pill mantikole-action-pill-primary"
+                  className="digiculture-action-pill digiculture-action-pill-primary"
                 >
                   <LogIn size={13} />
                   <span>Masuk</span>
                 </Link>
-              </>
+              )
             ) : !loading && user ? (
               <>
-                {/* Role Badge Chip */}
-                {user.role === 'SUPERADMIN' && (
-                  <span className="mantikole-role-badge mantikole-role-badge-superadmin" title="Hak Akses: Superadmin">
-                    <ShieldAlert size={11} />
-                    <span>Superadmin</span>
-                  </span>
-                )}
-                {user.role === 'ADMIN' && (
-                  <span className="mantikole-role-badge mantikole-role-badge-admin" title="Hak Akses: Konservator Wilayah">
-                    <Shield size={11} />
-                    <span>Admin</span>
-                  </span>
-                )}
-                {user.role === 'PELAPOR' && (
-                  <span className="mantikole-role-badge mantikole-role-badge-pelapor" title="Hak Akses: Sahabat Budaya">
-                    <UserCheck size={11} />
-                    <span>Pelapor</span>
-                  </span>
-                )}
-
-                {/* User Name Chip */}
-                <span className="mantikole-user-name" title={`${user.nama} (${user.email})`}>
-                  {user.nama}
-                </span>
-
-                {/* Quick Action Button for PELAPOR */}
-                {user.role === 'PELAPOR' && (
-                  <Link
-                    href="/pelapor/lapor"
-                    className="mantikole-action-pill mantikole-action-pill-primary"
-                    style={{ padding: '0.35rem 0.75rem' }}
-                  >
-                    <FilePlus size={12} />
-                    <span>Lapor</span>
-                  </Link>
-                )}
-
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  className="mantikole-action-pill mantikole-action-pill-outline"
+                  className="digiculture-action-pill digiculture-action-pill-outline"
                   style={{ color: 'var(--action-danger)', padding: '0.35rem 0.65rem' }}
                   title={`Keluar Akun (${user.nama})`}
                 >
@@ -331,7 +340,7 @@ export default function Navbar() {
           {/* Mobile Menu Hamburger Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 text-slate-700 hover:text-slate-950 focus:outline-none dark:text-zinc-300 dark:hover:text-white mantikole-mobile-toggle-btn"
+            className="p-1.5 text-slate-700 hover:text-slate-950 focus:outline-none dark:text-zinc-300 dark:hover:text-white digiculture-mobile-toggle-btn"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -341,10 +350,12 @@ export default function Navbar() {
 
       {/* Floating Mobile Drawer Card */}
       {mobileMenuOpen && (
-        <div className="mantikole-mobile-drawer">
+        <div className="digiculture-mobile-drawer">
           {/* User profile card in drawer when authenticated */}
           {user && (
-            <div
+            <Link
+              href="/pelapor/profil"
+              onClick={() => setMobileMenuOpen(false)}
               style={{
                 padding: '0.65rem 0.85rem',
                 marginBottom: '0.5rem',
@@ -353,7 +364,9 @@ export default function Navbar() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                textDecoration: 'none',
               }}
+              title="Buka Pengaturan Profil Akun"
             >
               <div style={{ overflow: 'hidden' }}>
                 <div
@@ -380,10 +393,10 @@ export default function Navbar() {
                   {user.email}
                 </div>
               </div>
-              <span className={`mantikole-role-badge mantikole-role-badge-${user.role.toLowerCase()}`}>
+              <span className={`digiculture-role-badge digiculture-role-badge-${user.role.toLowerCase()}`}>
                 {user.role}
               </span>
-            </div>
+            </Link>
           )}
 
           {navLinks.map((link) => {
@@ -398,7 +411,7 @@ export default function Navbar() {
                   }
                   setMobileMenuOpen(false);
                 }}
-                className={`mantikole-mobile-item ${active ? 'is-active' : ''}`}
+                className={`digiculture-mobile-item ${active ? 'is-active' : ''}`}
               >
                 {link.label}
               </Link>
@@ -416,11 +429,11 @@ export default function Navbar() {
             }}
           >
             {!user ? (
-              <>
+              isKatalogPage || isLoginPage ? (
                 <Link
-                  href="/login?redirect=/pelapor/lapor"
+                  href="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="mantikole-action-pill mantikole-action-pill-outline"
+                  className="digiculture-action-pill digiculture-action-pill-primary"
                   style={{
                     width: '100%',
                     justifyContent: 'center',
@@ -428,14 +441,13 @@ export default function Navbar() {
                     borderRadius: '0.75rem',
                   }}
                 >
-                  <FileText size={14} className="text-slate-600 dark:text-zinc-400" />
-                  <span>Lapor Pusaka Budaya</span>
+                  <span>Kembali</span>
                 </Link>
-
+              ) : (
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="mantikole-action-pill mantikole-action-pill-primary"
+                  className="digiculture-action-pill digiculture-action-pill-primary"
                   style={{
                     width: '100%',
                     justifyContent: 'center',
@@ -446,33 +458,16 @@ export default function Navbar() {
                   <LogIn size={14} />
                   <span>Masuk</span>
                 </Link>
-              </>
+              )
             ) : (
               <>
-                {user.role === 'PELAPOR' && (
-                  <Link
-                    href="/pelapor/lapor"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="mantikole-action-pill mantikole-action-pill-primary"
-                    style={{
-                      width: '100%',
-                      justifyContent: 'center',
-                      padding: '0.55rem',
-                      borderRadius: '0.75rem',
-                    }}
-                  >
-                    <FilePlus size={14} />
-                    <span>Buat Laporan Baru</span>
-                  </Link>
-                )}
-
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     handleLogout();
                   }}
                   disabled={isLoggingOut}
-                  className="mantikole-action-pill mantikole-action-pill-outline"
+                  className="digiculture-action-pill digiculture-action-pill-outline"
                   style={{
                     width: '100%',
                     justifyContent: 'center',

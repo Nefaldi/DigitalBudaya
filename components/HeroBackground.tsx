@@ -9,7 +9,7 @@ interface HeroBackgroundProps {
 }
 
 export default function HeroBackground({
-  src = '/rumahsouraja.jpeg',
+  src = '/rumahadatsouraja.jpeg',
   alt = 'Rumah Adat Souraja Sulawesi Tengah',
 }: HeroBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,18 +45,18 @@ export default function HeroBackground({
   }, []);
 
   return (
-    <div className="mantikole-hero-bg-wrap" aria-hidden="true">
-      <div ref={containerRef} className="mantikole-hero-zoom-container">
+    <div className="digiculture-hero-bg-wrap" aria-hidden="true">
+      <div ref={containerRef} className="digiculture-hero-zoom-container">
         <Image
           src={src}
           alt={alt}
           fill
           priority
           sizes="100vw"
-          className="mantikole-hero-bg-img"
+          className="digiculture-hero-bg-img"
         />
       </div>
-      <div className="mantikole-hero-overlay" />
+      <div className="digiculture-hero-overlay" />
     </div>
   );
 }

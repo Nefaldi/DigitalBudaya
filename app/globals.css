@@ -465,7 +465,7 @@ a {
 }
 
 /* ==============================================================================
-   Mantikole-Style Immersive Hero & Stat Cards
+   DigiCulture-Style Immersive Hero & Stat Cards
    ============================================================================== */
 .homepage-root {
   position: relative;
@@ -476,7 +476,7 @@ a {
 }
 
 /* 1. Full-screen Hero Section */
-.mantikole-hero-section {
+.digiculture-hero-section {
   position: relative;
   width: 100%;
   min-height: 100vh;
@@ -492,7 +492,7 @@ a {
 }
 
 /* Background Image Wrapper with Initial Zoom-In and Scroll Zoom-Out */
-.mantikole-hero-bg-wrap {
+.digiculture-hero-bg-wrap {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -502,7 +502,7 @@ a {
   overflow: hidden;
 }
 
-.mantikole-hero-zoom-container {
+.digiculture-hero-zoom-container {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -513,7 +513,7 @@ a {
   transition: transform 0.08s ease-out;
 }
 
-.mantikole-hero-bg-img {
+.digiculture-hero-bg-img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -524,7 +524,7 @@ a {
 }
 
 /* Cinematic Dark Gradient Overlay with smooth transition to canvas */
-.mantikole-hero-overlay {
+.digiculture-hero-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -538,7 +538,7 @@ a {
 }
 
 /* Center Content */
-.mantikole-hero-content {
+.digiculture-hero-content {
   position: relative;
   z-index: 10;
   width: 100%;
@@ -553,7 +553,7 @@ a {
 }
 
 /* Institution Badge */
-.mantikole-hero-badge {
+.digiculture-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -571,7 +571,7 @@ a {
   margin-bottom: 0.25rem;
 }
 
-.mantikole-hero-badge-dot {
+.digiculture-hero-badge-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -580,12 +580,12 @@ a {
   flex-shrink: 0;
 }
 
-.mantikole-hero-badge-sep {
+.digiculture-hero-badge-sep {
   opacity: 0.5;
 }
 
 /* Giant Headline */
-.mantikole-hero-title {
+.digiculture-hero-title {
   font-size: clamp(2.35rem, 6.2vw, 4.85rem);
   font-weight: 900;
   color: #ffffff;
@@ -597,7 +597,7 @@ a {
 }
 
 /* Slogan */
-.mantikole-hero-slogan {
+.digiculture-hero-slogan {
   font-size: clamp(0.95rem, 2.2vw, 1.35rem);
   font-weight: 700;
   color: #e2e8f0;
@@ -610,7 +610,7 @@ a {
 }
 
 /* Subtitle */
-.mantikole-hero-subtitle {
+.digiculture-hero-subtitle {
   font-size: clamp(0.85rem, 1.4vw, 0.975rem);
   color: #cbd5e1;
   max-width: 620px;
@@ -621,7 +621,7 @@ a {
 }
 
 /* Actions */
-.mantikole-hero-actions {
+.digiculture-hero-actions {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -630,7 +630,7 @@ a {
   margin-top: 0.75rem;
 }
 
-.mantikole-hero-btn-primary {
+.digiculture-hero-btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -644,18 +644,18 @@ a {
   transition: all 0.2s ease;
 }
 
-.mantikole-hero-btn-primary:hover {
+.digiculture-hero-btn-primary:hover {
   background-color: #f4f4f5;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
-.mantikole-hero-btn-count {
+.digiculture-hero-btn-count {
   font-size: 0.78rem;
   opacity: 0.75;
 }
 
-.mantikole-hero-btn-secondary {
+.digiculture-hero-btn-secondary {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -671,18 +671,18 @@ a {
   transition: all 0.2s ease;
 }
 
-.mantikole-hero-btn-secondary:hover {
+.digiculture-hero-btn-secondary:hover {
   background-color: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.4);
   transform: translateY(-1px);
 }
 
 /* Scroll indicator */
-.mantikole-hero-scroll-wrap {
+.digiculture-hero-scroll-wrap {
   margin-top: 2rem;
 }
 
-.mantikole-hero-scroll {
+.digiculture-hero-scroll {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -694,18 +694,18 @@ a {
   text-transform: lowercase;
   opacity: 0.85;
   transition: opacity 0.2s ease;
-  animation: mantikoleBounce 2s infinite;
+  animation: digicultureBounce 2s infinite;
 }
 
-.mantikole-hero-scroll:hover {
+.digiculture-hero-scroll:hover {
   opacity: 1;
 }
 
-.mantikole-scroll-icon {
+.digiculture-scroll-icon {
   color: #ffffff;
 }
 
-@keyframes mantikoleBounce {
+@keyframes digicultureBounce {
   0%, 100% {
     transform: translateY(0);
   }
@@ -714,8 +714,8 @@ a {
   }
 }
 
-/* 2. Mantikole Stat Cards Section */
-.mantikole-stats-header {
+/* 2. DigiCulture Stat Cards Section */
+.digiculture-stats-header {
   margin-bottom: 2rem;
   text-align: center;
   max-width: 680px;
@@ -723,7 +723,7 @@ a {
   margin-right: auto;
 }
 
-.mantikole-section-tag {
+.digiculture-section-tag {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -735,14 +735,14 @@ a {
   text-transform: uppercase;
 }
 
-.mantikole-tag-dot {
+.digiculture-tag-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background-color: var(--status-selesai);
 }
 
-.mantikole-stats-title {
+.digiculture-stats-title {
   font-size: clamp(1.4rem, 2.8vw, 1.85rem);
   font-weight: 700;
   color: var(--text-primary);
@@ -750,32 +750,32 @@ a {
   letter-spacing: -0.02em;
 }
 
-.mantikole-stats-desc {
+.digiculture-stats-desc {
   font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.55;
   margin: 0;
 }
 
-.mantikole-stats-grid {
+.digiculture-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
 }
 
 @media (max-width: 1024px) {
-  .mantikole-stats-grid {
+  .digiculture-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 640px) {
-  .mantikole-stats-grid {
+  .digiculture-stats-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.mantikole-stat-card {
+.digiculture-stat-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-lg);
@@ -787,24 +787,24 @@ a {
   transition: all 0.25s ease;
 }
 
-.mantikole-stat-card:hover {
+.digiculture-stat-card:hover {
   border-color: var(--border-strong);
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-[data-theme="dark"] .mantikole-stat-card:hover {
+[data-theme="dark"] .digiculture-stat-card:hover {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-.mantikole-stat-top {
+.digiculture-stat-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.85rem;
 }
 
-.mantikole-stat-lbl {
+.digiculture-stat-lbl {
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -812,7 +812,7 @@ a {
   text-transform: uppercase;
 }
 
-.mantikole-stat-icon-wrap {
+.digiculture-stat-icon-wrap {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
@@ -824,19 +824,19 @@ a {
   transition: all 0.2s ease;
 }
 
-.mantikole-stat-card:hover .mantikole-stat-icon-wrap {
+.digiculture-stat-card:hover .digiculture-stat-icon-wrap {
   background-color: var(--action-primary);
   color: var(--action-primary-text);
 }
 
-.mantikole-stat-val-row {
+.digiculture-stat-val-row {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
 
-.mantikole-stat-val {
+.digiculture-stat-val {
   font-size: clamp(2rem, 3.5vw, 2.5rem);
   font-weight: 800;
   line-height: 1;
@@ -844,14 +844,14 @@ a {
   letter-spacing: -0.03em;
 }
 
-.mantikole-stat-unit {
+.digiculture-stat-unit {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
 }
 
-.mantikole-stat-text {
+.digiculture-stat-text {
   font-size: 0.78rem;
   color: var(--text-secondary);
   line-height: 1.5;
@@ -1170,10 +1170,10 @@ a {
 }
 
 /* ==============================================================================
-   Mantikole-Style Floating Island Navbar & Scroll Morphing Animation
+   DigiCulture-Style Floating Island Navbar & Scroll Morphing Animation
    ============================================================================== */
 
-.mantikole-header-wrapper {
+.digiculture-header-wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -1185,12 +1185,12 @@ a {
 }
 
 @media (min-width: 640px) {
-  .mantikole-header-wrapper {
+  .digiculture-header-wrapper {
     padding: 0 1.5rem;
   }
 }
 
-.mantikole-nav-container {
+.digiculture-nav-container {
   pointer-events: auto;
   display: flex;
   align-items: center;
@@ -1209,7 +1209,7 @@ a {
 }
 
 /* State: Top of page (Unscrolled) */
-.mantikole-nav-unscrolled {
+.digiculture-nav-unscrolled {
   max-width: var(--max-width, 1160px);
   margin-top: 0;
   margin-bottom: 0;
@@ -1224,7 +1224,7 @@ a {
 }
 
 /* State: Scrolled down (Floating Pill Island) */
-.mantikole-nav-scrolled {
+.digiculture-nav-scrolled {
   max-width: 920px;
   margin-top: 0.65rem;
   margin-bottom: 0.65rem;
@@ -1237,13 +1237,13 @@ a {
   box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
 }
 
-[data-theme="dark"] .mantikole-nav-scrolled {
+[data-theme="dark"] .digiculture-nav-scrolled {
   background-color: rgba(18, 18, 21, 0.9);
   box-shadow: 0 14px 40px -8px rgba(0, 0, 0, 0.7), 0 4px 10px -2px rgba(0, 0, 0, 0.45);
 }
 
 /* Logo Badge */
-.mantikole-logo-badge {
+.digiculture-logo-badge {
   position: relative;
   width: 34px;
   height: 34px;
@@ -1258,35 +1258,61 @@ a {
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 }
 
-.mantikole-logo-badge:hover {
+.digiculture-logo-badge:hover {
   transform: scale(1.05);
 }
 
-.mantikole-brand-title {
+.digiculture-brand-title {
   font-weight: 800;
   font-size: 0.95rem;
   letter-spacing: -0.025em;
   color: var(--text-primary);
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
-.mantikole-brand-subtitle {
+.digiculture-brand-subtitle {
   font-size: 0.72rem;
   color: var(--text-muted);
   font-weight: 500;
-  padding-left: 0.5rem;
+  margin-left: 0.55rem;
+  padding-left: 0.55rem;
   border-left: 1px solid var(--border-hairline);
   display: none;
+  line-height: 1.2;
 }
 
 @media (min-width: 640px) {
-  .mantikole-brand-subtitle {
+  .digiculture-brand-subtitle {
     display: inline-block;
   }
 }
 
 /* Pill Navigation Rail */
-.mantikole-nav-rail {
+.digiculture-nav-left {
+  flex: 1 1 0%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.digiculture-nav-center {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.digiculture-nav-right {
+  flex: 1 1 0%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.digiculture-nav-rail {
   display: none;
   align-items: center;
   gap: 3px;
@@ -1298,17 +1324,17 @@ a {
   border: 1px solid var(--border-hairline);
 }
 
-[data-theme="dark"] .mantikole-nav-rail {
+[data-theme="dark"] .digiculture-nav-rail {
   background-color: rgba(24, 24, 27, 0.85);
 }
 
 @media (min-width: 768px) {
-  .mantikole-nav-rail {
+  .digiculture-nav-rail {
     display: flex;
   }
 }
 
-.mantikole-nav-item {
+.digiculture-nav-item {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -1323,30 +1349,30 @@ a {
   white-space: nowrap;
 }
 
-.mantikole-nav-item:hover {
+.digiculture-nav-item:hover {
   color: var(--text-primary);
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="dark"] .mantikole-nav-item:hover {
+[data-theme="dark"] .digiculture-nav-item:hover {
   color: var(--text-primary);
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-.mantikole-nav-item.is-active {
+.digiculture-nav-item.is-active {
   color: #ffffff !important;
   background-color: #020617 !important;
   font-weight: 700;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="dark"] .mantikole-nav-item.is-active {
+[data-theme="dark"] .digiculture-nav-item.is-active {
   color: #020617 !important;
   background-color: #ffffff !important;
 }
 
-/* Action Pill Buttons (Right Section) - Mantikole Spec */
-.mantikole-action-pill {
+/* Action Pill Buttons (Right Section) - DigiCulture Spec */
+.digiculture-action-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.38rem;
@@ -1361,55 +1387,55 @@ a {
   white-space: nowrap;
 }
 
-.mantikole-action-pill-outline {
+.digiculture-action-pill-outline {
   background-color: #ffffff;
   color: #0f172a;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.mantikole-action-pill-outline:hover {
+.digiculture-action-pill-outline:hover {
   background-color: #f8fafc;
   border-color: #cbd5e1;
   transform: translateY(-0.5px);
 }
 
-[data-theme="dark"] .mantikole-action-pill-outline {
+[data-theme="dark"] .digiculture-action-pill-outline {
   background-color: #121215;
   color: #f1f5f9;
   border-color: #27272a;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .mantikole-action-pill-outline:hover {
+[data-theme="dark"] .digiculture-action-pill-outline:hover {
   background-color: #1c1c20;
   border-color: #3f3f46;
 }
 
-.mantikole-action-pill-primary {
+.digiculture-action-pill-primary {
   background-color: #020617;
   color: #ffffff;
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.mantikole-action-pill-primary:hover {
+.digiculture-action-pill-primary:hover {
   background-color: #1e293b;
   transform: translateY(-0.5px);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
-[data-theme="dark"] .mantikole-action-pill-primary {
+[data-theme="dark"] .digiculture-action-pill-primary {
   background-color: #ffffff;
   color: #020617;
 }
 
-[data-theme="dark"] .mantikole-action-pill-primary:hover {
+[data-theme="dark"] .digiculture-action-pill-primary:hover {
   background-color: #f1f5f9;
 }
 
 /* Role Badges for Navbar & Drawer */
-.mantikole-role-badge {
+.digiculture-role-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.28rem;
@@ -1422,40 +1448,40 @@ a {
   line-height: 1;
 }
 
-.mantikole-role-badge-superadmin {
+.digiculture-role-badge-superadmin {
   background-color: rgba(168, 85, 247, 0.12);
   color: #9333ea;
   border: 1px solid rgba(168, 85, 247, 0.28);
 }
-[data-theme="dark"] .mantikole-role-badge-superadmin {
+[data-theme="dark"] .digiculture-role-badge-superadmin {
   background-color: rgba(168, 85, 247, 0.2);
   color: #c084fc;
   border-color: rgba(168, 85, 247, 0.4);
 }
 
-.mantikole-role-badge-admin {
+.digiculture-role-badge-admin {
   background-color: rgba(59, 130, 246, 0.12);
   color: #2563eb;
   border: 1px solid rgba(59, 130, 246, 0.28);
 }
-[data-theme="dark"] .mantikole-role-badge-admin {
+[data-theme="dark"] .digiculture-role-badge-admin {
   background-color: rgba(59, 130, 246, 0.2);
   color: #60a5fa;
   border-color: rgba(59, 130, 246, 0.4);
 }
 
-.mantikole-role-badge-pelapor {
+.digiculture-role-badge-pelapor {
   background-color: rgba(16, 185, 129, 0.12);
   color: #059669;
   border: 1px solid rgba(16, 185, 129, 0.28);
 }
-[data-theme="dark"] .mantikole-role-badge-pelapor {
+[data-theme="dark"] .digiculture-role-badge-pelapor {
   background-color: rgba(16, 185, 129, 0.2);
   color: #34d399;
   border-color: rgba(16, 185, 129, 0.4);
 }
 
-.mantikole-user-name {
+.digiculture-user-name {
   font-size: 0.76rem;
   font-weight: 500;
   color: var(--text-secondary);
@@ -1466,12 +1492,12 @@ a {
 }
 
 @media (max-width: 1024px) {
-  .mantikole-user-name {
+  .digiculture-user-name {
     display: none;
   }
 }
 
-.mantikole-mobile-toggle-btn {
+.digiculture-mobile-toggle-btn {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -1482,19 +1508,19 @@ a {
 }
 
 @media (min-width: 768px) {
-  .mantikole-mobile-toggle-btn {
+  .digiculture-mobile-toggle-btn {
     display: none !important;
   }
 }
 
 @media (max-width: 767px) {
-  .mantikole-desktop-action {
+  .digiculture-desktop-action {
     display: none !important;
   }
 }
 
 /* Mobile Drawer Island */
-.mantikole-mobile-drawer {
+.digiculture-mobile-drawer {
   pointer-events: auto;
   max-width: 420px;
   width: calc(100% - 1.5rem);
@@ -1504,17 +1530,17 @@ a {
   border-radius: 1.25rem;
   padding: 1.15rem;
   box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
-  animation: mantikoleDrawerEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: digicultureDrawerEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-[data-theme="dark"] .mantikole-mobile-drawer {
+[data-theme="dark"] .digiculture-mobile-drawer {
   box-shadow: 0 22px 50px -10px rgba(0, 0, 0, 0.8), 0 10px 20px -4px rgba(0, 0, 0, 0.5);
 }
 
-@keyframes mantikoleDrawerEnter {
+@keyframes digicultureDrawerEnter {
   0% {
     opacity: 0;
     transform: scale(0.96) translateY(-8px);
@@ -1525,7 +1551,7 @@ a {
   }
 }
 
-.mantikole-mobile-item {
+.digiculture-mobile-item {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -1538,12 +1564,12 @@ a {
   text-decoration: none;
 }
 
-.mantikole-mobile-item:hover {
+.digiculture-mobile-item:hover {
   color: var(--text-primary);
   background-color: var(--bg-subtle);
 }
 
-.mantikole-mobile-item.is-active {
+.digiculture-mobile-item.is-active {
   color: var(--action-primary-text) !important;
   background-color: var(--action-primary) !important;
   font-weight: 700;

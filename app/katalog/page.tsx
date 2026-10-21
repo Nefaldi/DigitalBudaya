@@ -4,15 +4,13 @@ import React, { useState, useEffect } from 'react';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import { Search, Compass, Loader2 } from 'lucide-react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 function KatalogContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialKab = searchParams.get('kabupatenKota') || 'Semua';
   const initialKat = searchParams.get('kategori') || 'Semua';
 
-  const [authChecked, setAuthChecked] = useState(false);
   const [reports, setReports] = useState<HeritageReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -24,35 +22,6 @@ function KatalogContent() {
   const [selectedKabupaten, setSelectedKabupaten] = useState(initialKab);
   const [selectedKategori, setSelectedKategori] = useState(initialKat);
   const [selectedStatus, setSelectedStatus] = useState('Semua');
-
-  // 1. Verifikasi otentikasi pengguna secara mandiri (mencegah double-fetch)
-  useEffect(() => {
-    let isMounted = true;
-
-    async function checkAuth() {
-      const paramsString = searchParams.toString();
-      const targetUrl = '/katalog' + (paramsString ? `?${paramsString}` : '');
-      const loginUrl = `/login?redirect=${encodeURIComponent(targetUrl)}`;
-
-      try {
-        const res = await fetch('/api/auth/me');
-        if (!res.ok) {
-          router.replace(loginUrl);
-          return;
-        }
-        if (isMounted) {
-          setAuthChecked(true);
-        }
-      } catch {
-        router.replace(loginUrl);
-      }
-    }
-
-    checkAuth();
-    return () => {
-      isMounted = false;
-    };
-  }, [router, searchParams]);
 
   // Sinkronisasi state filter jika parameter URL berubah (misalnya navigasi dari footer/navbar)
   useEffect(() => {
@@ -67,10 +36,8 @@ function KatalogContent() {
     return () => clearTimeout(timer);
   }, [searchParams]);
 
-  // 2. Pengambilan data katalog berbasis filter & pagination (hanya berjalan setelah terotentikasi)
+  // Pengambilan data katalog berbasis filter & pagination
   useEffect(() => {
-    if (!authChecked) return;
-
     let isMounted = true;
 
     const timer = setTimeout(async () => {
@@ -108,9 +75,9 @@ function KatalogContent() {
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [authChecked, searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
+  }, [searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
 
-  // 3. Muat data tambahan secara inkremental (Pagination / Load More)
+  // Muat data tambahan secara inkremental (Pagination / Load More)
   const handleLoadMore = async () => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
@@ -138,15 +105,6 @@ function KatalogContent() {
       setLoadingMore(false);
     }
   };
-
-  if (!authChecked) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1rem' }}>
-        <Loader2 className="animate-spin" size={32} style={{ color: 'var(--action-primary)' }} />
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memverifikasi sesi pengguna...</p>
-      </div>
-    );
-  }
 
   return (
     <div style={{ paddingTop: '3.5rem', paddingBottom: '6rem' }}>

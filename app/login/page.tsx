@@ -304,7 +304,7 @@ function LoginForm() {
 
           {/* Register Link */}
           <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Belum memiliki akun Pelapor?{' '}
+            Belum memiliki akun?{' '}
             <Link
               href={targetRedirect ? `/register?redirect=${encodeURIComponent(targetRedirect)}` : '/register'}
               style={{
@@ -313,7 +313,7 @@ function LoginForm() {
                 textDecoration: 'none',
               }}
             >
-              Daftar Mandiri di Sini
+              Daftar
             </Link>
           </div>
         </div>
