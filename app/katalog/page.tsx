@@ -172,7 +172,7 @@ function KatalogContent() {
 
             {/* Filter Kategori */}
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>Klasifikasi Pusaka</label>
+              <label className="form-label" style={{ fontSize: '0.8rem' }}>Klasifikasi Budaya</label>
               <select
                 value={selectedKategori}
                 onChange={(e) => setSelectedKategori(e.target.value)}

@@ -71,7 +71,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/katalog?kategori=BENDA" style={{ color: 'var(--text-secondary)' }}>
-                  Pusaka Benda (Megalitik & Arsitektur)
+                  Budaya Benda (Megalitik & Arsitektur)
                 </Link>
               </li>
               <li>

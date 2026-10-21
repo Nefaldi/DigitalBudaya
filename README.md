@@ -143,7 +143,7 @@ Antarmuka mengadopsi filosofi **Nordic-Swiss Cultural Archival / Contemporary Cu
 ## Fitur Sistem
 
 - **Framed Archival Hero & Live Metrics:** Tampilan beranda berbingkai arsip resmi BPK Wilayah XVIII dengan indikator registri aktif dan metrik kuantitatif langsung dari basis data.
-- **Katalog Geospasial Publik:** Direktori pencarian pusaka mencakup 13 Kabupaten/Kota se-Sulawesi Tengah dengan sinkronisasi parameter URL dua arah, filter kategori, status konservasi, dan pencarian teks *case-insensitive*.
+- **Katalog Geospasial Publik:** Direktori pencarian budaya mencakup 13 Kabupaten/Kota se-Sulawesi Tengah dengan sinkronisasi parameter URL dua arah, filter kategori, status konservasi, dan pencarian teks *case-insensitive*.
 - **Peta Interaktif Leaflet:** Pembatasan wilayah spesifik Sulteng (119.0°E - 124.5°E, -3.8°S - 2.2°N) dengan penanda pin SVG bertema perisai Tadulako dan lompatan langsung dari navigasi (`/#peta`).
 - **Before-After Slider Modern:** Komponen komparasi visual interaktif dengan Pointer Capture API, dukungan sentuh mobile, dan penempatan posisi instan via klik.
 - **Dossier Lembar Arsip & Cetak Fisik:** Halaman detail dua kolom yang memuat metadata registrasi, peta lokasi terverifikasi, dan tombol cetak dossier A4.
@@ -169,7 +169,7 @@ DigitalBudaya/
 │   │       ├── [id]/          # Operasi per pengguna (Superadmin)
 │   │       └── profile/       # GET/PATCH profil pengguna login
 │   ├── katalog/               # Direktori publik geospasial
-│   │   └── [id]/              # Dossier detail pusaka & slider pemugaran
+│   │   └── [id]/              # Dossier detail budaya & slider pemugaran
 │   ├── login/                 # Halaman autentikasi login
 │   ├── pelapor/               # Portal pelapor masyarakat (/pelapor)
 │   │   ├── lapor/             # Form pelaporan dengan kompresor kanvas & peta

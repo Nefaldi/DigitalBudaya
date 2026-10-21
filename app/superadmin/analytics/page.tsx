@@ -153,7 +153,7 @@ export default function AnalyticsDashboardPage() {
               {data.totalReports}
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Pusaka terdata
+              Budaya terdata
             </div>
           </div>
 

@@ -292,7 +292,7 @@ export default function ImageCompressorUpload({
       (blob) => {
         stopCamera();
         if (blob) {
-          const file = new File([blob], `pusaka_${Date.now()}.jpg`, { type: 'image/jpeg' });
+          const file = new File([blob], `budaya_${Date.now()}.jpg`, { type: 'image/jpeg' });
           processAndUploadFile(file);
         }
       },

@@ -15,7 +15,7 @@ import {
 
 const DRAFT_STORAGE_KEY = 'digiculture_field_draft_v1';
 
-export default function LaporPusakaPage() {
+export default function LaporBudayaPage() {
   const [judulPusaka, setJudulPusaka] = useState('');
   const [kategori, setKategori] = useState<'BENDA' | 'TAKBENDA'>('BENDA');
   const [kabupatenKota, setKabupatenKota] = useState('Kabupaten Poso');

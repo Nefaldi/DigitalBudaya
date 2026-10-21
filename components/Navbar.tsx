@@ -185,7 +185,7 @@ export default function Navbar() {
     navLinks = [
       { label: 'Workbench Verifikasi', href: '/admin' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
-      { label: 'Katalog Pusaka', href: '/katalog' },
+      { label: 'Katalog Budaya', href: '/katalog' },
     ];
   } else if (user.role === 'SUPERADMIN') {
     // Dedicated features for Superadmin (Pimpinan & Eksekutif)
@@ -193,7 +193,7 @@ export default function Navbar() {
       { label: 'Analitik Intelijen', href: '/superadmin/analytics' },
       { label: 'Kelola Pengguna', href: '/superadmin/users' },
       { label: 'Workbench Admin', href: '/admin' },
-      { label: 'Katalog Pusaka', href: '/katalog' },
+      { label: 'Katalog Budaya', href: '/katalog' },
     ];
   }
 
