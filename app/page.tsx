@@ -16,12 +16,13 @@ export default async function HomePage() {
   const user = token ? verifyToken(token) : null;
 
   let reports: HeritageReportItem[] = [];
+  let mapReports: HeritageReportItem[] = [];
   let totalVerified = 0;
   let countBenda = 0;
   let countTakbenda = 0;
 
   try {
-    const [rawReports, count, bendaCount, takbendaCount] = await Promise.all([
+    const [rawReports, count, bendaCount, takbendaCount, rawMapReports] = await Promise.all([
       prisma.heritageReport.findMany({
         where: { status: 'SELESAI' },
         include: {
@@ -40,6 +41,29 @@ export default async function HomePage() {
       prisma.heritageReport.count({
         where: { kategori: 'TAKBENDA' },
       }),
+      prisma.heritageReport.findMany({
+        where: {
+          status: 'SELESAI',
+          latitude: { not: null },
+          longitude: { not: null },
+        },
+        select: {
+          id: true,
+          judulPusaka: true,
+          kategori: true,
+          lokasiSpesifik: true,
+          kabupatenKota: true,
+          latitude: true,
+          longitude: true,
+          fotoKondisiAwal: true,
+          fotoDigitalisasi: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+      }),
     ]);
 
     totalVerified = count;
@@ -47,6 +71,12 @@ export default async function HomePage() {
     countTakbenda = takbendaCount;
     reports = rawReports.map((r) => ({
       ...r,
+      createdAt: r.createdAt.toISOString(),
+      updatedAt: r.updatedAt.toISOString(),
+    }));
+    mapReports = rawMapReports.map((r) => ({
+      ...r,
+      deskripsiKrisis: '',
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
     }));
@@ -69,7 +99,7 @@ export default async function HomePage() {
       {/* 1. HERO SECTION: Full-screen DigiCulture-style Immersive Hero */}
       <section className="digiculture-hero-section">
         {/* Dynamic Zoom-In and Scroll Zoom-Out Background (Rumah Adat Souraja) */}
-        <HeroBackground src="/rumahadatsouraja.jpeg" alt="Rumah Adat Souraja Sulawesi Tengah" />
+        <HeroBackground src="/rumahadatsouraja.webp" alt="Rumah Adat Souraja Sulawesi Tengah" />
 
         {/* Center Content Container */}
         <div className="digiculture-hero-content">
@@ -217,11 +247,31 @@ export default async function HomePage() {
         </div>
 
         {reports.length > 0 ? (
-          <div className="grid-cols-3">
-            {reports.map((report) => (
-              <HeritageCard key={report.id} report={report} hideOpenArchive />
-            ))}
-          </div>
+          <>
+            <div className="grid-cols-3">
+              {reports.map((report) => (
+                <HeritageCard key={report.id} report={report} hideOpenArchive />
+              ))}
+            </div>
+
+            <div style={{ marginTop: '2.25rem', textAlign: 'center' }}>
+              <Link
+                href="/katalog"
+                className="digiculture-hero-btn-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem 1.75rem',
+                  fontSize: '0.88rem',
+                  textDecoration: 'none',
+                }}
+              >
+                <BookOpen size={15} />
+                <span>Lihat Seluruh Katalog Budaya ({totalVerified})</span>
+              </Link>
+            </div>
+          </>
         ) : (
           <div className="paper-card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
@@ -259,7 +309,7 @@ export default async function HomePage() {
             overflow: 'hidden',
           }}
         >
-          <SultengMap reports={reports} height="460px" />
+          <SultengMap reports={mapReports.length > 0 ? mapReports : reports} height="460px" />
         </div>
       </section>
     </div>

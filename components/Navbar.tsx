@@ -23,18 +23,9 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState<string>('/');
   const pathname = usePathname();
 
+  // Consolidated RAF-throttled scroll handler for both scrolled styling and active section detection
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Track active section on homepage via scroll and hash changes
-  useEffect(() => {
-    if (pathname !== '/') return;
+    let ticking = false;
 
     const getElementDocTop = (el: HTMLElement | null) => {
       if (!el) return Infinity;
@@ -42,44 +33,52 @@ export default function Navbar() {
       return rect.top + window.scrollY;
     };
 
-    const updateActiveByHashOrScroll = () => {
-      const scrollY = window.scrollY;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          setScrolled(scrollY > 20);
 
-      // When near or at top of page (hero area), active section is always Beranda ('/')
-      if (scrollY <= 100) {
-        setActiveSection('/');
-        return;
-      }
+          if (pathname === '/') {
+            if (scrollY <= 100) {
+              setActiveSection('/');
+            } else {
+              const petaEl = document.getElementById('peta');
+              const terkiniEl = document.getElementById('katalog-terkini');
+              const statistikEl = document.getElementById('statistik');
 
-      const petaEl = document.getElementById('peta');
-      const terkiniEl = document.getElementById('katalog-terkini');
-      const statistikEl = document.getElementById('statistik');
+              const offsetTolerance = 240;
+              const petaTop = getElementDocTop(petaEl) - offsetTolerance;
+              const terkiniTop = getElementDocTop(terkiniEl) - offsetTolerance;
+              const statistikTop = getElementDocTop(statistikEl) - offsetTolerance;
 
-      const offsetTolerance = 240;
-      const petaTop = getElementDocTop(petaEl) - offsetTolerance;
-      const terkiniTop = getElementDocTop(terkiniEl) - offsetTolerance;
-      const statistikTop = getElementDocTop(statistikEl) - offsetTolerance;
+              if (scrollY < statistikTop) {
+                setActiveSection('/');
+              } else if (petaEl && scrollY >= petaTop) {
+                setActiveSection('/#peta');
+              } else if (terkiniEl && scrollY >= terkiniTop) {
+                setActiveSection('/#katalog-terkini');
+              } else if (statistikEl && scrollY >= statistikTop) {
+                setActiveSection('/#statistik');
+              } else {
+                setActiveSection('/');
+              }
+            }
+          }
 
-      if (scrollY < statistikTop) {
-        setActiveSection('/');
-      } else if (petaEl && scrollY >= petaTop) {
-        setActiveSection('/#peta');
-      } else if (terkiniEl && scrollY >= terkiniTop) {
-        setActiveSection('/#katalog-terkini');
-      } else if (statistikEl && scrollY >= statistikTop) {
-        setActiveSection('/#statistik');
-      } else {
-        setActiveSection('/');
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    updateActiveByHashOrScroll();
-    window.addEventListener('scroll', updateActiveByHashOrScroll, { passive: true });
-    window.addEventListener('hashchange', updateActiveByHashOrScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('hashchange', handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', updateActiveByHashOrScroll);
-      window.removeEventListener('hashchange', updateActiveByHashOrScroll);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('hashchange', handleScroll);
     };
   }, [pathname]);
 
@@ -176,6 +175,7 @@ export default function Navbar() {
   } else if (user.role === 'PELAPOR') {
     // Dedicated features for Pelapor (Sahabat Budaya)
     navLinks = [
+      { label: 'Beranda', href: '/' },
       { label: 'Laporan Saya', href: '/pelapor' },
       { label: 'Buat Laporan', href: '/pelapor/lapor' },
       { label: 'Katalog Budaya', href: '/katalog' },
@@ -183,6 +183,7 @@ export default function Navbar() {
   } else if (user.role === 'ADMIN') {
     // Dedicated features for Admin (Konservator Wilayah)
     navLinks = [
+      { label: 'Beranda', href: '/' },
       { label: 'Workbench Verifikasi', href: '/admin' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
       { label: 'Katalog Budaya', href: '/katalog' },
@@ -190,6 +191,7 @@ export default function Navbar() {
   } else if (user.role === 'SUPERADMIN') {
     // Dedicated features for Superadmin (Pimpinan & Eksekutif)
     navLinks = [
+      { label: 'Beranda', href: '/' },
       { label: 'Analitik Intelijen', href: '/superadmin/analytics' },
       { label: 'Kelola Pengguna', href: '/superadmin/users' },
       { label: 'Workbench Admin', href: '/admin' },
