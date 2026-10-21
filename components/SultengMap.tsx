@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useSyncExternalStore } from 'react';
 import type L from 'leaflet';
 import { HeritageReportItem } from './HeritageCard';
 import { SULTENG_BOUNDS } from '@/lib/sultengLocations';
+import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 
 interface SultengMapProps {
   reports: HeritageReportItem[];
@@ -80,8 +81,15 @@ export default function SultengMap({
           const icon = rep.kategori === 'TAKBENDA' ? emeraldIcon : terracottaIcon;
           const marker = L.marker([rep.latitude, rep.longitude], { icon }).addTo(map);
 
+          const rawPhoto = rep.fotoDigitalisasi || rep.fotoKondisiAwal;
+          const thumbUrl = rawPhoto ? optimizeCloudinaryUrl(rawPhoto, 300) : '';
+          const imageHtml = thumbUrl
+            ? `<div style="width:100%;height:85px;border-radius:4px;overflow:hidden;margin-bottom:6px;background:var(--bg-subtle);"><img src="${thumbUrl}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" /></div>`
+            : '';
+
           const popupContent = `
-            <div style="font-family:'Plus Jakarta Sans',sans-serif;min-width:200px;max-width:240px;padding:4px;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;min-width:200px;max-width:240px;padding:2px;">
+              ${imageHtml}
               <div style="font-size:11px;font-weight:600;color:${rep.kategori === 'TAKBENDA' ? '#1e4030' : '#142948'};margin-bottom:3px;">
                 ${rep.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'} • ${rep.kabupatenKota}
               </div>

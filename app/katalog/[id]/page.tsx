@@ -10,6 +10,7 @@ import SultengMap from '@/components/SultengMap';
 import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 import PrintDossierButton from '@/components/PrintDossierButton';
+import type { Metadata } from 'next';
 import {
   MapPin,
   Calendar,
@@ -18,9 +19,33 @@ import {
   FileText,
   AlertCircle,
   Compass,
+  ArrowLeft,
 } from 'lucide-react';
 
 export const revalidate = 60;
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const { id } = params;
+
+  try {
+    const report = await prisma.heritageReport.findUnique({
+      where: { id },
+      select: { judulPusaka: true, kabupatenKota: true, deskripsiKrisis: true },
+    });
+
+    if (!report) {
+      return { title: 'Dossier Cagar Budaya — DigiCulture Care' };
+    }
+
+    return {
+      title: `${report.judulPusaka} (${report.kabupatenKota}) — Lembar Registrasi Cagar Budaya`,
+      description: report.deskripsiKrisis.slice(0, 160),
+    };
+  } catch {
+    return { title: 'Dossier Cagar Budaya — DigiCulture Care' };
+  }
+}
 
 export default async function HeritageDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -74,12 +99,13 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.45rem',
               color: 'var(--text-secondary)',
               fontSize: '0.85rem',
               fontWeight: 500,
             }}
           >
+            <ArrowLeft size={16} />
             <span>Kembali ke Katalog</span>
           </Link>
           <PrintDossierButton />
