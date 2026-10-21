@@ -24,12 +24,11 @@ export const metadata = {
   description: 'Platform Partisipatif Penyelamatan, Restorasi, dan Digitalisasi Cagar Budaya Megalitikum & Tradisi Lisan Sulawesi Tengah',
   icons: {
     icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
     ],
     apple: [
-      { url: '/apple-touch-icon.png' },
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
 };
