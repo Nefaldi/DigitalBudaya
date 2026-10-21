@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
-import { Search, Compass, Loader2 } from 'lucide-react';
+import { Search, Compass, Loader2, RotateCcw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
 function KatalogContent() {
@@ -23,6 +23,20 @@ function KatalogContent() {
   const [selectedKategori, setSelectedKategori] = useState(initialKat);
   const [selectedStatus, setSelectedStatus] = useState('Semua');
 
+  const isFiltered = Boolean(
+    searchTerm ||
+    selectedKabupaten !== 'Semua' ||
+    selectedKategori !== 'Semua' ||
+    selectedStatus !== 'Semua'
+  );
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedKabupaten('Semua');
+    setSelectedKategori('Semua');
+    setSelectedStatus('Semua');
+  };
+
   // Sinkronisasi state filter jika parameter URL berubah (misalnya navigasi dari footer/navbar)
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -39,6 +53,7 @@ function KatalogContent() {
   // Pengambilan data katalog berbasis filter & pagination
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const timer = setTimeout(async () => {
       setLoading(true);
@@ -52,7 +67,7 @@ function KatalogContent() {
         query.set('page', '1');
         query.set('limit', '12');
 
-        const res = await fetch(`/api/reports?${query.toString()}`);
+        const res = await fetch(`/api/reports?${query.toString()}`, { signal: controller.signal });
         if (res.ok && isMounted) {
           const data = await res.json();
           setReports(data.reports || []);
@@ -64,7 +79,8 @@ function KatalogContent() {
             setTotalCount(data.reports?.length || 0);
           }
         }
-      } catch (err) {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') return;
         console.error('Error loading catalog:', err);
       } finally {
         if (isMounted) setLoading(false);
@@ -73,6 +89,7 @@ function KatalogContent() {
 
     return () => {
       isMounted = false;
+      controller.abort();
       clearTimeout(timer);
     };
   }, [searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
@@ -211,10 +228,32 @@ function KatalogContent() {
           </div>
         ) : reports.length > 0 ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
               <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>
                 Menampilkan <strong style={{ color: 'var(--text-primary)' }}>{reports.length}</strong> dari <strong style={{ color: 'var(--text-primary)' }}>{totalCount || reports.length}</strong> entri arsip
               </span>
+
+              {isFiltered && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  style={{
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-hairline)',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.25rem 0.65rem',
+                    borderRadius: 'var(--radius-xs)',
+                  }}
+                >
+                  <RotateCcw size={12} />
+                  <span>Reset Filter</span>
+                </button>
+              )}
             </div>
 
             <div className="grid-cols-3">

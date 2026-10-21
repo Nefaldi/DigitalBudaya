@@ -38,9 +38,15 @@ export default function AnalyticsDashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
+    let ignore = false;
+
     async function fetchAnalytics() {
       try {
-        const authRes = await fetch('/api/auth/me');
+        const [authRes, res] = await Promise.all([
+          fetch('/api/auth/me'),
+          fetch('/api/analytics'),
+        ]);
+
         if (!authRes.ok) {
           router.push('/login?redirect=/superadmin/analytics');
           return;
@@ -51,18 +57,23 @@ export default function AnalyticsDashboardPage() {
           return;
         }
 
-        const res = await fetch('/api/analytics');
-        if (res.ok) {
+        if (res.ok && !ignore) {
           const json = await res.json();
           setData(json.analytics);
         }
       } catch (err) {
         console.error('Error fetching analytics:', err);
       } finally {
-        setLoading(false);
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     }
     fetchAnalytics();
+
+    return () => {
+      ignore = true;
+    };
   }, [router]);
 
   const fullKabupatenBreakdown = useMemo(() => {

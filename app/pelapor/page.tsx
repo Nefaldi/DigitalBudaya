@@ -49,8 +49,11 @@ export default function PelaporDashboardPage() {
 
     async function fetchMyReports() {
       try {
-        // 1. Get Me
-        const authRes = await fetch('/api/auth/me');
+        const [authRes, repRes] = await Promise.all([
+          fetch('/api/auth/me'),
+          fetch('/api/reports?myReports=true'),
+        ]);
+
         if (!authRes.ok) {
           router.push('/login?redirect=/pelapor');
           return;
@@ -59,8 +62,6 @@ export default function PelaporDashboardPage() {
         if (ignore) return;
         setUser(authData.user);
 
-        // 2. Get My Reports
-        const repRes = await fetch('/api/reports?myReports=true');
         if (repRes.ok) {
           const repData = await repRes.json();
           if (ignore) return;

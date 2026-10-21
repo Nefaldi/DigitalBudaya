@@ -50,18 +50,20 @@ export default function UserManagementPage() {
 
     async function fetchUsers() {
       try {
-        const authRes = await fetch('/api/auth/me');
-        if (!authRes.ok) {
-          router.push('/login?redirect=/superadmin/users');
-          return;
+        if (!currentUser) {
+          const authRes = await fetch('/api/auth/me');
+          if (!authRes.ok) {
+            router.push('/login?redirect=/superadmin/users');
+            return;
+          }
+          const authData = await authRes.json();
+          if (authData.user.role !== 'SUPERADMIN') {
+            router.push('/admin');
+            return;
+          }
+          if (ignore) return;
+          setCurrentUser(authData.user);
         }
-        const authData = await authRes.json();
-        if (authData.user.role !== 'SUPERADMIN') {
-          router.push('/admin');
-          return;
-        }
-        if (ignore) return;
-        setCurrentUser(authData.user);
 
         const res = await fetch(`/api/users?role=${roleFilter}`);
         if (res.ok) {
@@ -83,7 +85,7 @@ export default function UserManagementPage() {
     return () => {
       ignore = true;
     };
-  }, [roleFilter, router]);
+  }, [roleFilter, router, currentUser]);
 
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     setUpdatingId(userId);

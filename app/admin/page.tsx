@@ -46,7 +46,11 @@ export default function AdminWorkbenchPage() {
 
     async function fetchData() {
       try {
-        const authRes = await fetch('/api/auth/me');
+        const [authRes, repRes] = await Promise.all([
+          fetch('/api/auth/me'),
+          fetch('/api/reports?status=Semua'),
+        ]);
+
         if (!authRes.ok) {
           router.push('/login?redirect=/admin');
           return;
@@ -59,8 +63,6 @@ export default function AdminWorkbenchPage() {
         if (ignore) return;
         setUser(authData.user);
 
-        // Fetch all reports without public restriction
-        const repRes = await fetch('/api/reports?status=Semua');
         if (repRes.ok) {
           const repData = await repRes.json();
           if (ignore) return;

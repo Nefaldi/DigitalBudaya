@@ -71,16 +71,24 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    return NextResponse.json({
-      reports,
-      pagination: {
-        total: totalCount,
-        page,
-        limit,
-        totalPages: Math.ceil(totalCount / limit),
-        hasMore: skip + reports.length < totalCount,
+    const responseHeaders: Record<string, string> = {};
+    if (!myReports && (!currentUser || currentUser.role === 'PELAPOR')) {
+      responseHeaders['Cache-Control'] = 'public, s-maxage=15, stale-while-revalidate=60';
+    }
+
+    return NextResponse.json(
+      {
+        reports,
+        pagination: {
+          total: totalCount,
+          page,
+          limit,
+          totalPages: Math.ceil(totalCount / limit),
+          hasMore: skip + reports.length < totalCount,
+        },
       },
-    });
+      { headers: responseHeaders }
+    );
   } catch (error) {
     console.error('Error fetching reports:', error);
     return NextResponse.json({ error: 'Gagal mengambil data laporan' }, { status: 500 });
