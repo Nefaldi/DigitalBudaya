@@ -36,26 +36,38 @@ export default function Navbar() {
   useEffect(() => {
     if (pathname !== '/') return;
 
+    const getElementDocTop = (el: HTMLElement | null) => {
+      if (!el) return Infinity;
+      const rect = el.getBoundingClientRect();
+      return rect.top + window.scrollY;
+    };
+
     const updateActiveByHashOrScroll = () => {
-      const hash = window.location.hash;
       const scrollY = window.scrollY;
+
+      // When near or at top of page (hero area), active section is always Beranda ('/')
+      if (scrollY <= 100) {
+        setActiveSection('/');
+        return;
+      }
 
       const petaEl = document.getElementById('peta');
       const terkiniEl = document.getElementById('katalog-terkini');
       const statistikEl = document.getElementById('statistik');
 
-      const petaTop = petaEl ? petaEl.offsetTop - 240 : Infinity;
-      const terkiniTop = terkiniEl ? terkiniEl.offsetTop - 240 : Infinity;
-      const statistikTop = statistikEl ? statistikEl.offsetTop - 240 : Infinity;
+      const offsetTolerance = 240;
+      const petaTop = getElementDocTop(petaEl) - offsetTolerance;
+      const terkiniTop = getElementDocTop(terkiniEl) - offsetTolerance;
+      const statistikTop = getElementDocTop(statistikEl) - offsetTolerance;
 
-      if (petaEl && scrollY >= petaTop) {
+      if (scrollY < statistikTop) {
+        setActiveSection('/');
+      } else if (petaEl && scrollY >= petaTop) {
         setActiveSection('/#peta');
       } else if (terkiniEl && scrollY >= terkiniTop) {
         setActiveSection('/#katalog-terkini');
       } else if (statistikEl && scrollY >= statistikTop) {
         setActiveSection('/#statistik');
-      } else if (scrollY <= 50 && (hash === '#statistik' || hash === '#katalog-terkini' || hash === '#peta')) {
-        setActiveSection(`/${hash}`);
       } else {
         setActiveSection('/');
       }
