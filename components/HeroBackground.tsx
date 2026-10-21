@@ -9,7 +9,7 @@ interface HeroBackgroundProps {
 }
 
 export default function HeroBackground({
-  src = '/rumahadatsouraja.jpeg',
+  src = '/rumahadatsouraja.webp',
   alt = 'Rumah Adat Souraja Sulawesi Tengah',
 }: HeroBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);

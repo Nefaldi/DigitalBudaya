@@ -902,271 +902,34 @@ a {
 }
 
 /* ==============================================================================
-   Featured Headline Carousel (Sorotan / Banner Slider)
-   Reference: UI Hero News & Archival Spotlight Carousel
+   Leaflet GeoMap & Curatorial Popup Theme Adaptation
    ============================================================================== */
-.featured-carousel-root {
-  position: relative;
-  width: 100%;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  background-color: #0b0b0e;
-  border: 1px solid var(--border-hairline);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.12);
-  user-select: none;
-  outline: none;
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.28) !important;
+  padding: 0 !important;
 }
 
-.featured-carousel-root:focus-visible {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px var(--border-focus);
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.5 !important;
 }
 
-.featured-carousel-viewport {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 21 / 9;
-  min-height: 380px;
-  max-height: 480px;
-  overflow: hidden;
+.leaflet-popup-tip {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-hairline) !important;
 }
 
-@media (max-width: 960px) {
-  .featured-carousel-viewport {
-    aspect-ratio: 16 / 9;
-    min-height: 340px;
-  }
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--text-muted) !important;
+  padding: 6px !important;
 }
 
-@media (max-width: 640px) {
-  .featured-carousel-viewport {
-    aspect-ratio: 4 / 3;
-    min-height: 310px;
-  }
-}
-
-.featured-carousel-track {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.featured-carousel-slide {
-  position: relative;
-  flex: 0 0 100%;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.featured-carousel-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s ease;
-}
-
-.featured-carousel-root:hover .featured-carousel-slide.is-active .featured-carousel-img {
-  transform: scale(1.02);
-}
-
-/* Gradients for high contrast editorial legibility */
-.featured-carousel-overlay-left {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(5, 5, 8, 0.94) 0%,
-    rgba(5, 5, 8, 0.82) 36%,
-    rgba(5, 5, 8, 0.35) 66%,
-    rgba(5, 5, 8, 0.05) 86%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 2;
-}
-
-.featured-carousel-overlay-bottom {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(5, 5, 8, 0.88) 0%,
-    rgba(5, 5, 8, 0.4) 35%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Content layer */
-.featured-carousel-content {
-  position: absolute;
-  left: 3.25rem;
-  bottom: 2.25rem;
-  max-width: 66%;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  pointer-events: auto;
-}
-
-@media (max-width: 960px) {
-  .featured-carousel-content {
-    left: 2.5rem;
-    max-width: 76%;
-    bottom: 2rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .featured-carousel-content {
-    left: 1.25rem;
-    right: 1.25rem;
-    bottom: 2.25rem;
-    max-width: calc(100% - 2.5rem);
-  }
-}
-
-.featured-carousel-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background-color: #4f46e5;
-  color: #ffffff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.28rem 0.65rem;
-  border-radius: 4px;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.featured-carousel-title {
-  font-family: Georgia, 'Times New Roman', Cambria, Times, serif;
-  font-size: clamp(1.2rem, 2.3vw, 2.05rem);
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.28;
-  margin: 0 0 0.85rem 0;
-  text-wrap: balance;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  transition: opacity 0.15s ease;
-}
-
-.featured-carousel-title:hover {
-  opacity: 0.92;
-}
-
-.featured-carousel-meta {
-  display: flex;
-  align-items: center;
-  gap: 1.15rem;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.82rem;
-  font-weight: 450;
-  flex-wrap: wrap;
-}
-
-.featured-carousel-meta-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-}
-
-/* Nav arrows */
-.featured-carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(4px);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-  padding: 0;
-}
-
-.featured-carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-50%) scale(1.08);
-}
-
-.featured-carousel-btn:active {
-  transform: translateY(-50%) scale(0.96);
-}
-
-.featured-carousel-btn-prev {
-  left: 1.25rem;
-}
-
-.featured-carousel-btn-next {
-  right: 1.25rem;
-}
-
-@media (max-width: 640px) {
-  .featured-carousel-btn {
-    width: 32px;
-    height: 32px;
-  }
-  .featured-carousel-btn-prev {
-    left: 0.65rem;
-  }
-  .featured-carousel-btn-next {
-    right: 0.65rem;
-  }
-}
-
-/* Pagination indicator dots */
-.featured-carousel-dots {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  z-index: 10;
-}
-
-.featured-carousel-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.featured-carousel-dot:hover {
-  background: rgba(255, 255, 255, 0.75);
-  transform: scale(1.2);
-}
-
-.featured-carousel-dot.is-active {
-  width: 8px;
-  height: 8px;
-  background: #ffffff;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
-  transform: scale(1.1);
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: var(--text-primary) !important;
 }
 
 /* ==============================================================================
