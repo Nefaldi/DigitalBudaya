@@ -10,6 +10,7 @@ import WorkflowStepper from '@/components/WorkflowStepper';
 import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import { UserSession } from '@/types';
+import LoadingScreen from '@/components/LoadingScreen';
 import {
   FilePlus,
   Clock,
@@ -159,10 +160,10 @@ export default function PelaporDashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '6rem 0' }}>
-        <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)', margin: '0 auto 1rem auto' }} />
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memuat dashboard Sahabat Budaya...</p>
-      </div>
+      <LoadingScreen
+        message="Memuat Dashboard Pelapor..."
+        submessage="Memuat arsip laporan cagar budaya Anda"
+      />
     );
   }
 
@@ -342,32 +343,41 @@ export default function PelaporDashboardPage() {
           {reports.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {reports.map((report) => (
-                <div key={report.id} className="paper-card" style={{ padding: 'clamp(1rem, 2.5vw, 1.75rem)' }}>
-                  <div className="report-row">
-                    {/* Thumbnail */}
+                <div
+                  key={report.id}
+                  className="paper-card"
+                  style={{
+                    padding: 'clamp(1rem, 2vw, 1.35rem)',
+                    borderRadius: '16px',
+                    border: '1px solid var(--border-hairline)',
+                  }}
+                >
+                  <div className="pelapor-card-grid">
+                    {/* Thumbnail with balanced ratio and smooth rounded corners */}
                     <div
                       style={{
                         position: 'relative',
                         width: '100%',
-                        height: '140px',
-                        borderRadius: 'var(--radius-sm)',
+                        minHeight: '190px',
+                        aspectRatio: '16/10',
+                        borderRadius: '12px',
                         overflow: 'hidden',
                         background: 'var(--bg-canvas)',
                         border: '1px solid var(--border-hairline)',
                       }}
                     >
                       <Image
-                        src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 400)}
+                        src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 600)}
                         alt={report.judulPusaka}
                         fill
                         unoptimized
-                        sizes="(max-width: 768px) 100vw, 240px"
+                        sizes="(max-width: 768px) 100vw, 300px"
                         style={{ objectFit: 'cover' }}
                       />
                     </div>
 
                     {/* Report Information */}
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.85rem' }}>
                       <div>
                         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
                           <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
@@ -383,9 +393,9 @@ export default function PelaporDashboardPage() {
                         <h3
                           style={{
                             fontSize: '1.25rem',
-                            marginBottom: '0.5rem',
+                            marginBottom: '0.4rem',
                             color: 'var(--text-primary)',
-                            fontWeight: 460,
+                            fontWeight: 600,
                             letterSpacing: '-0.02em',
                           }}
                         >
@@ -396,8 +406,8 @@ export default function PelaporDashboardPage() {
                           style={{
                             fontSize: '0.875rem',
                             color: 'var(--text-secondary)',
-                            marginBottom: '1rem',
-                            lineHeight: 1.6,
+                            marginBottom: '0.85rem',
+                            lineHeight: 1.55,
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
                             WebkitBoxOrient: 'vertical',
@@ -408,9 +418,9 @@ export default function PelaporDashboardPage() {
                         </p>
                       </div>
 
-                      {/* Stepper Preview */}
-                      <div style={{ marginBottom: '1.25rem' }}>
-                        <WorkflowStepper currentStatus={report.status} adminName={report.admin?.nama} />
+                      {/* Stepper Preview (Compact & Connected) */}
+                      <div>
+                        <WorkflowStepper currentStatus={report.status} adminName={report.admin?.nama} compact={true} />
                       </div>
 
                       {/* Actions Bar */}
@@ -620,8 +630,8 @@ export default function PelaporDashboardPage() {
                     onChange={(e) => setEditKategori(e.target.value as 'BENDA' | 'TAKBENDA')}
                     className="form-select"
                   >
-                    <option value="BENDA">Benda (Megalit, Arsitektur, Artefak)</option>
-                    <option value="TAKBENDA">Takbenda (Tradisi Lisan, Bahasa, Sastra)</option>
+                    <option value="BENDA">Benda</option>
+                    <option value="TAKBENDA">Takbenda</option>
                   </select>
                 </div>
 

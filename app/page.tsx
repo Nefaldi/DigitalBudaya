@@ -235,43 +235,47 @@ export default async function HomePage() {
           style={{
             marginBottom: '1.75rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '0.75rem',
+            paddingBottom: '0.85rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '1rem',
           }}
         >
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
-            Katalog Terkini
-          </h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-            Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
-          </p>
+          <div>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
+              Katalog Terkini
+            </h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+              Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
+            </p>
+          </div>
+
+          <Link
+            href="/katalog"
+            className="digiculture-hero-btn-primary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.55rem 1.15rem',
+              fontSize: '0.84rem',
+              textDecoration: 'none',
+              borderRadius: '9999px',
+            }}
+          >
+            <BookOpen size={14} />
+            <span>Lihat Seluruh Katalog ({totalVerified})</span>
+          </Link>
         </div>
 
         {reports.length > 0 ? (
-          <>
-            <div className="grid-cols-3">
-              {reports.map((report) => (
-                <HeritageCard key={report.id} report={report} hideOpenArchive />
-              ))}
-            </div>
-
-            <div style={{ marginTop: '2.25rem', textAlign: 'center' }}>
-              <Link
-                href="/katalog"
-                className="digiculture-hero-btn-primary"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.75rem 1.75rem',
-                  fontSize: '0.88rem',
-                  textDecoration: 'none',
-                }}
-              >
-                <BookOpen size={15} />
-                <span>Lihat Seluruh Katalog Budaya ({totalVerified})</span>
-              </Link>
-            </div>
-          </>
+          <div className="grid-cols-3">
+            {reports.map((report) => (
+              <HeritageCard key={report.id} report={report} hideOpenArchive />
+            ))}
+          </div>
         ) : (
           <div className="paper-card" style={{ textAlign: 'center', padding: '3.5rem 1.5rem' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>

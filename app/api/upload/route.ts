@@ -28,6 +28,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Berkas file tidak ditemukan dalam form-data' }, { status: 400 });
     }
 
+    // Validasi tipe berkas hanya gambar (JPG, PNG, WEBP, AVIF)
+    const allowedImageMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+    if (!allowedImageMimes.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'Format berkas tidak didukung. Harap unggah berkas citra gambar (JPG, PNG, WEBP, AVIF).' },
+        { status: 400 }
+      );
+    }
+
     // Limit ukuran file maksimal 4.5 MB
     const MAX_FILE_SIZE = 4.5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
@@ -41,12 +50,8 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Determine resource_type for Cloudinary (image vs audio/video)
-    const isAudio = file.type.startsWith('audio/') || file.name.endsWith('.mp3') || file.name.endsWith('.wav');
-    const resourceType = isAudio ? 'video' : 'image';
-
-    // Upload to Cloudinary
-    const result = await uploadToCloudinary(buffer, folder, resourceType);
+    // Upload to Cloudinary (resource_type: image)
+    const result = await uploadToCloudinary(buffer, folder, 'image');
 
     return NextResponse.json({
       message: 'Unggah berkas berhasil',

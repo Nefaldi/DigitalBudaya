@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { hashPassword, signToken } from '@/lib/auth';
 import { Role } from '@prisma/client';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'anonymous';
+    const rateLimit = checkRateLimit(`register:${ip}`, { maxRequests: 5, intervalMs: 60_000 });
+    if (!rateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak percobaan pendaftaran akun. Silakan coba kembali dalam ${retrySeconds} detik.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
+    }
+
     const body = await req.json();
     const { nama, email, password } = body;
 
@@ -14,6 +25,19 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
     const normalizedNama = nama.trim();
+
+    if (normalizedNama.length < 2 || normalizedNama.length > 70) {
+      return NextResponse.json({ error: 'Nama harus berdurasi antara 2 hingga 70 karakter' }, { status: 400 });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      return NextResponse.json({ error: 'Format alamat email tidak valid' }, { status: 400 });
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json({ error: 'Kata sandi minimal 6 karakter' }, { status: 400 });
+    }
 
     // Check existing email
     const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });

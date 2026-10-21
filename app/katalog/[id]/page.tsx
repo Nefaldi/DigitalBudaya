@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
-import AudioWavePlayer from '@/components/AudioWavePlayer';
 import WorkflowStepper from '@/components/WorkflowStepper';
 import SultengMap from '@/components/SultengMap';
 import { HeritageReportItem } from '@/components/HeritageCard';
@@ -214,17 +213,6 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
             </div>
           )}
         </div>
-
-        {/* Audio Player if available (Takbenda) */}
-        {report.rekamanAudioUrl && (
-          <div style={{ marginBottom: '2.5rem' }}>
-            <AudioWavePlayer
-              audioUrl={report.rekamanAudioUrl}
-              title={`Rekaman Tradisi Lisan: ${report.judulPusaka}`}
-              subtitle={`Arsip Penuturan Budaya — ${report.kabupatenKota}, Sulawesi Tengah`}
-            />
-          </div>
-        )}
 
         {/* Workflow Stepper */}
         <div style={{ marginBottom: '2.5rem' }}>

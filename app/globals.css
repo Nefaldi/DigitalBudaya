@@ -988,7 +988,7 @@ a {
 
 /* State: Scrolled down (Floating Pill Island) */
 .digiculture-nav-scrolled {
-  max-width: 920px;
+  max-width: 1060px;
   margin-top: 0.65rem;
   margin-bottom: 0.65rem;
   padding: 0.45rem 1.15rem;
@@ -1336,6 +1336,21 @@ a {
   color: var(--action-primary-text) !important;
   background-color: var(--action-primary) !important;
   font-weight: 700;
+}
+
+/* Pelapor Card Responsive Grid */
+.pelapor-card-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .pelapor-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 

@@ -13,20 +13,20 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot(): 'light' | 'dark' {
-  if (typeof window === 'undefined') return 'light';
+  if (typeof window === 'undefined') return 'dark';
   const currentAttr = document.documentElement.getAttribute('data-theme');
   if (currentAttr === 'dark' || currentAttr === 'light') {
     return currentAttr;
   }
   const saved = localStorage.getItem('digiculture_theme');
-  if (saved === 'dark') {
-    return 'dark';
+  if (saved === 'light') {
+    return 'light';
   }
-  return 'light';
+  return 'dark';
 }
 
 function getServerSnapshot(): 'light' | 'dark' {
-  return 'light';
+  return 'dark';
 }
 
 export default function ThemeToggle({ pill = false }: { pill?: boolean }) {

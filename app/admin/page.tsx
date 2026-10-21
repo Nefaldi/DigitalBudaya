@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 import ImageCompressorUpload from '@/components/ImageCompressorUpload';
+import LoadingScreen from '@/components/LoadingScreen';
 import { UserSession } from '@/types';
 import {
   Shield,
@@ -14,10 +15,7 @@ import {
   Upload,
   X,
   ExternalLink,
-  Loader2,
-  Music,
   MapPin,
-  CheckCircle2,
 } from 'lucide-react';
 
 export default function AdminWorkbenchPage() {
@@ -31,12 +29,9 @@ export default function AdminWorkbenchPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState<'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI'>('DIPROSES');
   const [fotoDigitalisasi, setFotoDigitalisasi] = useState('');
-  const [rekamanAudioUrl, setRekamanAudioUrl] = useState('');
   const [catatanPenanganan, setCatatanPenanganan] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState('');
-  const [uploadingAudio, setUploadingAudio] = useState(false);
-  const [audioUploadError, setAudioUploadError] = useState('');
   const [workbenchFeedback, setWorkbenchFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const router = useRouter();
@@ -88,7 +83,6 @@ export default function AdminWorkbenchPage() {
     setSelectedReport(report);
     setUpdatingStatus(report.status === 'LAPORAN_MASUK' ? 'DIPROSES' : report.status);
     setFotoDigitalisasi(report.fotoDigitalisasi || '');
-    setRekamanAudioUrl(report.rekamanAudioUrl || '');
     setCatatanPenanganan(report.catatanPenanganan || '');
     setActionError('');
     setModalOpen(true);
@@ -115,52 +109,6 @@ export default function AdminWorkbenchPage() {
     }
   };
 
-  const handleAudioFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (
-      !file.type.startsWith('audio/') &&
-      !file.name.endsWith('.mp3') &&
-      !file.name.endsWith('.wav') &&
-      !file.name.endsWith('.m4a') &&
-      !file.name.endsWith('.ogg')
-    ) {
-      setAudioUploadError('Berkas harus berupa audio (MP3, WAV, M4A, OGG).');
-      return;
-    }
-
-    if (file.size > 4.5 * 1024 * 1024) {
-      setAudioUploadError('Ukuran berkas audio maksimal 4.5 MB.');
-      return;
-    }
-
-    setUploadingAudio(true);
-    setAudioUploadError('');
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'digiculture/audio');
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Gagal mengunggah berkas audio');
-      }
-
-      setRekamanAudioUrl(data.url);
-    } catch (err) {
-      setAudioUploadError(err instanceof Error ? err.message : 'Gagal mengunggah audio');
-    } finally {
-      setUploadingAudio(false);
-    }
-  };
-
   const handleSaveResolution = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedReport) return;
@@ -175,7 +123,6 @@ export default function AdminWorkbenchPage() {
         body: JSON.stringify({
           status: updatingStatus,
           fotoDigitalisasi: fotoDigitalisasi || null,
-          rekamanAudioUrl: rekamanAudioUrl || null,
           catatanPenanganan: catatanPenanganan || null,
         }),
       });
@@ -196,10 +143,10 @@ export default function AdminWorkbenchPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '6rem 0' }}>
-        <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)', margin: '0 auto 1rem auto' }} />
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memuat Workbench Konservator Wilayah...</p>
-      </div>
+      <LoadingScreen
+        message="Memuat Workbench Konservator..."
+        submessage="Sinkronisasi antrean laporan dan arsip pemulihan cagar budaya"
+      />
     );
   }
 
@@ -554,100 +501,6 @@ export default function AdminWorkbenchPage() {
                     initialUrl={fotoDigitalisasi}
                     onUploadSuccess={(url) => setFotoDigitalisasi(url)}
                   />
-                </div>
-
-                {/* Audio URL / Direct Upload (For Takbenda) */}
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <Music size={14} style={{ color: 'var(--action-emerald)' }} /> Rekaman Audio Lapangan (Khusus Warisan Takbenda)
-                  </label>
-
-                  {audioUploadError && (
-                    <div style={{ color: 'var(--status-masuk)', fontSize: '0.78rem', marginBottom: '0.5rem' }}>
-                      {audioUploadError}
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <input
-                      type="url"
-                      placeholder="https://domain-arsip.id/audio/rekaman.mp3"
-                      value={rekamanAudioUrl}
-                      onChange={(e) => setRekamanAudioUrl(e.target.value)}
-                      className="form-input"
-                      style={{ flex: 1 }}
-                    />
-                    <label
-                      className="btn btn-secondary btn-sm"
-                      style={{
-                        cursor: uploadingAudio ? 'not-allowed' : 'pointer',
-                        whiteSpace: 'nowrap',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                      }}
-                    >
-                      {uploadingAudio ? (
-                        <>
-                          <Loader2 size={13} className="animate-spin" />
-                          <span>Mengunggah...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Upload size={13} />
-                          <span>Unggah Audio</span>
-                        </>
-                      )}
-                      <input
-                        type="file"
-                        accept="audio/*,.mp3,.wav,.m4a,.ogg"
-                        onChange={handleAudioFileUpload}
-                        disabled={uploadingAudio}
-                        style={{ display: 'none' }}
-                      />
-                    </label>
-                  </div>
-
-                  {rekamanAudioUrl && (
-                    <div
-                      style={{
-                        padding: '0.65rem 0.85rem',
-                        background: 'var(--bg-canvas)',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid var(--border-hairline)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '0.75rem',
-                        marginTop: '0.5rem',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.8rem', color: 'var(--action-emerald)', overflow: 'hidden' }}>
-                        <CheckCircle2 size={14} />
-                        <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                          Audio terpasang: {rekamanAudioUrl}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setRekamanAudioUrl('')}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: 'var(--text-muted)',
-                          cursor: 'pointer',
-                          padding: '0.2rem',
-                        }}
-                        title="Hapus tautan audio"
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  )}
-
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', display: 'block' }}>
-                    Bisa unggah langsung file audio MP3/WAV penutur lokal (maks. 4.5 MB) atau masukkan tautan CDN.
-                  </span>
                 </div>
 
                 {/* Catatan Penanganan Konservator */}

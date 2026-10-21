@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserRole, UserSession } from '@/types';
+import LoadingScreen from '@/components/LoadingScreen';
 import {
   Search,
   Shield,
@@ -182,10 +183,10 @@ export default function UserManagementPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '6rem 0' }}>
-        <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)', margin: '0 auto 1rem auto' }} />
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Memuat Konsol Manajemen Pengguna...</p>
-      </div>
+      <LoadingScreen
+        message="Memuat Konsol Pengguna..."
+        submessage="Sinkronisasi akun pengelola dan sahabat budaya"
+      />
     );
   }
 

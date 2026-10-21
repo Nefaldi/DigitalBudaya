@@ -3,7 +3,64 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Mail, Phone, MapPin } from 'lucide-react';
+
+function InstagramIcon({ size = 15, style }: { size?: number; style?: React.CSSProperties }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={style}
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ size = 15, style }: { size?: number; style?: React.CSSProperties }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={style}
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+
+function YoutubeIcon({ size = 15, style }: { size?: number; style?: React.CSSProperties }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={style}
+    >
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <polygon points="10 15 15 12 10 9 10 15" fill="currentColor" />
+    </svg>
+  );
+}
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -104,7 +161,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Kolom 3: Modul & Fitur Unggulan Lomba */}
+          {/* Kolom 3: Informasi Kontak & Media Sosial */}
           <div>
             <div
               style={{
@@ -116,33 +173,58 @@ export default function Footer() {
                 letterSpacing: '0.05em',
               }}
             >
-              Fitur & Modul Inovasi
+              Informasi Kontak
             </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
-              <li>
-                <Link href="/katalog?kategori=BENDA" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-                  Cagar Budaya Benda (Megalitik & Situs)
-                </Link>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem' }}>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
+                <InstagramIcon size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  @kebudayaan_sulteng
+                </a>
               </li>
-              <li>
-                <Link href="/katalog?kategori=TAKBENDA" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-                  Warisan Takbenda (Tradisi Lisan & Bahasa)
-                </Link>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
+                <FacebookIcon size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  Dinas Kebudayaan Prov. Sulteng
+                </a>
               </li>
-              <li>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  Komparator Restorasi Before-After
-                </span>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
+                <YoutubeIcon size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
+                <a
+                  href="https://youtube.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  Budaya Sulawesi Tengah
+                </a>
               </li>
-              <li>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  Ekspor Lembar Dossier Resmi Standar A4
-                </span>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
+                <Mail size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
+                <a
+                  href="mailto:pengaduan@digiculture.sultengprov.go.id"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  pengaduan@digiculture.id
+                </a>
               </li>
-              <li>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  Kompresi Citra Canvas & Geofencing GPS
-                </span>
+              <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
+                <Phone size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
+                <span>Hotline: +62 821-9876-5432</span>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                <MapPin size={15} style={{ color: 'var(--action-primary)', flexShrink: 0, marginTop: '2px' }} />
+                <span>Jl. Prof. Moh. Yamin No. 25, Kota Palu, Sulawesi Tengah</span>
               </li>
             </ul>
           </div>

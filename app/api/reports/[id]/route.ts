@@ -4,6 +4,7 @@ import { getAuthenticatedUser } from '@/lib/auth';
 import { isWithinSulteng } from '@/lib/sultengLocations';
 import { Prisma, StatusPenyelamatan, KategoriPusaka } from '@prisma/client';
 import { deleteFromCloudinary } from '@/lib/cloudinary';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   try {
@@ -34,6 +35,15 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
     const user = getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Harap login terlebih dahulu' }, { status: 401 });
+    }
+
+    const rateLimit = checkRateLimit(`report-patch:${user.id}`, { maxRequests: 30, intervalMs: 60_000 });
+    if (!rateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak permintaan pembaruan laporan. Coba lagi dalam ${retrySeconds} detik.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
     }
 
     const params = await props.params;
@@ -152,6 +162,15 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
     const user = getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Harap login terlebih dahulu' }, { status: 401 });
+    }
+
+    const rateLimit = checkRateLimit(`report-delete:${user.id}`, { maxRequests: 10, intervalMs: 60_000 });
+    if (!rateLimit.isAllowed) {
+      const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
+      return NextResponse.json(
+        { error: `Terlalu banyak permintaan penghapusan laporan. Coba lagi dalam ${retrySeconds} detik.` },
+        { status: 429, headers: { 'Retry-After': String(retrySeconds) } }
+      );
     }
 
     const params = await props.params;

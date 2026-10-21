@@ -317,7 +317,7 @@ export default function LaporBudayaPage() {
                 <input
                   type="text"
                   required
-                  placeholder="Contoh: Situs Megalitikum Pokekea / Soura Kaili"
+                  placeholder="Contoh: Situs Megalitikum Pokekea"
                   value={judulPusaka}
                   onChange={(e) => setJudulPusaka(e.target.value)}
                   className="form-input"
@@ -331,8 +331,8 @@ export default function LaporBudayaPage() {
                   onChange={(e) => setKategori(e.target.value as 'BENDA' | 'TAKBENDA')}
                   className="form-select"
                 >
-                  <option value="BENDA">Benda (Fisik/Megalitik)</option>
-                  <option value="TAKBENDA">Takbenda (Bahasa/Tradisi Lisan)</option>
+                  <option value="BENDA">Benda</option>
+                  <option value="TAKBENDA">Takbenda</option>
                 </select>
               </div>
             </div>

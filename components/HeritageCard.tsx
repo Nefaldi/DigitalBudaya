@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Volume2 } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 
 export interface HeritageReportItem {
@@ -91,25 +91,6 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
           <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
             {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Benda'}
           </span>
-
-          {report.rekamanAudioUrl && (
-            <span
-              style={{
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                color: '#ffffff',
-                fontSize: '0.7rem',
-                fontWeight: 500,
-                padding: '0.15rem 0.45rem',
-                borderRadius: 'var(--radius-xs)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-              }}
-            >
-              <Volume2 size={11} />
-              <span>Audio</span>
-            </span>
-          )}
         </div>
       </Link>
 

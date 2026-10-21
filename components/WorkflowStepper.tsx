@@ -7,12 +7,14 @@ interface WorkflowStepperProps {
   currentStatus: 'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI';
   adminName?: string | null;
   updatedAt?: string;
+  compact?: boolean;
 }
 
 export default function WorkflowStepper({
   currentStatus,
   adminName,
   updatedAt,
+  compact = false,
 }: WorkflowStepperProps) {
   const steps = [
     {
@@ -46,11 +48,117 @@ export default function WorkflowStepper({
     return 'pending';
   };
 
+  if (compact) {
+    return (
+      <div
+        style={{
+          background: 'var(--bg-subtle)',
+          border: '1px solid var(--border-hairline)',
+          borderRadius: '12px',
+          padding: '0.75rem 1rem',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            Status Penanganan
+          </span>
+          {adminName && currentStatus !== 'LAPORAN_MASUK' && (
+            <span style={{ fontSize: '0.75rem', color: 'var(--action-primary)', fontWeight: 500 }}>
+              Konservator: {adminName}
+            </span>
+          )}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', position: 'relative' }}>
+          {steps.map((step, idx) => {
+            const status = getStepStatus(step.id);
+            const Icon = step.icon;
+
+            const isDone = status === 'completed';
+            const isActive = status === 'active';
+
+            return (
+              <div
+                key={step.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.45rem 0.6rem',
+                  borderRadius: '8px',
+                  background: isActive ? 'var(--bg-surface)' : isDone ? 'rgba(46, 125, 50, 0.08)' : 'transparent',
+                  border: isActive ? '1px solid var(--border-strong)' : isDone ? '1px solid var(--status-selesai-border)' : '1px solid transparent',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    background: isDone
+                      ? 'var(--status-selesai-bg)'
+                      : isActive
+                      ? 'var(--color-terracotta-soft)'
+                      : 'var(--bg-canvas)',
+                    color: isDone
+                      ? 'var(--status-selesai)'
+                      : isActive
+                      ? 'var(--action-primary)'
+                      : 'var(--text-muted)',
+                    border: `1px solid ${
+                      isDone
+                        ? 'var(--status-selesai-border)'
+                        : isActive
+                        ? 'var(--action-primary)'
+                        : 'var(--border-hairline)'
+                    }`,
+                  }}
+                >
+                  <Icon size={13} />
+                </div>
+                <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      fontSize: '0.76rem',
+                      fontWeight: isActive ? 600 : 500,
+                      color: isDone ? 'var(--status-selesai)' : isActive ? 'var(--text-primary)' : 'var(--text-muted)',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {idx + 1}. {step.id === 'LAPORAN_MASUK' ? 'Masuk' : step.id === 'DIPROSES' ? 'Investigasi' : 'Selesai'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.68rem',
+                      color: 'var(--text-muted)',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {isDone ? 'Selesai' : isActive ? 'Sedang Berjalan' : 'Antrean'}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-hairline)',
-      borderRadius: 'var(--radius-sm)',
+      borderRadius: '16px',
       padding: '1.25rem',
       position: 'relative',
     }}>

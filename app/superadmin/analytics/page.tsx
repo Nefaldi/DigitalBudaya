@@ -3,15 +3,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
+import LoadingScreen from '@/components/LoadingScreen';
 import {
   BarChart3,
-  Users,
   ShieldCheck,
   Clock,
   Layers,
   MapPin,
-  TrendingUp,
-  Loader2,
+  CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -89,10 +89,10 @@ export default function AnalyticsDashboardPage() {
 
   if (loading || !data) {
     return (
-      <div style={{ textAlign: 'center', padding: '6rem 0' }}>
-        <Loader2 size={32} className="animate-spin" style={{ color: 'var(--action-primary)', margin: '0 auto 1rem auto' }} />
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Merekapitulasi data intelijen cagar budaya Sulawesi Tengah...</p>
-      </div>
+      <LoadingScreen
+        message="Memuat Analitik Wilayah..."
+        submessage="Konsolidasi data sebaran cagar budaya 13 kabupaten/kota Sulawesi Tengah"
+      />
     );
   }
 
@@ -100,20 +100,25 @@ export default function AnalyticsDashboardPage() {
     ? Math.round((data.statusBreakdown.SELESAI / data.totalReports) * 100)
     : 0;
 
+  const bendaPct = data.totalReports > 0
+    ? Math.round((data.kategoriBreakdown.BENDA / data.totalReports) * 100)
+    : 0;
+  const takbendaPct = 100 - bendaPct;
+
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
       <div className="container">
-        {/* Header */}
+        {/* Header Section */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             flexWrap: 'wrap',
-            gap: '1.5rem',
-            marginBottom: '2.5rem',
+            gap: '1rem',
+            marginBottom: '1.75rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '1.75rem',
+            paddingBottom: '1.25rem',
           }}
         >
           <div>
@@ -123,271 +128,358 @@ export default function AnalyticsDashboardPage() {
                 alignItems: 'center',
                 gap: '0.4rem',
                 color: 'var(--action-primary)',
-                fontSize: '0.8rem',
+                fontSize: '0.78rem',
                 fontWeight: 600,
                 letterSpacing: '0.04em',
-                marginBottom: '0.5rem',
+                marginBottom: '0.4rem',
                 background: 'var(--color-terracotta-soft)',
-                padding: '0.2rem 0.6rem',
-                borderRadius: 'var(--radius-sm)',
+                padding: '0.2rem 0.55rem',
+                borderRadius: '6px',
               }}
             >
-              <BarChart3 size={14} /> Analitik Wilayah
+              <BarChart3 size={13} /> Analitik Wilayah
             </div>
             <h1
               style={{
-                fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
+                fontSize: 'clamp(1.5rem, 3vw, 2rem)',
                 color: 'var(--text-primary)',
-                marginBottom: '0.4rem',
-                fontWeight: 460,
-                letterSpacing: '-0.028em',
+                marginBottom: '0.3rem',
+                fontWeight: 700,
+                letterSpacing: '-0.025em',
               }}
             >
-              Analitik Cagar Budaya
+              Sebaran & Preservasi Cagar Budaya
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-              Ringkasan data pelestarian dan sebaran 13 kabupaten/kota.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
+              Ringkasan data pelaporan, verifikasi lapangan, dan sebaran 13 kabupaten/kota se-Sulawesi Tengah.
             </p>
           </div>
         </div>
 
-        {/* Top 4 Key Metric Cards */}
-        <div className="grid-cols-4" style={{ marginBottom: '2.25rem' }}>
-          <div className="paper-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
-                Total Laporan
+        {/* 4 Compact KPI Metric Cards */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1rem',
+            marginBottom: '1.5rem',
+          }}
+        >
+          {/* Card 1: Total */}
+          <div className="paper-card" style={{ padding: '1.15rem 1.25rem', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Total Budaya Terdata
               </span>
-              <Layers size={18} style={{ color: 'var(--action-primary)' }} />
+              <Layers size={16} style={{ color: 'var(--action-primary)' }} />
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '0.35rem' }}>
+            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
               {data.totalReports}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Budaya terdata
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+              Objek terdata di 13 kab/kota
             </div>
           </div>
 
-          <div className="paper-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
-                Tingkat Pemulihan
+          {/* Card 2: Selesai */}
+          <div className="paper-card" style={{ padding: '1.15rem 1.25rem', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Selesai / Publik
               </span>
-              <ShieldCheck size={18} style={{ color: 'var(--action-emerald)' }} />
+              <ShieldCheck size={16} style={{ color: 'var(--status-selesai)' }} />
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--action-emerald)', lineHeight: 1.1, marginBottom: '0.35rem' }}>
-              {completionRate}%
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--status-selesai)', lineHeight: 1 }}>
+                {data.statusBreakdown.SELESAI}
+              </span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--status-selesai)', background: 'var(--status-selesai-bg)', padding: '0.15rem 0.45rem', borderRadius: '9999px' }}>
+                {completionRate}% tuntas
+              </span>
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              {data.statusBreakdown.SELESAI} laporan selesai
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+              Telah melalui digitalisasi
             </div>
           </div>
 
-          <div className="paper-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
-                Investigasi Aktif
+          {/* Card 3: Sedang Ditangani */}
+          <div className="paper-card" style={{ padding: '1.15rem 1.25rem', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Investigasi Lapangan
               </span>
-              <Clock size={18} style={{ color: 'var(--status-diproses)' }} />
+              <Clock size={16} style={{ color: 'var(--status-diproses)' }} />
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--status-diproses)', lineHeight: 1.1, marginBottom: '0.35rem' }}>
+            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--status-diproses)', lineHeight: 1 }}>
               {data.statusBreakdown.DIPROSES}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Sedang ditangani tim
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+              Ditangani konservator
             </div>
           </div>
 
-          <div className="paper-card" style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
-                Sahabat Budaya
+          {/* Card 4: Laporan Masuk */}
+          <div className="paper-card" style={{ padding: '1.15rem 1.25rem', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Laporan Baru Masuk
               </span>
-              <Users size={18} style={{ color: 'var(--action-emerald)' }} />
+              <AlertCircle size={16} style={{ color: 'var(--status-masuk)' }} />
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: '0.35rem' }}>
-              {data.totalUsers}
+            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--status-masuk)', lineHeight: 1 }}>
+              {data.statusBreakdown.LAPORAN_MASUK}
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Pengguna aktif terdaftar
-            </div>
-          </div>
-        </div>
-
-        {/* Pipeline & Category Split Grid */}
-        <div className="analytics-row" style={{ marginBottom: '2.25rem' }}>
-          {/* Status Pipeline */}
-          <div className="paper-card" style={{ padding: '1.75rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-              <TrendingUp size={16} style={{ color: 'var(--action-primary)' }} />
-              <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 460, margin: 0 }}>
-                Pipa Alur Penyelamatan Cagar Budaya
-              </h2>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {/* Laporan Masuk */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.4rem' }}>
-                  <span style={{ color: 'var(--status-masuk)', fontWeight: 500 }}>1. Antrean Laporan Masuk (Kritis)</span>
-                  <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{data.statusBreakdown.LAPORAN_MASUK}</span>
-                </div>
-                <div style={{ width: '100%', height: '8px', background: 'var(--bg-canvas)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
-                  <div
-                    style={{
-                      width: `${data.totalReports ? (data.statusBreakdown.LAPORAN_MASUK / data.totalReports) * 100 : 0}%`,
-                      height: '100%',
-                      background: 'var(--status-masuk)',
-                      transition: 'width 0.5s ease',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Diproses */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.4rem' }}>
-                  <span style={{ color: 'var(--status-diproses)', fontWeight: 500 }}>2. Investigasi & Restorasi Lapangan</span>
-                  <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{data.statusBreakdown.DIPROSES}</span>
-                </div>
-                <div style={{ width: '100%', height: '8px', background: 'var(--bg-canvas)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
-                  <div
-                    style={{
-                      width: `${data.totalReports ? (data.statusBreakdown.DIPROSES / data.totalReports) * 100 : 0}%`,
-                      height: '100%',
-                      background: 'var(--status-diproses)',
-                      transition: 'width 0.5s ease',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Selesai */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.4rem' }}>
-                  <span style={{ color: 'var(--action-emerald)', fontWeight: 500 }}>3. Tuntas & Digitalisasi Arsip Publik</span>
-                  <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{data.statusBreakdown.SELESAI}</span>
-                </div>
-                <div style={{ width: '100%', height: '8px', background: 'var(--bg-canvas)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
-                  <div
-                    style={{
-                      width: `${data.totalReports ? (data.statusBreakdown.SELESAI / data.totalReports) * 100 : 0}%`,
-                      height: '100%',
-                      background: 'var(--action-emerald)',
-                      transition: 'width 0.5s ease',
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Kategori Breakdown */}
-          <div className="paper-card" style={{ padding: '1.75rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-              <Layers size={16} style={{ color: 'var(--action-primary)' }} />
-              <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 460, margin: 0 }}>
-                Komposisi Benda vs Takbenda
-              </h2>
-            </div>
-
-            <div className="analytics-subgrid">
-              <div
-                style={{
-                  background: 'var(--bg-canvas)',
-                  border: '1px solid var(--border-hairline)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '1.5rem 1rem',
-                  textAlign: 'center',
-                }}
-              >
-                <span className="badge badge-benda" style={{ marginBottom: '0.85rem' }}>Cagar Budaya Benda</span>
-                <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--text-primary)', lineHeight: 1.1 }}>
-                  {data.kategoriBreakdown.BENDA}
-                </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
-                  Megalitikum & Struktur Bangunan
-                </div>
-              </div>
-
-              <div
-                style={{
-                  background: 'var(--bg-canvas)',
-                  border: '1px solid var(--border-hairline)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '1.5rem 1rem',
-                  textAlign: 'center',
-                }}
-              >
-                <span className="badge badge-takbenda" style={{ marginBottom: '0.85rem' }}>Warisan Takbenda</span>
-                <div style={{ fontSize: '2.1rem', fontWeight: 460, color: 'var(--action-emerald)', lineHeight: 1.1 }}>
-                  {data.kategoriBreakdown.TAKBENDA}
-                </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
-                  Bahasa & Tradisi Tutur Lisan
-                </div>
-              </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+              Menunggu verifikasi lapangan
             </div>
           </div>
         </div>
 
-        {/* Kabupaten Breakdown Bar Chart */}
-        <div className="paper-card" style={{ padding: 'clamp(1.25rem, 3vw, 1.75rem)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-            <MapPin size={16} style={{ color: 'var(--action-primary)' }} />
-            <h2 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 460, margin: 0 }}>
-              Sebaran Cagar Budaya Terdata Berdasarkan 13 Kabupaten/Kota
-            </h2>
-          </div>
+        {/* 2-Column Balanced Dashboard Layout */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(320px, 420px) 1fr',
+            gap: '1.25rem',
+            alignItems: 'start',
+          }}
+          className="analytics-grid-balanced"
+        >
+          {/* Kolom Kiri: Status Pipeline & Kategori Composition */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Status Breakdown Box */}
+            <div className="paper-card" style={{ padding: '1.25rem', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <CheckCircle2 size={16} style={{ color: 'var(--action-primary)' }} />
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                  Alur Tahapan Penanganan
+                </h3>
+              </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {fullKabupatenBreakdown.map((kab) => (
-              <div
-                key={kab.kabupatenKota}
-                className="analytics-breakdown-row"
-              >
-                <span
-                  style={{
-                    fontSize: '0.875rem',
-                    color: 'var(--text-primary)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {kab.kabupatenKota}
-                </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+                {/* 1. Selesai */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: 'var(--status-selesai)', fontWeight: 600 }}>Tuntas & Terverifikasi</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {data.statusBreakdown.SELESAI} ({data.totalReports ? Math.round((data.statusBreakdown.SELESAI / data.totalReports) * 100) : 0}%)
+                    </span>
+                  </div>
+                  <div style={{ width: '100%', height: '6px', background: 'var(--bg-canvas)', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${data.totalReports ? (data.statusBreakdown.SELESAI / data.totalReports) * 100 : 0}%`,
+                        height: '100%',
+                        background: 'var(--status-selesai)',
+                      }}
+                    />
+                  </div>
+                </div>
 
+                {/* 2. Diproses */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: 'var(--status-diproses)', fontWeight: 600 }}>Sedang Ditangani Lapangan</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {data.statusBreakdown.DIPROSES} ({data.totalReports ? Math.round((data.statusBreakdown.DIPROSES / data.totalReports) * 100) : 0}%)
+                    </span>
+                  </div>
+                  <div style={{ width: '100%', height: '6px', background: 'var(--bg-canvas)', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${data.totalReports ? (data.statusBreakdown.DIPROSES / data.totalReports) * 100 : 0}%`,
+                        height: '100%',
+                        background: 'var(--status-diproses)',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* 3. Masuk */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '0.35rem' }}>
+                    <span style={{ color: 'var(--status-masuk)', fontWeight: 600 }}>Laporan Baru Masuk</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {data.statusBreakdown.LAPORAN_MASUK} ({data.totalReports ? Math.round((data.statusBreakdown.LAPORAN_MASUK / data.totalReports) * 100) : 0}%)
+                    </span>
+                  </div>
+                  <div style={{ width: '100%', height: '6px', background: 'var(--bg-canvas)', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${data.totalReports ? (data.statusBreakdown.LAPORAN_MASUK / data.totalReports) * 100 : 0}%`,
+                        height: '100%',
+                        background: 'var(--status-masuk)',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Kategori Benda vs Takbenda */}
+            <div className="paper-card" style={{ padding: '1.25rem', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Layers size={16} style={{ color: 'var(--action-primary)' }} />
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                  Komposisi Kategori
+                </h3>
+              </div>
+
+              {/* Visual Split Ratio Bar */}
+              <div style={{ display: 'flex', width: '100%', height: '8px', borderRadius: '9999px', overflow: 'hidden', marginBottom: '1rem' }}>
+                <div style={{ width: `${bendaPct}%`, background: 'var(--action-primary)', transition: 'width 0.4s ease' }} title={`Benda: ${bendaPct}%`} />
+                <div style={{ width: `${takbendaPct}%`, background: 'var(--action-emerald)', transition: 'width 0.4s ease' }} title={`Takbenda: ${takbendaPct}%`} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div
-                  className="breakdown-bar"
                   style={{
-                    width: '100%',
-                    height: '8px',
-                    background: 'var(--bg-canvas)',
-                    borderRadius: '4px',
-                    overflow: 'hidden',
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    background: 'var(--bg-subtle)',
                     border: '1px solid var(--border-hairline)',
                   }}
                 >
-                  <div
-                    style={{
-                      width: `${data.totalReports ? (kab.count / data.totalReports) * 100 : 0}%`,
-                      height: '100%',
-                      background: 'var(--action-primary)',
-                      borderRadius: '4px',
-                      transition: 'width 0.5s ease',
-                    }}
-                  />
+                  <span className="badge badge-benda" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem' }}>Benda</span>
+                  <div style={{ fontSize: '1.45rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.35rem', lineHeight: 1 }}>
+                    {data.kategoriBreakdown.BENDA}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    {bendaPct}% dari total
+                  </div>
                 </div>
 
-                <span className="breakdown-count" style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
-                  {kab.count}
-                </span>
+                <div
+                  style={{
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    background: 'var(--bg-subtle)',
+                    border: '1px solid var(--border-hairline)',
+                  }}
+                >
+                  <span className="badge badge-takbenda" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem' }}>Takbenda</span>
+                  <div style={{ fontSize: '1.45rem', fontWeight: 700, color: 'var(--action-emerald)', marginTop: '0.35rem', lineHeight: 1 }}>
+                    {data.kategoriBreakdown.TAKBENDA}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                    {takbendaPct}% dari total
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
+          </div>
+
+          {/* Kolom Kanan: Distribusi 13 Kabupaten/Kota (Padat & Rapi) */}
+          <div className="paper-card" style={{ padding: '1.25rem', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-hairline)', paddingBottom: '0.65rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <MapPin size={16} style={{ color: 'var(--action-primary)' }} />
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                  Sebaran Wilayah (13 Kabupaten & Kota)
+                </h3>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                Urut berdasarkan jumlah terbanyak
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '0.5rem 1.25rem',
+              }}
+            >
+              {fullKabupatenBreakdown.map((kab, idx) => {
+                const pct = data.totalReports > 0 ? (kab.count / data.totalReports) * 100 : 0;
+                const hasData = kab.count > 0;
+
+                return (
+                  <div
+                    key={kab.kabupatenKota}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.45rem 0.65rem',
+                      borderRadius: '8px',
+                      background: hasData ? 'var(--bg-subtle)' : 'transparent',
+                      border: `1px solid ${hasData ? 'var(--border-hairline)' : 'transparent'}`,
+                      gap: '0.65rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, flex: 1 }}>
+                      <span
+                        style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 600,
+                          color: idx < 3 && hasData ? 'var(--action-primary)' : 'var(--text-muted)',
+                          width: '18px',
+                          textAlign: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '0.8rem',
+                          fontWeight: hasData ? 500 : 400,
+                          color: hasData ? 'var(--text-primary)' : 'var(--text-muted)',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {kab.kabupatenKota}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                      <div
+                        style={{
+                          width: '45px',
+                          height: '5px',
+                          background: 'var(--bg-canvas)',
+                          borderRadius: '9999px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${pct}%`,
+                            height: '100%',
+                            background: idx === 0 ? 'var(--action-primary)' : 'var(--text-secondary)',
+                          }}
+                        />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          color: hasData ? 'var(--text-primary)' : 'var(--text-muted)',
+                          minWidth: '20px',
+                          textAlign: 'right',
+                        }}
+                      >
+                        {kab.count}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 860px) {
+          .analytics-grid-balanced {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

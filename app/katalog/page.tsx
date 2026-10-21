@@ -197,8 +197,8 @@ function KatalogContent() {
                 style={{ fontSize: '0.875rem' }}
               >
                 <option value="Semua">Semua Kategori</option>
-                <option value="BENDA">Benda (Fisik/Megalitik/Struktur)</option>
-                <option value="TAKBENDA">Takbenda (Lisan/Ritual/Musik)</option>
+                <option value="BENDA">Benda</option>
+                <option value="TAKBENDA">Takbenda</option>
               </select>
             </div>
 
