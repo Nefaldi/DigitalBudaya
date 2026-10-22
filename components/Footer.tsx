@@ -243,52 +243,52 @@ export default function Footer() {
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
                 <InstagramIcon size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'inherit', textDecoration: 'none' }}
                 >
-                  @kebudayaan_sulteng
+                  @digiculture_care
                 </a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
                 <FacebookIcon size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'inherit', textDecoration: 'none' }}
                 >
-                  Dinas Kebudayaan Prov. Sulteng
+                  Digiculture Care
                 </a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
                 <YoutubeIcon size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
                 <a
-                  href="https://youtube.com"
+                  href="https://www.youtube.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'inherit', textDecoration: 'none' }}
                 >
-                  Budaya Sulawesi Tengah
+                  Digiculture Care
                 </a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
                 <Mail size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
                 <a
-                  href="mailto:pengaduan@digiculture.sultengprov.go.id"
+                  href="mailto:digiculturec@gmail.com"
                   style={{ color: 'inherit', textDecoration: 'none' }}
                 >
-                  pengaduan@digiculture.id
+                  digiculturec@gmail.com
                 </a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', color: 'var(--text-secondary)' }}>
                 <Phone size={15} style={{ color: 'var(--action-primary)', flexShrink: 0 }} />
-                <span>Hotline: +62 821-9876-5432</span>
+                <span>Hotline: +62 822-1186-3324</span>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
                 <MapPin size={15} style={{ color: 'var(--action-primary)', flexShrink: 0, marginTop: '2px' }} />
-                <span>Jl. Prof. Moh. Yamin No. 25, Kota Palu, Sulawesi Tengah</span>
+                <span>Jl. Soekarno Hatta No.KM. 9, Kota Palu, Sulawesi Tengah</span>
               </li>
             </ul>
           </div>
