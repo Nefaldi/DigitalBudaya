@@ -60,6 +60,8 @@ model HeritageReport {
   pelapor            User               @relation("PelaporHeritage", fields: [pelaporId], references: [id], onDelete: Cascade)
   admin              User?              @relation("AdminHeritage", fields: [adminId], references: [id], onDelete: SetNull)
 
+  @@index([status, createdAt(sort: Desc)])
+  @@index([pelaporId, createdAt(sort: Desc)])
   @@index([status, kabupatenKota])
   @@index([kategori])
   @@index([pelaporId])

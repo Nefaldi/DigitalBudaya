@@ -49,12 +49,14 @@ export async function GET(req: NextRequest) {
     }
 
     if (search) {
-      where.OR = [
-        { judulPusaka: { contains: search, mode: 'insensitive' } },
-        { lokasiSpesifik: { contains: search, mode: 'insensitive' } },
-        { deskripsiKrisis: { contains: search, mode: 'insensitive' } },
-        { kabupatenKota: { contains: search, mode: 'insensitive' } },
-      ];
+      const sanitizedSearch = search.trim().slice(0, 50);
+      if (sanitizedSearch) {
+        where.OR = [
+          { judulPusaka: { contains: sanitizedSearch, mode: 'insensitive' } },
+          { lokasiSpesifik: { contains: sanitizedSearch, mode: 'insensitive' } },
+          { kabupatenKota: { contains: sanitizedSearch, mode: 'insensitive' } },
+        ];
+      }
     }
 
     const [totalCount, reports] = await Promise.all([
