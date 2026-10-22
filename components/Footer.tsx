@@ -116,6 +116,70 @@ export default function Footer() {
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
               Platform terintegrasi pelestarian, dokumentasi geospasial, dan penyelamatan cagar budaya megalitikum serta tradisi tutur lisan di 13 kabupaten dan kota Provinsi Sulawesi Tengah.
             </p>
+
+            {/* Logo Afiliasi Munas */}
+            <div
+              style={{
+                marginTop: '1.25rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid var(--border-hairline)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.85rem',
+              }}
+            >
+              <div
+                style={{
+                  position: 'relative',
+                  width: '52px',
+                  height: '65px',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '10px',
+                  padding: '4px',
+                  border: '1px solid var(--border-hairline)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  overflow: 'hidden',
+                }}
+              >
+                <Image
+                  src="/logo-munas.png"
+                  alt="Logo MUNAS"
+                  width={44}
+                  height={58}
+                  style={{ objectFit: 'contain', width: 'auto', height: '100%' }}
+                />
+              </div>
+              <div>
+                <span
+                  style={{
+                    fontSize: '0.68rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    color: 'var(--text-muted)',
+                    fontWeight: 700,
+                    display: 'block',
+                    marginBottom: '0.2rem',
+                  }}
+                >
+                  Karya Inovasi Kegiatan
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    display: 'block',
+                    lineHeight: 1.35,
+                  }}
+                >
+                  Musyawarah Nasional (MUNAS)
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Kolom 2: Navigasi Cepat & Eksplorasi */}
