@@ -10,6 +10,7 @@ import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import LoadingScreen from '@/components/LoadingScreen';
 import UserManagementSection from '@/components/admin/UserManagementSection';
 import { UserSession } from '@/types';
+import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
 import {
   Shield,
   Play,
@@ -21,10 +22,14 @@ import {
   Users,
 } from 'lucide-react';
 
+// Module-level in-memory cache for instantaneous client navigation (SWR)
+let clientCachedReports: HeritageReportItem[] | null = null;
+let lastReportsFetched = 0;
+
 export default function AdminWorkbenchPage() {
-  const [reports, setReports] = useState<HeritageReportItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserSession | null>(null);
+  const [reports, setReports] = useState<HeritageReportItem[]>(clientCachedReports || []);
+  const [loading, setLoading] = useState<boolean>(!clientCachedReports);
+  const [user, setUser] = useState<UserSession | null>(getCachedUser());
 
   const searchParams = useSearchParams();
   const initialSection = searchParams.get('tab') === 'users' ? 'users' : 'laporan';
@@ -58,27 +63,35 @@ export default function AdminWorkbenchPage() {
 
     async function fetchData() {
       try {
-        const [authRes, repRes] = await Promise.all([
-          fetch('/api/auth/me'),
-          fetch('/api/reports?status=Semua'),
-        ]);
-
-        if (!authRes.ok) {
+        const sessionUser = await fetchUserSession();
+        if (!sessionUser) {
           router.push('/login?redirect=/admin');
           return;
         }
-        const authData = await authRes.json();
-        if (authData.user.role !== 'ADMIN' && authData.user.role !== 'SUPERADMIN') {
+        if (sessionUser.role !== 'ADMIN' && sessionUser.role !== 'SUPERADMIN') {
           router.push('/pelapor');
           return;
         }
         if (ignore) return;
-        setUser(authData.user);
+        setUser(sessionUser);
 
-        if (repRes.ok) {
+        const now = Date.now();
+        // Skip background fetch if data is fresh within 15 seconds
+        if (clientCachedReports && now - lastReportsFetched < 15_000) {
+          if (!ignore) {
+            setReports(clientCachedReports);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const repRes = await fetch('/api/reports?status=Semua');
+        if (repRes.ok && !ignore) {
           const repData = await repRes.json();
-          if (ignore) return;
-          setReports(repData.reports || []);
+          const items = repData.reports || [];
+          clientCachedReports = items;
+          lastReportsFetched = Date.now();
+          setReports(items);
         }
       } catch (err) {
         console.error('Admin workbench fetch error:', err);
@@ -117,7 +130,11 @@ export default function AdminWorkbenchPage() {
       if (!res.ok) {
         setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal mengambil alih laporan' });
       } else {
-        setReports((prev) => prev.map((r) => (r.id === reportId ? data.report : r)));
+        setReports((prev) => {
+          const updated = prev.map((r) => (r.id === reportId ? data.report : r));
+          clientCachedReports = updated;
+          return updated;
+        });
         setWorkbenchFeedback({ type: 'success', message: 'Laporan berhasil diambil alih untuk penanganan konservasi.' });
       }
     } catch (err) {
@@ -149,7 +166,11 @@ export default function AdminWorkbenchPage() {
         throw new Error(data.error || 'Gagal memperbarui data penanganan');
       }
 
-      setReports((prev) => prev.map((r) => (r.id === selectedReport.id ? data.report : r)));
+      setReports((prev) => {
+        const updated = prev.map((r) => (r.id === selectedReport.id ? data.report : r));
+        clientCachedReports = updated;
+        return updated;
+      });
       setModalOpen(false);
     } catch (err: unknown) {
       setActionError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan pembaruan.');

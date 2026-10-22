@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LogIn, Key, Mail, AlertCircle, Loader2, KeyRound, Info } from 'lucide-react';
+import { setCachedUser } from '@/lib/clientSession';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -35,6 +36,8 @@ function LoginForm() {
       if (!res.ok) {
         throw new Error(data.error || 'Gagal melakukan otentikasi');
       }
+
+      setCachedUser(data.user || null);
 
       // Redirect according to role & target redirect
       const role = data.user?.role;

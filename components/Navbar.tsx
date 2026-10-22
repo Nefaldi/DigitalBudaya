@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
 import { UserSession } from '@/types';
+import { getCachedUser, fetchUserSession, setCachedUser, isSessionFetched } from '@/lib/clientSession';
 import {
   Menu,
   X,
@@ -91,23 +92,31 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        } else {
-          setUser(null);
+    let ignore = false;
+
+    if (isSessionFetched()) {
+      setUser(getCachedUser());
+      setLoading(false);
+    } else {
+      fetchUserSession().then((u) => {
+        if (!ignore) {
+          setUser(u);
+          setLoading(false);
         }
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+      });
     }
-    checkAuth();
-  }, [pathname]);
+
+    const onAuthUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<UserSession | null>;
+      setUser(customEvent.detail !== undefined ? customEvent.detail : getCachedUser());
+    };
+
+    window.addEventListener('digiculture-auth-update', onAuthUpdate);
+    return () => {
+      ignore = true;
+      window.removeEventListener('digiculture-auth-update', onAuthUpdate);
+    };
+  }, []);
 
   const handleExecuteLogout = async () => {
     if (isLoggingOut) return;
@@ -117,6 +126,7 @@ export default function Navbar() {
     } catch {
       // Ignore
     } finally {
+      setCachedUser(null);
       setUser(null);
       setShowLogoutConfirm(false);
       setIsLoggingOut(false);

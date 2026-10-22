@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import LoadingScreen from '@/components/LoadingScreen';
+import { fetchUserSession } from '@/lib/clientSession';
 import {
   BarChart3,
   ShieldCheck,
@@ -32,9 +33,13 @@ interface AnalyticsData {
   totalUsers: number;
 }
 
+// Module-level in-memory cache for instantaneous client navigation (SWR)
+let clientCachedAnalytics: AnalyticsData | null = null;
+let lastAnalyticsFetched = 0;
+
 export default function AnalyticsDashboardPage() {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<AnalyticsData | null>(clientCachedAnalytics);
+  const [loading, setLoading] = useState<boolean>(!clientCachedAnalytics);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,23 +47,31 @@ export default function AnalyticsDashboardPage() {
 
     async function fetchAnalytics() {
       try {
-        const [authRes, res] = await Promise.all([
-          fetch('/api/auth/me'),
-          fetch('/api/analytics'),
-        ]);
-
-        if (!authRes.ok) {
+        const user = await fetchUserSession();
+        if (!user) {
           router.push('/login?redirect=/superadmin/analytics');
           return;
         }
-        const authData = await authRes.json();
-        if (authData.user.role !== 'SUPERADMIN' && authData.user.role !== 'ADMIN') {
+        if (user.role !== 'SUPERADMIN' && user.role !== 'ADMIN') {
           router.push('/pelapor');
           return;
         }
 
+        const now = Date.now();
+        // Skip background fetch if data is fresh within 15 seconds
+        if (clientCachedAnalytics && now - lastAnalyticsFetched < 15_000) {
+          if (!ignore) {
+            setData(clientCachedAnalytics);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const res = await fetch('/api/analytics');
         if (res.ok && !ignore) {
           const json = await res.json();
+          clientCachedAnalytics = json.analytics;
+          lastAnalyticsFetched = Date.now();
           setData(json.analytics);
         }
       } catch (err) {

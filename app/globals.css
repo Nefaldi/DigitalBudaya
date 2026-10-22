@@ -1368,4 +1368,28 @@ a {
   }
 }
 
+/* Fast Non-Blocking Top Progress Bar for Route Transitions */
+.digiculture-top-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 99999;
+  background: linear-gradient(90deg, transparent, var(--action-primary), #6366f1, var(--action-primary));
+  background-size: 200% 100%;
+  animation: digicultureTopProgress 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes digicultureTopProgress {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+
 

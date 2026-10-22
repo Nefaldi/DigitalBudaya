@@ -6,17 +6,25 @@ import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import { Search, Compass, Loader2, RotateCcw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
+// Module-level in-memory cache for default catalog view
+let defaultCatalogCache: { reports: HeritageReportItem[]; total: number; hasMore: boolean; timestamp: number } | null = null;
+
 function KatalogContent() {
   const searchParams = useSearchParams();
   const initialKab = searchParams.get('kabupatenKota') || 'Semua';
   const initialKat = searchParams.get('kategori') || 'Semua';
 
-  const [reports, setReports] = useState<HeritageReportItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const isDefaultView = initialKab === 'Semua' && initialKat === 'Semua';
+  const cachedReports = isDefaultView ? defaultCatalogCache?.reports : undefined;
+  const cachedHasMore = isDefaultView ? defaultCatalogCache?.hasMore : undefined;
+  const cachedTotal = isDefaultView ? defaultCatalogCache?.total : undefined;
+
+  const [reports, setReports] = useState<HeritageReportItem[]>(cachedReports ?? []);
+  const [loading, setLoading] = useState(cachedReports === undefined);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
+  const [hasMore, setHasMore] = useState(cachedHasMore ?? false);
+  const [totalCount, setTotalCount] = useState(cachedTotal ?? 0);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedKabupaten, setSelectedKabupaten] = useState(initialKab);
@@ -56,7 +64,23 @@ function KatalogContent() {
     const controller = new AbortController();
 
     const timer = setTimeout(async () => {
-      setLoading(true);
+      const isDefault = !searchTerm && selectedKabupaten === 'Semua' && selectedKategori === 'Semua' && selectedStatus === 'Semua';
+      const now = Date.now();
+
+      // Skip fetch if default catalog is fresh within 20 seconds
+      if (isDefault && defaultCatalogCache && now - defaultCatalogCache.timestamp < 20_000) {
+        if (isMounted) {
+          setReports(defaultCatalogCache.reports);
+          setHasMore(defaultCatalogCache.hasMore);
+          setTotalCount(defaultCatalogCache.total);
+          setLoading(false);
+        }
+        return;
+      }
+
+      if (!isDefault || !defaultCatalogCache) {
+        setLoading(true);
+      }
       setPage(1);
       try {
         const query = new URLSearchParams();
@@ -70,14 +94,22 @@ function KatalogContent() {
         const res = await fetch(`/api/reports?${query.toString()}`, { signal: controller.signal });
         if (res.ok && isMounted) {
           const data = await res.json();
-          setReports(data.reports || []);
-          if (data.pagination) {
-            setHasMore(data.pagination.hasMore);
-            setTotalCount(data.pagination.total);
-          } else {
-            setHasMore(false);
-            setTotalCount(data.reports?.length || 0);
+          const items = data.reports || [];
+          const more = Boolean(data.pagination ? data.pagination.hasMore : false);
+          const total = data.pagination ? data.pagination.total : items.length;
+
+          if (isDefault) {
+            defaultCatalogCache = {
+              reports: items,
+              hasMore: more,
+              total,
+              timestamp: Date.now(),
+            };
           }
+
+          setReports(items);
+          setHasMore(more);
+          setTotalCount(total);
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') return;

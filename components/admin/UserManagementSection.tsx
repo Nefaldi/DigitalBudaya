@@ -29,9 +29,13 @@ interface UserManagementSectionProps {
   currentUser: UserSession | null;
 }
 
+// Module-level in-memory cache for user list per role
+const clientUserCache: Record<string, { users: UserItem[]; timestamp: number }> = {};
+
 export default function UserManagementSection({ currentUser }: UserManagementSectionProps) {
-  const [users, setUsers] = useState<UserItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const initialCache = clientUserCache['Semua']?.users || [];
+  const [users, setUsers] = useState<UserItem[]>(initialCache);
+  const [loading, setLoading] = useState(!clientUserCache['Semua']);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('Semua');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -50,13 +54,28 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
     let ignore = false;
 
     async function fetchUsers() {
+      const now = Date.now();
+      const cached = clientUserCache[roleFilter];
+
+      if (cached && now - cached.timestamp < 15_000) {
+        if (!ignore) {
+          setUsers(cached.users);
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
-        setLoading(true);
+        if (!cached) {
+          setLoading(true);
+        }
         const res = await fetch(`/api/users?role=${roleFilter}`);
         if (res.ok) {
           const json = await res.json();
           if (ignore) return;
-          setUsers(json.users || []);
+          const userList = json.users || [];
+          clientUserCache[roleFilter] = { users: userList, timestamp: Date.now() };
+          setUsers(userList);
         }
       } catch (err) {
         console.error('Fetch users error:', err);

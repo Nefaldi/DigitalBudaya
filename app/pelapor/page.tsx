@@ -11,6 +11,7 @@ import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import { UserSession } from '@/types';
 import LoadingScreen from '@/components/LoadingScreen';
+import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
 import {
   FilePlus,
   Clock,
@@ -25,10 +26,14 @@ import {
   X,
 } from 'lucide-react';
 
+// Module-level in-memory cache for Pelapor's personal reports
+let clientCachedMyReports: HeritageReportItem[] | null = null;
+let lastMyReportsFetched = 0;
+
 export default function PelaporDashboardPage() {
-  const [reports, setReports] = useState<HeritageReportItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserSession | null>(null);
+  const [reports, setReports] = useState<HeritageReportItem[]>(clientCachedMyReports || []);
+  const [loading, setLoading] = useState<boolean>(!clientCachedMyReports);
+  const [user, setUser] = useState<UserSession | null>(getCachedUser());
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingReport, setEditingReport] = useState<HeritageReportItem | null>(null);
   const [editJudul, setEditJudul] = useState('');
@@ -50,23 +55,32 @@ export default function PelaporDashboardPage() {
 
     async function fetchMyReports() {
       try {
-        const [authRes, repRes] = await Promise.all([
-          fetch('/api/auth/me'),
-          fetch('/api/reports?myReports=true'),
-        ]);
-
-        if (!authRes.ok) {
+        const sessionUser = await fetchUserSession();
+        if (!sessionUser) {
           router.push('/login?redirect=/pelapor');
           return;
         }
-        const authData = await authRes.json();
         if (ignore) return;
-        setUser(authData.user);
+        setUser(sessionUser);
 
+        const now = Date.now();
+        // Skip background fetch if data is fresh within 15 seconds
+        if (clientCachedMyReports && now - lastMyReportsFetched < 15_000) {
+          if (!ignore) {
+            setReports(clientCachedMyReports);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const repRes = await fetch('/api/reports?myReports=true');
         if (repRes.ok) {
           const repData = await repRes.json();
           if (ignore) return;
-          setReports(repData.reports || []);
+          const items = repData.reports || [];
+          clientCachedMyReports = items;
+          lastMyReportsFetched = Date.now();
+          setReports(items);
         }
       } catch (err) {
         console.error('Error fetching pelapor dashboard:', err);
@@ -95,7 +109,11 @@ export default function PelaporDashboardPage() {
       if (!res.ok) {
         setFeedback({ type: 'error', message: data.error || 'Gagal membatalkan laporan' });
       } else {
-        setReports((prev) => prev.filter((r) => r.id !== id));
+        setReports((prev) => {
+          const updated = prev.filter((r) => r.id !== id);
+          clientCachedMyReports = updated;
+          return updated;
+        });
         setFeedback({ type: 'success', message: 'Laporan berhasil dibatalkan.' });
         setReportToDelete(null);
       }
@@ -147,9 +165,11 @@ export default function PelaporDashboardPage() {
         throw new Error(data.error || 'Gagal memperbarui laporan');
       }
 
-      setReports((prev) =>
-        prev.map((r) => (r.id === editingReport.id ? { ...r, ...data.report } : r))
-      );
+      setReports((prev) => {
+        const updated = prev.map((r) => (r.id === editingReport.id ? { ...r, ...data.report } : r));
+        clientCachedMyReports = updated;
+        return updated;
+      });
       setEditingReport(null);
     } catch (err) {
       setEditError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan perubahan.');
