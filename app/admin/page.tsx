@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import LoadingScreen from '@/components/LoadingScreen';
+import UserManagementSection from '@/components/admin/UserManagementSection';
 import { UserSession } from '@/types';
 import {
   Shield,
@@ -16,12 +17,19 @@ import {
   X,
   ExternalLink,
   MapPin,
+  ClipboardList,
+  Users,
 } from 'lucide-react';
 
 export default function AdminWorkbenchPage() {
   const [reports, setReports] = useState<HeritageReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<UserSession | null>(null);
+
+  const searchParams = useSearchParams();
+  const initialSection = searchParams.get('tab') === 'users' ? 'users' : 'laporan';
+  const [activeSection, setActiveSection] = useState<'laporan' | 'users'>(initialSection);
+
   const [activeTab, setActiveTab] = useState<'ALL' | 'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI'>('ALL');
 
   // Modal State for Digitalization & Status Update
@@ -35,6 +43,15 @@ export default function AdminWorkbenchPage() {
   const [workbenchFeedback, setWorkbenchFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'users') {
+      setActiveSection('users');
+    } else if (tabParam === 'laporan') {
+      setActiveSection('laporan');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     let ignore = false;
@@ -159,6 +176,8 @@ export default function AdminWorkbenchPage() {
   const countDiproses = reports.filter((r) => r.status === 'DIPROSES').length;
   const countSelesai = reports.filter((r) => r.status === 'SELESAI').length;
 
+  const isSuperadmin = user?.role === 'SUPERADMIN';
+
   return (
     <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
       <div className="container">
@@ -170,7 +189,7 @@ export default function AdminWorkbenchPage() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             gap: '1.5rem',
-            marginBottom: '2rem',
+            marginBottom: '1.5rem',
             borderBottom: '1px solid var(--border-hairline)',
             paddingBottom: '1.75rem',
           }}
@@ -202,224 +221,332 @@ export default function AdminWorkbenchPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Manajemen Laporan
+              {isSuperadmin ? 'Workbench Admin' : 'Workbench Verifikasi'}
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
               Petugas:{' '}
               <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
                 {user?.nama}
               </strong>{' '}
-              ({user?.role === 'SUPERADMIN' ? 'Superadmin' : 'Konservator'})
+              ({isSuperadmin ? 'Superadmin' : 'Konservator'})
             </p>
           </div>
         </div>
 
-        {workbenchFeedback && (
+        {/* Section Navigation Tabs (Khusus Superadmin: Manajemen Laporan & Kelola Pengguna) */}
+        {isSuperadmin && (
           <div
             style={{
-              padding: '0.85rem 1.25rem',
-              borderRadius: 'var(--radius-sm)',
-              marginBottom: '1.75rem',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: workbenchFeedback.type === 'success' ? 'var(--status-selesai-bg)' : 'var(--status-masuk-bg)',
-              color: workbenchFeedback.type === 'success' ? 'var(--status-selesai)' : 'var(--status-masuk)',
-              border: `1px solid ${workbenchFeedback.type === 'success' ? 'var(--status-selesai-border)' : 'var(--status-masuk-border)'}`,
-              fontSize: '0.875rem',
+              gap: '0.5rem',
+              borderBottom: '1px solid var(--border-hairline)',
+              marginBottom: '2rem',
             }}
           >
-            <span>{workbenchFeedback.message}</span>
             <button
-              onClick={() => setWorkbenchFeedback(null)}
-              style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+              type="button"
+              onClick={() => setActiveSection('laporan')}
+              style={{
+                padding: '0.75rem 1.25rem',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                border: 'none',
+                background: 'transparent',
+                color: activeSection === 'laporan' ? 'var(--action-primary)' : 'var(--text-muted)',
+                borderBottom: activeSection === 'laporan' ? '2px solid var(--action-primary)' : '2px solid transparent',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '-1px',
+                transition: 'all 0.15s ease',
+              }}
             >
-              Tutup
+              <ClipboardList size={16} />
+              <span>Manajemen Laporan ({reports.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveSection('users')}
+              style={{
+                padding: '0.75rem 1.25rem',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                border: 'none',
+                background: 'transparent',
+                color: activeSection === 'users' ? 'var(--action-primary)' : 'var(--text-muted)',
+                borderBottom: activeSection === 'users' ? '2px solid var(--action-primary)' : '2px solid transparent',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '-1px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Users size={16} />
+              <span>Kelola Pengguna</span>
             </button>
           </div>
         )}
 
-        {/* Tab Filters */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setActiveTab('ALL')}
-            className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Semua ({reports.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('LAPORAN_MASUK')}
-            className={`btn btn-sm ${activeTab === 'LAPORAN_MASUK' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Masuk ({countMasuk})
-          </button>
-          <button
-            onClick={() => setActiveTab('DIPROSES')}
-            className={`btn btn-sm ${activeTab === 'DIPROSES' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Diproses ({countDiproses})
-          </button>
-          <button
-            onClick={() => setActiveTab('SELESAI')}
-            className={`btn btn-sm ${activeTab === 'SELESAI' ? 'btn-primary' : 'btn-secondary'}`}
-          >
-            Selesai ({countSelesai})
-          </button>
-        </div>
-
-        {/* Reports Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {filteredReports.map((report) => (
-            <div key={report.id} className="paper-card" style={{ padding: 'clamp(1rem, 2.5vw, 1.5rem)' }}>
-              <div className="admin-row">
-                {/* Thumbnail */}
-                <div
-                  style={{
-                    position: 'relative',
-                    width: '100%',
-                    height: '115px',
-                    borderRadius: 'var(--radius-sm)',
-                    overflow: 'hidden',
-                    background: 'var(--bg-canvas)',
-                    border: '1px solid var(--border-hairline)',
-                  }}
+        {/* Content: Kelola Pengguna (Superadmin) */}
+        {isSuperadmin && activeSection === 'users' ? (
+          <UserManagementSection currentUser={user} />
+        ) : (
+          /* Content: Manajemen Laporan Konservasi */
+          <div>
+            {workbenchFeedback && (
+              <div
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: 'var(--radius-sm)',
+                  marginBottom: '1.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: workbenchFeedback.type === 'success' ? 'var(--status-selesai-bg)' : 'var(--status-masuk-bg)',
+                  color: workbenchFeedback.type === 'success' ? 'var(--status-selesai)' : 'var(--status-masuk)',
+                  border: `1px solid ${workbenchFeedback.type === 'success' ? 'var(--status-selesai-border)' : 'var(--status-masuk-border)'}`,
+                  fontSize: '0.875rem',
+                }}
+              >
+                <span>{workbenchFeedback.message}</span>
+                <button
+                  onClick={() => setWorkbenchFeedback(null)}
+                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
                 >
-                  <Image
-                    src={optimizeCloudinaryUrl(report.fotoDigitalisasi || report.fotoKondisiAwal, 300)}
-                    alt={report.judulPusaka}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 768px) 100vw, 200px"
-                    style={{ objectFit: 'cover' }}
-                  />
-                </div>
-
-                {/* Details */}
-                <div>
-                  <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
-                    <span
-                      className={`badge ${
-                        report.status === 'SELESAI'
-                          ? 'badge-selesai'
-                          : report.status === 'DIPROSES'
-                          ? 'badge-diproses'
-                          : 'badge-masuk'
-                      }`}
-                    >
-                      {report.status}
-                    </span>
-                    <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
-                      {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
-                    </span>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <MapPin size={13} style={{ color: 'var(--action-primary)' }} />
-                      {report.kabupatenKota} ({report.lokasiSpesifik})
-                    </span>
-                  </div>
-
-                  <h3
-                    style={{
-                      fontSize: '1.15rem',
-                      color: 'var(--text-primary)',
-                      marginBottom: '0.35rem',
-                      fontWeight: 460,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {report.judulPusaka}
-                  </h3>
-
-                  <p
-                    style={{
-                      fontSize: '0.85rem',
-                      color: 'var(--text-secondary)',
-                      lineHeight: 1.5,
-                      marginBottom: '0.65rem',
-                      maxWidth: '750px',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {report.deskripsiKrisis}
-                  </p>
-
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
-                    <span>Pelapor: <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{report.pelapor?.nama}</strong></span>
-                    <span>Konservator: <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{report.admin?.nama || 'Belum Diambil'}</strong></span>
-                    <span>Tanggal: {new Date(report.createdAt).toLocaleDateString('id-ID')}</span>
-                  </div>
-                </div>
-
-                {/* Actions Column */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '175px' }}>
-                  {report.status === 'LAPORAN_MASUK' && (
-                    <button
-                      onClick={() => handleTakeOwnership(report.id)}
-                      className="btn btn-primary btn-sm"
-                      style={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      <Play size={13} />
-                      <span>Mulai Investigasi</span>
-                    </button>
-                  )}
-
-                  <button
-                    onClick={() => openActionModal(report)}
-                    className="btn btn-secondary btn-sm"
-                    style={{ width: '100%', justifyContent: 'center' }}
-                  >
-                    <Upload size={13} />
-                    <span>Tindak Lanjut</span>
-                  </button>
-
-                  <Link
-                    href={`/katalog/${report.id}`}
-                    target="_blank"
-                    className="btn btn-sm"
-                    style={{
-                      width: '100%',
-                      fontSize: '0.78rem',
-                      justifyContent: 'center',
-                      background: 'var(--bg-canvas)',
-                      border: '1px solid var(--border-hairline)',
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    <ExternalLink size={12} />
-                    <span>Lihat Dossier</span>
-                  </Link>
-                </div>
+                  Tutup
+                </button>
               </div>
-            </div>
-          ))}
-        </div>
+            )}
 
-        {/* Modal: Tatalaksana Penanganan & Digitalisasi */}
+            {/* Tab Filters */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setActiveTab('ALL')}
+                className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                Semua ({reports.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('LAPORAN_MASUK')}
+                className={`btn btn-sm ${activeTab === 'LAPORAN_MASUK' ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                Laporan Masuk ({countMasuk})
+              </button>
+              <button
+                onClick={() => setActiveTab('DIPROSES')}
+                className={`btn btn-sm ${activeTab === 'DIPROSES' ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                Sedang Ditangani ({countDiproses})
+              </button>
+              <button
+                onClick={() => setActiveTab('SELESAI')}
+                className={`btn btn-sm ${activeTab === 'SELESAI' ? 'btn-primary' : 'btn-secondary'}`}
+              >
+                Selesai / Terverifikasi ({countSelesai})
+              </button>
+            </div>
+
+            {/* List Reports */}
+            {filteredReports.length === 0 ? (
+              <div className="paper-card" style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>
+                  Tidak ada laporan cagar budaya pada filter status ini.
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {filteredReports.map((report) => (
+                  <div
+                    key={report.id}
+                    className="paper-card"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      padding: '1.25rem',
+                      gap: '1.25rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                      {/* Thumbnail Foto Awal */}
+                      <div
+                        style={{
+                          width: '130px',
+                          height: '95px',
+                          position: 'relative',
+                          borderRadius: 'var(--radius-sm)',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                          backgroundColor: 'var(--bg-canvas)',
+                          border: '1px solid var(--border-hairline)',
+                        }}
+                      >
+                        <Image
+                          src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 300)}
+                          alt={report.judulPusaka}
+                          fill
+                          sizes="130px"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+
+                      {/* Info Laporan */}
+                      <div style={{ flex: '1 1 280px', minWidth: '240px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.4rem' }}>
+                          <span
+                            className={`badge ${
+                              report.status === 'SELESAI'
+                                ? 'badge-selesai'
+                                : report.status === 'DIPROSES'
+                                ? 'badge-diproses'
+                                : 'badge-masuk'
+                            }`}
+                          >
+                            {report.status === 'LAPORAN_MASUK'
+                              ? 'Laporan Masuk'
+                              : report.status === 'DIPROSES'
+                              ? 'Sedang Ditangani'
+                              : 'Selesai'}
+                          </span>
+                          <span className={`badge ${report.kategori === 'BENDA' ? 'badge-benda' : 'badge-takbenda'}`}>
+                            {report.kategori === 'BENDA' ? 'Benda / Cagar' : 'Takbenda / Tradisi'}
+                          </span>
+                        </div>
+
+                        <h3
+                          style={{
+                            fontSize: '1.15rem',
+                            fontWeight: 600,
+                            color: 'var(--text-primary)',
+                            margin: '0 0 0.35rem 0',
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          {report.judulPusaka}
+                        </h3>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                          <MapPin size={13} />
+                          <span>{report.lokasiSpesifik}, {report.kabupatenKota}</span>
+                        </div>
+
+                        <p
+                          style={{
+                            color: 'var(--text-secondary)',
+                            fontSize: '0.85rem',
+                            lineHeight: 1.5,
+                            margin: 0,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {report.deskripsiKrisis}
+                        </p>
+                      </div>
+
+                      {/* Aksi & Status Penanganan */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.65rem',
+                          alignItems: 'flex-end',
+                          marginLeft: 'auto',
+                          flexShrink: 0,
+                          minWidth: '180px',
+                        }}
+                      >
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'right' }}>
+                          {report.admin ? (
+                            <span>Ditangani: <strong style={{ color: 'var(--text-primary)' }}>{report.admin.nama}</strong></span>
+                          ) : (
+                            <span style={{ color: 'var(--status-masuk)' }}>Belum ada konservator</span>
+                          )}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                          {report.status === 'LAPORAN_MASUK' && (
+                            <button
+                              onClick={() => handleTakeOwnership(report.id)}
+                              className="btn btn-outline btn-sm"
+                              title="Ambil Alih Penanganan"
+                            >
+                              <Play size={13} />
+                              <span>Ambil Alih</span>
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => openActionModal(report)}
+                            className="btn btn-primary btn-sm"
+                          >
+                            <Upload size={13} />
+                            <span>Tatalaksana</span>
+                          </button>
+
+                          <Link
+                            href={`/katalog/${report.id}`}
+                            className="btn btn-secondary btn-sm"
+                            target="_blank"
+                            title="Pratinjau Dossier Publik"
+                          >
+                            <ExternalLink size={13} />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Jika sudah ada catatan penanganan lapangan */}
+                    {report.catatanPenanganan && (
+                      <div
+                        style={{
+                          padding: '0.75rem 1rem',
+                          backgroundColor: 'var(--bg-canvas)',
+                          borderRadius: 'var(--radius-sm)',
+                          fontSize: '0.825rem',
+                          color: 'var(--text-secondary)',
+                          borderLeft: '3px solid var(--action-primary)',
+                        }}
+                      >
+                        <strong style={{ color: 'var(--text-primary)' }}>Catatan Lapangan Terakhir: </strong>
+                        {report.catatanPenanganan}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Modal Tatalaksana Konservasi & Digitalisasi */}
         {modalOpen && selectedReport && (
           <div
             style={{
               position: 'fixed',
               inset: 0,
-              background: 'rgba(24, 23, 22, 0.65)',
-              backdropFilter: 'blur(8px)',
+              zIndex: 1000,
+              backgroundColor: 'rgba(0, 0, 0, 0.65)',
+              backdropFilter: 'blur(4px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 2000,
-              padding: '1.5rem',
+              padding: '1rem',
             }}
           >
             <div
               className="paper-card"
               style={{
                 width: '100%',
-                maxWidth: '640px',
+                maxWidth: '620px',
                 maxHeight: '90vh',
                 overflowY: 'auto',
-                padding: '2.25rem',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+                padding: 'clamp(1.5rem, 4vw, 2rem)',
               }}
             >
               <div
@@ -427,9 +554,9 @@ export default function AdminWorkbenchPage() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'flex-start',
-                  marginBottom: '1.5rem',
+                  marginBottom: '1.25rem',
                   borderBottom: '1px solid var(--border-hairline)',
-                  paddingBottom: '1rem',
+                  paddingBottom: '0.75rem',
                 }}
               >
                 <div>

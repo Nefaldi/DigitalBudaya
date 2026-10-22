@@ -149,6 +149,10 @@ export default function Navbar() {
       return true;
     }
 
+    if (href === '/admin' && (pathname === '/admin' || pathname.startsWith('/superadmin/users'))) {
+      return true;
+    }
+
     return false;
   };
 
@@ -190,10 +194,10 @@ export default function Navbar() {
     ];
   } else if (user.role === 'SUPERADMIN') {
     // Menu disamakan menjadi 'Analitik Wilayah' agar seragam & tidak membingungkan
+    // Fitur 'Kelola Pengguna' diintegrasikan ke dalam 'Workbench Admin'
     navLinks = [
       { label: 'Beranda', href: '/' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
-      { label: 'Kelola Pengguna', href: '/superadmin/users' },
       { label: 'Workbench Admin', href: '/admin' },
       { label: 'Katalog Budaya', href: '/katalog' },
     ];
