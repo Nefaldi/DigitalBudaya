@@ -17,6 +17,14 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
     const body = await req.json();
     const { role, nama, email } = body;
 
+    // Anti Self-Lockout: Prevent active Superadmin from accidentally demoting their own account
+    if (id === user.id && role && role !== 'SUPERADMIN') {
+      return NextResponse.json(
+        { error: 'Anda tidak dapat menurunkan peran Superadmin akun Anda sendiri untuk mencegah kehilangan akses sistem' },
+        { status: 400 }
+      );
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { id } });
     if (!existingUser) {
       return NextResponse.json({ error: 'Pengguna tidak ditemukan' }, { status: 404 });

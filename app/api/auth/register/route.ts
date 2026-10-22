@@ -6,8 +6,8 @@ import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'anonymous';
-    const rateLimit = checkRateLimit(`register:${ip}`, { maxRequests: 5, intervalMs: 60_000 });
+    const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for')?.split(',')[0].trim() || '127.0.0.1';
+    const rateLimit = checkRateLimit(`register-ip:${ip}`, { maxRequests: 5, intervalMs: 60_000 });
     if (!rateLimit.isAllowed) {
       const retrySeconds = Math.ceil(rateLimit.resetMs / 1000);
       return NextResponse.json(
