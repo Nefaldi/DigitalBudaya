@@ -21,96 +21,64 @@ export default function LoadingScreen({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: fullScreen ? '70vh' : '360px',
+        minHeight: fullScreen ? '70vh' : '260px',
         padding: '2rem 1rem',
         position: 'relative',
-        overflow: 'hidden',
       }}
       className="digiculture-loading-wrapper"
     >
-      {/* Ambient background glow */}
-      <div
-        style={{
-          position: 'absolute',
-          width: '240px',
-          height: '240px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, var(--action-primary) 0%, transparent 70%)',
-          opacity: 0.12,
-          filter: 'blur(40px)',
-          animation: 'pulseGlow 3s ease-in-out infinite alternate',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Central Emblem with pulsing ring */}
+      {/* Clean Emblem with Single Smooth Spinner */}
       <div
         style={{
           position: 'relative',
-          width: '84px',
-          height: '84px',
+          width: '64px',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '1.75rem',
+          marginBottom: '1.25rem',
         }}
       >
-        {/* Outer orbital spinner ring */}
+        {/* Subtle, single spinning ring */}
         <div
           style={{
             position: 'absolute',
-            inset: '-6px',
+            inset: 0,
             borderRadius: '50%',
-            border: '2px solid transparent',
+            border: '2px solid var(--border-hairline)',
             borderTopColor: 'var(--action-primary)',
-            borderRightColor: 'rgba(194, 91, 59, 0.4)',
-            animation: 'spin 1.4s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite',
+            animation: 'digicultureSpin 0.9s linear infinite',
           }}
         />
 
-        {/* Pulse wave ring */}
+        {/* Clean Logo Container */}
         <div
           style={{
-            position: 'absolute',
-            inset: '-14px',
-            borderRadius: '50%',
-            border: '1px solid var(--action-primary)',
-            opacity: 0.25,
-            animation: 'pingWave 2.4s cubic-bezier(0, 0, 0.2, 1) infinite',
-          }}
-        />
-
-        {/* Logo container badge */}
-        <div
-          style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '18px',
+            width: '46px',
+            height: '46px',
+            borderRadius: '12px',
             background: 'var(--bg-card)',
             border: '1px solid var(--border-hairline)',
-            boxShadow: '0 8px 24px -4px rgba(0, 0, 0, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'relative',
-            zIndex: 2,
-            animation: 'breathe 2.4s ease-in-out infinite',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
           }}
         >
           <Image
             src="/logo-transparent.png"
-            alt="Logo DigiCulture Care"
-            width={38}
-            height={38}
+            alt="DigiCulture Care Logo"
+            width={26}
+            height={26}
             className="logo-light-variant"
             style={{ objectFit: 'contain' }}
             priority
           />
           <Image
             src="/logo-light-transparent.png"
-            alt="Logo DigiCulture Care"
-            width={38}
-            height={38}
+            alt="DigiCulture Care Logo"
+            width={26}
+            height={26}
             className="logo-dark-variant"
             style={{ objectFit: 'contain' }}
             priority
@@ -118,39 +86,14 @@ export default function LoadingScreen({
         </div>
       </div>
 
-      {/* Dynamic Progress Beam */}
-      <div
-        style={{
-          width: '140px',
-          height: '3px',
-          background: 'var(--border-hairline)',
-          borderRadius: '9999px',
-          overflow: 'hidden',
-          position: 'relative',
-          marginBottom: '1.25rem',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            width: '45%',
-            background: 'linear-gradient(90deg, transparent, var(--action-primary), transparent)',
-            borderRadius: '9999px',
-            animation: 'beamSlide 1.5s ease-in-out infinite',
-          }}
-        />
-      </div>
-
-      {/* Text message */}
-      <div style={{ textAlign: 'center', maxWidth: '360px', zIndex: 2 }}>
+      {/* Clean, Legible Status Text */}
+      <div style={{ textAlign: 'center', maxWidth: '340px' }}>
         <h3
           style={{
-            fontSize: '0.98rem',
+            fontSize: '0.925rem',
             fontWeight: 600,
             color: 'var(--text-primary)',
-            margin: '0 0 0.35rem 0',
+            margin: '0 0 0.25rem 0',
             letterSpacing: '-0.015em',
           }}
         >
@@ -159,10 +102,10 @@ export default function LoadingScreen({
         {submessage && (
           <p
             style={{
-              fontSize: '0.8rem',
+              fontSize: '0.78rem',
               color: 'var(--text-muted)',
               margin: 0,
-              lineHeight: 1.45,
+              lineHeight: 1.4,
             }}
           >
             {submessage}
@@ -170,54 +113,14 @@ export default function LoadingScreen({
         )}
       </div>
 
-      {/* Scoped Keyframes for smooth animations */}
+      {/* Single Keyframe */}
       <style jsx>{`
-        @keyframes spin {
+        @keyframes digicultureSpin {
           0% {
             transform: rotate(0deg);
           }
           100% {
             transform: rotate(360deg);
-          }
-        }
-        @keyframes pingWave {
-          0% {
-            transform: scale(0.85);
-            opacity: 0.6;
-          }
-          70% {
-            transform: scale(1.35);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1.35);
-            opacity: 0;
-          }
-        }
-        @keyframes breathe {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.04);
-          }
-        }
-        @keyframes pulseGlow {
-          0% {
-            transform: scale(0.9);
-            opacity: 0.08;
-          }
-          100% {
-            transform: scale(1.2);
-            opacity: 0.18;
-          }
-        }
-        @keyframes beamSlide {
-          0% {
-            left: -50%;
-          }
-          100% {
-            left: 110%;
           }
         }
       `}</style>
