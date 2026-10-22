@@ -276,13 +276,14 @@ export default function Navbar() {
             <ThemeToggle pill />
 
             {/* Desktop Actions */}
-            <div className="digiculture-desktop-action" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <div className="digiculture-desktop-action" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
               {!loading && !user ? (
                 /* Guest Action */
                 isKatalogPage || isLoginPage ? (
                   <Link
                     href="/"
                     className="digiculture-action-pill digiculture-action-pill-primary"
+                    style={{ flexShrink: 0 }}
                   >
                     <span>Kembali</span>
                   </Link>
@@ -290,6 +291,7 @@ export default function Navbar() {
                   <Link
                     href="/login"
                     className="digiculture-action-pill digiculture-action-pill-primary"
+                    style={{ flexShrink: 0 }}
                   >
                     <LogIn size={13} />
                     <span>Masuk</span>
@@ -307,6 +309,7 @@ export default function Navbar() {
                       borderColor: pathname === '/pelapor/profil' ? 'var(--action-primary)' : 'var(--border-hairline)',
                       maxWidth: '170px',
                       overflow: 'hidden',
+                      flexShrink: 0,
                     }}
                     title={`Profil: ${user.nama} (${user.role})`}
                   >
@@ -342,7 +345,7 @@ export default function Navbar() {
                     onClick={() => setShowLogoutConfirm(true)}
                     disabled={isLoggingOut}
                     className="digiculture-action-pill digiculture-action-pill-outline"
-                    style={{ color: 'var(--action-danger)', padding: '0.35rem 0.65rem' }}
+                    style={{ color: 'var(--action-danger)', padding: '0.35rem 0.65rem', flexShrink: 0 }}
                     title="Keluar dari sesi akun Anda"
                   >
                     <LogOut size={12} />

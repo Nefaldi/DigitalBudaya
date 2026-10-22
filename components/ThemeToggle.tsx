@@ -57,6 +57,7 @@ export default function ThemeToggle({ pill = false }: { pill?: boolean }) {
         color: 'var(--text-primary)',
         cursor: 'pointer',
         transition: 'all 0.15s ease',
+        flexShrink: 0,
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'var(--text-secondary)';
