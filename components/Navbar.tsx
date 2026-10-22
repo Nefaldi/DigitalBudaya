@@ -307,7 +307,7 @@ export default function Navbar() {
                       textDecoration: 'none',
                       color: 'var(--text-primary)',
                       borderColor: pathname === '/pelapor/profil' ? 'var(--action-primary)' : 'var(--border-hairline)',
-                      maxWidth: '170px',
+                      maxWidth: '150px',
                       overflow: 'hidden',
                       flexShrink: 0,
                     }}
@@ -319,24 +319,10 @@ export default function Navbar() {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
-                        maxWidth: '90px',
                         fontWeight: 600,
                       }}
                     >
                       {user.nama}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.65rem',
-                        padding: '0.1rem 0.35rem',
-                        borderRadius: '4px',
-                        background: 'var(--bg-subtle)',
-                        color: 'var(--text-muted)',
-                        fontWeight: 700,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {user.role === 'SUPERADMIN' ? 'ADM' : user.role === 'ADMIN' ? 'KONS' : 'USER'}
                     </span>
                   </Link>
 
