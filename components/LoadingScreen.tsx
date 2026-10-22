@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 interface LoadingScreenProps {
   message?: string;
@@ -21,80 +20,33 @@ export default function LoadingScreen({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: fullScreen ? '70vh' : '260px',
+        minHeight: fullScreen ? '65vh' : '220px',
         padding: '2rem 1rem',
-        position: 'relative',
       }}
       className="digiculture-loading-wrapper"
     >
-      {/* Clean Emblem with Single Smooth Spinner */}
+      {/* Animasi Lingkaran Minimalis */}
       <div
         style={{
-          position: 'relative',
-          width: '64px',
-          height: '64px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: '1.25rem',
+          width: '38px',
+          height: '38px',
+          borderRadius: '50%',
+          border: '3px solid var(--border-hairline)',
+          borderTopColor: 'var(--action-primary)',
+          animation: 'digicultureSpin 0.75s linear infinite',
+          marginBottom: '1rem',
         }}
-      >
-        {/* Subtle, single spinning ring */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            borderRadius: '50%',
-            border: '2px solid var(--border-hairline)',
-            borderTopColor: 'var(--action-primary)',
-            animation: 'digicultureSpin 0.9s linear infinite',
-          }}
-        />
+      />
 
-        {/* Clean Logo Container */}
-        <div
-          style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '12px',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-hairline)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-          }}
-        >
-          <Image
-            src="/logo-transparent.png"
-            alt="DigiCulture Care Logo"
-            width={26}
-            height={26}
-            className="logo-light-variant"
-            style={{ objectFit: 'contain' }}
-            priority
-          />
-          <Image
-            src="/logo-light-transparent.png"
-            alt="DigiCulture Care Logo"
-            width={26}
-            height={26}
-            className="logo-dark-variant"
-            style={{ objectFit: 'contain' }}
-            priority
-          />
-        </div>
-      </div>
-
-      {/* Clean, Legible Status Text */}
-      <div style={{ textAlign: 'center', maxWidth: '340px' }}>
+      {/* Teks Status */}
+      <div style={{ textAlign: 'center', maxWidth: '320px' }}>
         <h3
           style={{
-            fontSize: '0.925rem',
+            fontSize: '0.9rem',
             fontWeight: 600,
             color: 'var(--text-primary)',
             margin: '0 0 0.25rem 0',
-            letterSpacing: '-0.015em',
+            letterSpacing: '-0.01em',
           }}
         >
           {message}
@@ -113,7 +65,6 @@ export default function LoadingScreen({
         )}
       </div>
 
-      {/* Single Keyframe */}
       <style jsx>{`
         @keyframes digicultureSpin {
           0% {
