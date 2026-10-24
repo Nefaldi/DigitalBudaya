@@ -225,24 +225,30 @@ export default function LaporBudayaPage() {
   };
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '1rem', paddingBottom: '4rem' }}>
       <div className="container" style={{ maxWidth: '840px' }}>
         {/* Paper White Card Container */}
-        <div className="paper-card" style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)' }}>
+        <div className="paper-card" style={{ padding: 'clamp(1.25rem, 3vw, 1.75rem)' }}>
           {/* Header */}
-          <div style={{ marginBottom: '2rem' }}>
+          <div
+            style={{
+              marginBottom: '1.25rem',
+              borderBottom: '1px solid var(--border-hairline)',
+              paddingBottom: '1rem',
+            }}
+          >
             <h1
               style={{
-                fontSize: 'clamp(1.8rem, 3.5vw, 2.3rem)',
+                fontSize: 'clamp(1.5rem, 3vw, 1.85rem)',
                 color: 'var(--text-primary)',
-                marginBottom: '0.5rem',
-                fontWeight: 460,
-                letterSpacing: '-0.028em',
+                margin: '0 0 0.25rem 0',
+                fontWeight: 600,
+                letterSpacing: '-0.025em',
               }}
             >
               Laporkan Budaya
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>
               Kirimkan laporan kondisi cagar budaya untuk ditindaklanjuti oleh tim konservator.
             </p>
           </div>
