@@ -173,7 +173,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
       }
 
       setUsers((prev) => [data.user, ...prev]);
-      const roleDisplayName = newRole === 'SUPERADMIN' ? 'Superadmin' : newRole === 'PELAPOR' ? 'Pelapor' : 'Konservator (Admin)';
+      const roleDisplayName = newRole === 'SUPERADMIN' ? 'Superadmin' : newRole === 'PELAPOR' ? 'Pelapor' : 'Admin (Konservator)';
       setFeedback({ type: 'success', message: `Pengguna "${newNama}" berhasil didaftarkan sebagai ${roleDisplayName}.` });
       setAddModalOpen(false);
       setNewNama('');
@@ -283,7 +283,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
               onClick={() => setRoleFilter(r)}
               className={`btn btn-sm ${roleFilter === r ? 'btn-primary' : 'btn-secondary'}`}
             >
-              {r === 'ADMIN' ? 'Konservator (Admin)' : r === 'SUPERADMIN' ? 'Superadmin' : r === 'PELAPOR' ? 'Pelapor' : r}
+              {r === 'ADMIN' ? 'Admin (Konservator)' : r === 'SUPERADMIN' ? 'Superadmin' : r === 'PELAPOR' ? 'Pelapor' : r}
             </button>
           ))}
         </div>
@@ -355,7 +355,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                             : 'badge-takbenda'
                         }`}
                       >
-                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Konservator (Admin)'}
+                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Admin (Konservator)'}
                       </span>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -371,7 +371,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                         style={{ padding: '0.4rem 0.65rem', fontSize: '0.8rem', width: 'auto' }}
                       >
                         <option value="PELAPOR">Pelapor (Masyarakat)</option>
-                        <option value="ADMIN">Konservator (Admin)</option>
+                        <option value="ADMIN">Admin (Konservator)</option>
                         <option value="SUPERADMIN">Superadmin (Pimpinan)</option>
                       </select>
                     </td>
@@ -505,7 +505,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                   onChange={(e) => setNewRole(e.target.value as UserRole)}
                   className="form-select"
                 >
-                  <option value="ADMIN">Konservator (Admin - Petugas Wilayah)</option>
+                  <option value="ADMIN">Admin (Konservator - Petugas Wilayah)</option>
                   <option value="PELAPOR">Pelapor (Masyarakat Umum)</option>
                   <option value="SUPERADMIN">Superadmin (Pimpinan / Pengelola Sistem)</option>
                 </select>
