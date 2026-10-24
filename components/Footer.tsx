@@ -176,7 +176,7 @@ export default function Footer() {
                     lineHeight: 1.35,
                   }}
                 >
-                  Musyawarah Nasional (MUNAS)
+                  MUNAS IX PERMIKOMNAS — UNIMA 2026
                 </span>
               </div>
             </div>
