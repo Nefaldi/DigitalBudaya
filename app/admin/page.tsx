@@ -525,7 +525,7 @@ export default function AdminWorkbenchPage() {
                 className={`btn btn-sm ${activeTab === 'MENUNGGU_VALIDASI' ? 'btn-primary' : 'btn-secondary'}`}
                 style={
                   countMenungguValidasi > 0 && activeTab !== 'MENUNGGU_VALIDASI'
-                    ? { borderColor: '#fed7aa', color: '#c2410c', background: '#fff7ed', fontWeight: 600 }
+                    ? { borderColor: 'var(--border-strong)', color: 'var(--color-terracotta)', background: 'var(--color-terracotta-soft)', fontWeight: 600 }
                     : undefined
                 }
               >
@@ -591,16 +591,11 @@ export default function AdminWorkbenchPage() {
                               report.status === 'SELESAI'
                                 ? 'badge-selesai'
                                 : report.status === 'MENUNGGU_VALIDASI'
-                                ? 'badge-warning'
+                                ? 'badge-validasi'
                                 : report.status === 'DIPROSES'
                                 ? 'badge-diproses'
                                 : 'badge-masuk'
                             }`}
-                            style={
-                              report.status === 'MENUNGGU_VALIDASI'
-                                ? { background: '#fff7ed', color: '#c2410c', borderColor: '#fed7aa', fontWeight: 600 }
-                                : undefined
-                            }
                           >
                             {report.status === 'LAPORAN_MASUK'
                               ? 'Laporan Masuk'
@@ -820,16 +815,16 @@ export default function AdminWorkbenchPage() {
                           gap: '1rem',
                           padding: '0.9rem',
                           borderRadius: 'var(--radius-sm)',
-                          background: report.status === 'MENUNGGU_VALIDASI' ? '#fffaf5' : 'var(--bg-canvas)',
-                          border: report.status === 'MENUNGGU_VALIDASI' ? '1px solid #fed7aa' : '1px solid var(--border-hairline)',
+                          background: 'var(--bg-subtle)',
+                          border: '1px solid var(--border-hairline)',
                           marginTop: '0.5rem',
                         }}
                       >
                         <div>
                           <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94a3b8' }} /> Sebelum (Laporan Awal)
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }} /> Sebelum (Laporan Awal)
                           </div>
-                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
+                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-canvas)' }}>
                             <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 400)} alt="Sebelum" fill sizes="260px" style={{ objectFit: 'cover' }} />
                           </div>
                           <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem', lineHeight: 1.4, margin: '0.4rem 0 0 0' }}>
@@ -838,22 +833,22 @@ export default function AdminWorkbenchPage() {
                         </div>
 
                         <div>
-                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} /> Sesudah (Hasil Penanganan Petugas)
+                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--status-selesai)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--status-selesai)' }} /> Sesudah (Hasil Penanganan Petugas)
                           </div>
-                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #86efac' }}>
+                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-canvas)' }}>
                             {report.fotoDigitalisasi ? (
                               <Image src={optimizeCloudinaryUrl(report.fotoDigitalisasi, 400)} alt="Sesudah" fill sizes="260px" style={{ objectFit: 'cover' }} />
                             ) : (
-                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.75rem', background: '#f8fafc' }}>
+                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', background: 'var(--bg-canvas)' }}>
                                 (Belum ada foto digitalisasi)
                               </div>
                             )}
                           </div>
                           {report.catatanPenanganan && (
-                            <div style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: 'var(--text-primary)', background: '#ffffff', padding: '0.4rem 0.6rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                              <strong style={{ fontSize: '0.7rem', color: '#15803d', display: 'block', textTransform: 'uppercase' }}>Catatan Petugas:</strong>
-                              {report.catatanPenanganan}
+                            <div style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: 'var(--text-primary)', background: 'var(--bg-surface)', padding: '0.45rem 0.65rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
+                              <strong style={{ fontSize: '0.7rem', color: 'var(--status-selesai)', display: 'block', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Catatan Petugas:</strong>
+                              <span style={{ color: 'var(--text-secondary)' }}>{report.catatanPenanganan}</span>
                             </div>
                           )}
                         </div>

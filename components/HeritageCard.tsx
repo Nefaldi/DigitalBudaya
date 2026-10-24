@@ -38,19 +38,7 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
       case 'SELESAI':
         return <span className="badge badge-selesai">Selesai & Terbit</span>;
       case 'MENUNGGU_VALIDASI':
-        return (
-          <span
-            className="badge"
-            style={{
-              background: '#fff7ed',
-              color: '#c2410c',
-              borderColor: '#fed7aa',
-              fontWeight: 600,
-            }}
-          >
-            Menunggu Validasi
-          </span>
-        );
+        return <span className="badge badge-validasi">Menunggu Validasi</span>;
       case 'DIPROSES':
         return <span className="badge badge-diproses">Diproses</span>;
       default:

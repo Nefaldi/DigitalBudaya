@@ -302,6 +302,12 @@ a {
   border: 1px solid var(--status-selesai-border);
 }
 
+.badge-validasi {
+  background-color: var(--color-terracotta-soft);
+  color: var(--color-terracotta);
+  border: 1px solid var(--border-strong);
+}
+
 .badge-benda {
   background-color: var(--cat-benda-bg);
   color: var(--cat-benda);

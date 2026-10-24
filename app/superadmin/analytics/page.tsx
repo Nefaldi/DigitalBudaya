@@ -187,8 +187,8 @@ export default function AnalyticsDashboardPage() {
             style={{
               padding: '1rem 1.25rem',
               borderRadius: '12px',
-              backgroundColor: '#fff7ed',
-              border: '1px solid #fed7aa',
+              backgroundColor: 'var(--color-terracotta-soft)',
+              border: '1px solid var(--border-strong)',
               marginBottom: '1.5rem',
               display: 'flex',
               justifyContent: 'space-between',
@@ -203,21 +203,22 @@ export default function AnalyticsDashboardPage() {
                   width: '36px',
                   height: '36px',
                   borderRadius: '8px',
-                  background: '#ffedd5',
-                  color: '#c2410c',
+                  background: 'var(--bg-card)',
+                  color: 'var(--color-terracotta)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
+                  border: '1px solid var(--border-hairline)',
                 }}
               >
                 <Hourglass size={18} />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: '0.925rem', fontWeight: 650, color: '#9a3412' }}>
+                <h4 style={{ margin: 0, fontSize: '0.925rem', fontWeight: 650, color: 'var(--text-primary)' }}>
                   Validasi Pekerjaan Petugas Butuh Persetujuan Anda
                 </h4>
-                <p style={{ margin: '0.15rem 0 0 0', fontSize: '0.8rem', color: '#c2410c' }}>
+                <p style={{ margin: '0.15rem 0 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   Terdapat {data.statusBreakdown.MENUNGGU_VALIDASI} laporan dengan hasil penanganan lapangan yang menunggu validasi Superadmin.
                 </p>
               </div>
@@ -226,7 +227,7 @@ export default function AnalyticsDashboardPage() {
               href="/admin?tab=validasi"
               className="btn btn-sm"
               style={{
-                backgroundColor: '#c2410c',
+                backgroundColor: 'var(--color-terracotta)',
                 color: '#ffffff',
                 border: 'none',
                 display: 'inline-flex',
@@ -303,12 +304,12 @@ export default function AnalyticsDashboardPage() {
           {/* Card 4: Menunggu Validasi */}
           <div className="paper-card" style={{ padding: '1.15rem 1.25rem', borderRadius: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.75rem', color: '#c2410c', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--color-terracotta)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Menunggu Validasi
               </span>
-              <Hourglass size={16} style={{ color: '#c2410c' }} />
+              <Hourglass size={16} style={{ color: 'var(--color-terracotta)' }} />
             </div>
-            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: '#c2410c', lineHeight: 1 }}>
+            <div style={{ fontSize: '1.85rem', fontWeight: 700, color: 'var(--color-terracotta)', lineHeight: 1 }}>
               {data.statusBreakdown.MENUNGGU_VALIDASI}
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
