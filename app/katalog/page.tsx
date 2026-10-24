@@ -177,7 +177,7 @@ function KatalogContent() {
         </div>
 
         {/* Quick Kategori Filter Tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <div className="mobile-scroll-tabs" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => setSelectedKategori('Semua')}

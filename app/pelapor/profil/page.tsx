@@ -288,7 +288,7 @@ export default function PelaporProfilPage() {
       <div className="container" style={{ maxWidth: '960px' }}>
         {/* User Identity Banner Card */}
         <div
-          className="paper-card"
+          className="paper-card profil-identity-banner"
           style={{
             padding: '1.5rem',
             marginBottom: '1.25rem',
@@ -358,6 +358,7 @@ export default function PelaporProfilPage() {
 
         {/* 3 FITUR TABS: INFORMASI PRIBADI, EDIT PROFIL, PENGATURAN AKUN */}
         <div
+          className="mobile-scroll-tabs"
           style={{
             display: 'flex',
             gap: '0.5rem',

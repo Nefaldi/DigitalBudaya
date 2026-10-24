@@ -285,7 +285,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => fillDemoAccount('pelapor@digiculture.id')}
-                className="btn btn-secondary btn-sm"
+                className="btn btn-secondary btn-sm demo-account-btn"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
                 <span>Pelapor</span>
@@ -294,7 +294,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => fillDemoAccount('admin@digiculture.id')}
-                className="btn btn-secondary btn-sm"
+                className="btn btn-secondary btn-sm demo-account-btn"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
                 <span>Konservator Wilayah</span>
@@ -303,7 +303,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => fillDemoAccount('superadmin@digiculture.id')}
-                className="btn btn-secondary btn-sm"
+                className="btn btn-secondary btn-sm demo-account-btn"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
                 <span>Superadmin</span>

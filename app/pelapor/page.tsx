@@ -268,7 +268,7 @@ export default function PelaporDashboardPage() {
         )}
 
         {/* Quick Stats Metric Cards */}
-        <div className="grid-cols-3" style={{ marginBottom: '1.5rem' }}>
+        <div className="grid-cols-3 pelapor-kpi-grid" style={{ marginBottom: '1.5rem' }}>
           <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.15rem 1.25rem' }}>
             <div
               style={{

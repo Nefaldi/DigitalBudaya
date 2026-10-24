@@ -163,6 +163,7 @@ export default function AnalyticsDashboardPage() {
 
         {/* 5 KPI Metric Cards */}
         <div
+          className="analytics-kpi-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',

@@ -413,6 +413,7 @@ export default function LaporBudayaPage() {
 
             {/* Submit Button */}
             <div
+              className="form-actions-row"
               style={{
                 borderTop: '1px solid var(--border-hairline)',
                 paddingTop: '1.75rem',

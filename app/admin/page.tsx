@@ -407,6 +407,7 @@ export default function AdminWorkbenchPage() {
         {/* Section Navigation Tabs (Khusus Superadmin: Manajemen Laporan & Kelola Pengguna) */}
         {isSuperadmin && (
           <div
+            className="mobile-scroll-tabs"
             style={{
               display: 'flex',
               gap: '0.5rem',
@@ -494,7 +495,7 @@ export default function AdminWorkbenchPage() {
             )}
 
             {/* Tab Filters */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div className="mobile-scroll-tabs" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
               <button
                 onClick={() => setActiveTab('ALL')}
                 className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
@@ -1105,10 +1106,12 @@ export default function AdminWorkbenchPage() {
             }}
           >
             <div
-              className="paper-card"
+              className="paper-card modal-sheet-card"
               style={{
                 width: '100%',
                 maxWidth: '480px',
+                maxHeight: '90vh',
+                overflowY: 'auto',
                 padding: 'clamp(1.5rem, 4vw, 2rem)',
               }}
             >
