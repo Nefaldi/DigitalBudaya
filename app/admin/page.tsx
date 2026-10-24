@@ -781,19 +781,7 @@ export default function AdminWorkbenchPage() {
                             </>
                           )}
 
-                          {/* Tombol Evaluasi / Detail Universal */}
-                          {isSuperadmin && (
-                            <button
-                              onClick={() => openActionModal(report)}
-                              className="btn btn-secondary btn-sm"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                              title="Buka form evaluasi dan catatan teknis"
-                            >
-                              <Upload size={13} />
-                              <span>Evaluasi</span>
-                            </button>
-                          )}
-
+                          {/* Link Pratinjau Dossier Publik */}
                           <Link
                             href={`/katalog/${report.id}`}
                             className="btn btn-secondary btn-sm"
