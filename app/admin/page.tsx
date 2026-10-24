@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { HeritageReportItem } from '@/components/HeritageCard';
@@ -16,7 +15,6 @@ import {
   Play,
   Upload,
   X,
-  ExternalLink,
   MapPin,
   ClipboardList,
   Users,
@@ -773,9 +771,6 @@ export default function AdminWorkbenchPage() {
                       >
                         <div
                           style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
                             borderBottom: '1px solid var(--border-hairline)',
                             paddingBottom: '0.6rem',
                           }}
@@ -783,15 +778,6 @@ export default function AdminWorkbenchPage() {
                           <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                             Detail Lengkap Laporan #{report.id.slice(-6).toUpperCase()}
                           </div>
-                          <Link
-                            href={`/katalog/${report.id}`}
-                            target="_blank"
-                            className="text-link"
-                            style={{ fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
-                          >
-                            <span>Buka Laman Publik</span>
-                            <ExternalLink size={12} />
-                          </Link>
                         </div>
 
                         {/* Grid Informasi Metadata */}
@@ -832,15 +818,6 @@ export default function AdminWorkbenchPage() {
                           </div>
                         </div>
 
-                        <div>
-                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                            Deskripsi Kerusakan / Kondisi Awal:
-                          </span>
-                          <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.5, background: 'var(--bg-canvas)', padding: '0.65rem 0.85rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
-                            {report.deskripsiKrisis}
-                          </p>
-                        </div>
-
                         {/* Dokumentasi Foto Sebelum dan Sesudah di dalam Dropdown */}
                         <div>
                           <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.45rem', fontWeight: 600 }}>
@@ -858,17 +835,26 @@ export default function AdminWorkbenchPage() {
                             }}
                           >
                             {/* Sebelum */}
-                            <div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
                               <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }} /> Foto Sebelum (Laporan Awal)
                               </div>
                               <div style={{ position: 'relative', width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-surface)' }}>
                                 <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 500)} alt="Sebelum" fill sizes="300px" style={{ objectFit: 'cover' }} />
                               </div>
+                              {/* Deskripsi dari Pelapor di bawah Gambar Pelapor */}
+                              <div style={{ marginTop: '0.5rem', flex: 1 }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.2rem', fontWeight: 600 }}>
+                                  Deskripsi Pelapor:
+                                </span>
+                                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45, background: 'var(--bg-surface)', padding: '0.55rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
+                                  {report.deskripsiKrisis || '(Tidak ada deskripsi)'}
+                                </p>
+                              </div>
                             </div>
 
                             {/* Sesudah */}
-                            <div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
                               <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--status-selesai)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--status-selesai)' }} /> Foto Sesudah (Hasil Penanganan)
                               </div>
@@ -881,31 +867,18 @@ export default function AdminWorkbenchPage() {
                                   </div>
                                 )}
                               </div>
+                              {/* Deskripsi dari Konservator di bawah Gambar Konservator */}
+                              <div style={{ marginTop: '0.5rem', flex: 1 }}>
+                                <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.2rem', fontWeight: 600 }}>
+                                  Deskripsi / Catatan Konservator:
+                                </span>
+                                <div style={{ fontSize: '0.8rem', color: report.catatanPenanganan ? 'var(--text-secondary)' : 'var(--text-muted)', lineHeight: 1.45, background: 'var(--bg-surface)', padding: '0.55rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-hairline)', fontStyle: report.catatanPenanganan ? 'normal' : 'italic' }}>
+                                  {report.catatanPenanganan || '(Belum ada catatan dari konservator)'}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-
-                        {/* Catatan Petugas Konservator (Jika Ada) */}
-                        {report.catatanPenanganan && (
-                          <div
-                            style={{
-                              padding: '0.65rem 0.85rem',
-                              backgroundColor: 'var(--bg-canvas)',
-                              borderRadius: 'var(--radius-sm)',
-                              fontSize: '0.825rem',
-                              color: 'var(--text-secondary)',
-                              borderLeft: '3px solid var(--action-primary)',
-                              borderTop: '1px solid var(--border-hairline)',
-                              borderRight: '1px solid var(--border-hairline)',
-                              borderBottom: '1px solid var(--border-hairline)',
-                            }}
-                          >
-                            <strong style={{ color: 'var(--action-primary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.04em', display: 'block', marginBottom: '0.2rem' }}>
-                              Catatan Petugas Konservator:
-                            </strong>
-                            {report.catatanPenanganan}
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
