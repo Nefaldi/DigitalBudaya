@@ -110,18 +110,28 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
 
     // ADMIN or SUPERADMIN Workflow
     if (user.role === 'ADMIN' || user.role === 'SUPERADMIN') {
-      const { status, fotoDigitalisasi, rekamanAudioUrl, catatanPenanganan } = body;
+      const { status, fotoDigitalisasi, rekamanAudioUrl, catatanPenanganan, adminId } = body;
 
       const dataToUpdate: Prisma.HeritageReportUncheckedUpdateInput = {};
+
+      // Penugasan Konservator / Petugas (seperti alur Sibersih)
+      if (adminId !== undefined) {
+        dataToUpdate.adminId = adminId || null;
+        if (adminId && !status && report.status === 'LAPORAN_MASUK') {
+          dataToUpdate.status = StatusPenyelamatan.DIPROSES;
+        }
+      }
 
       if (status) {
         // Workflow Validation: LAPORAN_MASUK -> DIPROSES -> SELESAI
         if (status === 'DIPROSES') {
           dataToUpdate.status = StatusPenyelamatan.DIPROSES;
-          dataToUpdate.adminId = user.id; // Take ownership
+          if (dataToUpdate.adminId === undefined && !report.adminId) {
+            dataToUpdate.adminId = user.id; // Take ownership if unassigned
+          }
         } else if (status === 'SELESAI') {
           dataToUpdate.status = StatusPenyelamatan.SELESAI;
-          if (!report.adminId) {
+          if (dataToUpdate.adminId === undefined && !report.adminId) {
             dataToUpdate.adminId = user.id;
           }
         } else if (status === 'LAPORAN_MASUK') {
@@ -152,7 +162,15 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
 
       invalidateCache('reports:');
       invalidateCache('analytics:');
-      return NextResponse.json({ message: 'Status dan data penanganan berhasil diperbarui oleh Admin', report: updated });
+
+      const actionMessage =
+        adminId !== undefined && !status
+          ? (adminId ? 'Tugas laporan berhasil ditugaskan ke Konservator' : 'Penugasan konservator berhasil direset')
+          : status === 'SELESAI'
+          ? 'Laporan berhasil divalidasi dan disahkan selesai (terbit di katalog)'
+          : 'Data laporan berhasil diperbarui';
+
+      return NextResponse.json({ message: actionMessage, report: updated });
     }
 
     return NextResponse.json({ error: 'Akses ditolak' }, { status: 403 });

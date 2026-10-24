@@ -6,12 +6,17 @@ import { Prisma, Role } from '@prisma/client';
 export async function GET(req: NextRequest) {
   try {
     const user = getAuthenticatedUser(req);
-    if (!user || user.role !== 'SUPERADMIN') {
-      return NextResponse.json({ error: 'Akses khusus Superadmin' }, { status: 403 });
+    if (!user || (user.role !== 'SUPERADMIN' && user.role !== 'ADMIN')) {
+      return NextResponse.json({ error: 'Akses khusus Superadmin / Admin' }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
     const roleParam = searchParams.get('role');
+
+    // Admin hanya diizinkan melihat daftar sesama Konservator (role=ADMIN)
+    if (user.role === 'ADMIN' && roleParam !== 'ADMIN') {
+      return NextResponse.json({ error: 'Akses khusus Superadmin' }, { status: 403 });
+    }
 
     const where: Prisma.UserWhereInput = {};
     if (roleParam && roleParam !== 'Semua') {

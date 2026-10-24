@@ -134,6 +134,34 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
           {report.deskripsiKrisis}
         </p>
 
+        {/* Info Pelapor & Petugas (Alur Sibersih) */}
+        <div
+          style={{
+            fontSize: '0.75rem',
+            color: 'var(--text-muted)',
+            borderTop: '1px solid var(--border-hairline)',
+            paddingTop: '0.5rem',
+            marginBottom: '0.65rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '0.5rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <span>
+            Pelapor: <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{report.pelapor?.nama || 'Masyarakat'}</strong>
+          </span>
+          <span>
+            Petugas:{' '}
+            {report.admin?.nama ? (
+              <strong style={{ color: 'var(--action-primary)', fontWeight: 600 }}>{report.admin.nama}</strong>
+            ) : (
+              <span style={{ color: 'var(--status-masuk)', fontStyle: 'italic', fontWeight: 600 }}>Belum Ditugaskan</span>
+            )}
+          </span>
+        </div>
+
         {/* Footer Row */}
         <div
           style={{

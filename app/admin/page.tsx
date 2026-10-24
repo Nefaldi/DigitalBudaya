@@ -20,6 +20,8 @@ import {
   MapPin,
   ClipboardList,
   Users,
+  UserCheck,
+  CheckCircle2,
 } from 'lucide-react';
 
 // Module-level in-memory cache for instantaneous client navigation (SWR)
@@ -46,6 +48,14 @@ export default function AdminWorkbenchPage() {
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState('');
   const [workbenchFeedback, setWorkbenchFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Penugasan Konservator & Validasi Laporan (Alur Sibersih)
+  const [conservators, setConservators] = useState<Array<{ id: string; nama: string; email: string }>>([]);
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [reportToAssign, setReportToAssign] = useState<HeritageReportItem | null>(null);
+  const [selectedConservatorId, setSelectedConservatorId] = useState('');
+  const [assigning, setAssigning] = useState(false);
+  const [assignError, setAssignError] = useState('');
 
   const router = useRouter();
 
@@ -74,6 +84,16 @@ export default function AdminWorkbenchPage() {
         }
         if (ignore) return;
         setUser(sessionUser);
+
+        // Ambil daftar Konservator untuk penugasan petugas
+        fetch('/api/users?role=ADMIN')
+          .then((res) => (res.ok ? res.json() : null))
+          .then((d) => {
+            if (!ignore && d?.users) {
+              setConservators(d.users);
+            }
+          })
+          .catch(() => {});
 
         const now = Date.now();
         // Skip background fetch if data is fresh within 15 seconds
@@ -116,6 +136,90 @@ export default function AdminWorkbenchPage() {
     setCatatanPenanganan(report.catatanPenanganan || '');
     setActionError('');
     setModalOpen(true);
+  };
+
+  const openAssignModal = (report: HeritageReportItem) => {
+    setReportToAssign(report);
+    setSelectedConservatorId(report.admin?.id || '');
+    setAssignError('');
+    setAssignModalOpen(true);
+  };
+
+  const handleAssignConservator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportToAssign) return;
+    setAssigning(true);
+    setAssignError('');
+
+    try {
+      const res = await fetch(`/api/reports/${reportToAssign.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminId: selectedConservatorId || null,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Gagal menugaskan konservator');
+      }
+
+      setReports((prev) => {
+        const updated = prev.map((r) => (r.id === reportToAssign.id ? data.report : r));
+        clientCachedReports = updated;
+        return updated;
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
+      }
+      setAssignModalOpen(false);
+      const chosen = conservators.find((c) => c.id === selectedConservatorId);
+      setWorkbenchFeedback({
+        type: 'success',
+        message: chosen
+          ? `Laporan berhasil ditugaskan kepada ${chosen.nama}. Status otomatis dialihkan ke Sedang Ditangani.`
+          : 'Penugasan petugas berhasil direset menjadi Belum Ditugaskan.',
+      });
+    } catch (err: unknown) {
+      setAssignError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menugaskan');
+    } finally {
+      setAssigning(false);
+    }
+  };
+
+  const handleDirectValidate = async (reportId: string, targetStatus: 'SELESAI' | 'DIPROSES') => {
+    setWorkbenchFeedback(null);
+    try {
+      const res = await fetch(`/api/reports/${reportId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: targetStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal memvalidasi laporan' });
+      } else {
+        setReports((prev) => {
+          const updated = prev.map((r) => (r.id === reportId ? data.report : r));
+          clientCachedReports = updated;
+          return updated;
+        });
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
+        }
+        setWorkbenchFeedback({
+          type: 'success',
+          message:
+            targetStatus === 'SELESAI'
+              ? 'Laporan dan hasil penanganan berhasil divalidasi dan disahkan Selesai (terbit di Katalog Budaya).'
+              : 'Laporan dikembalikan ke status Sedang Ditangani.',
+        });
+      }
+    } catch (err) {
+      console.error('Validation error:', err);
+      setWorkbenchFeedback({ type: 'error', message: 'Terjadi kesalahan saat memvalidasi laporan.' });
+    }
   };
 
   const handleTakeOwnership = async (reportId: string) => {
@@ -476,7 +580,7 @@ export default function AdminWorkbenchPage() {
                         </p>
                       </div>
 
-                      {/* Aksi & Status Penanganan */}
+                      {/* Aksi & Status Penanganan (Alur Sibersih) */}
                       <div
                         style={{
                           display: 'flex',
@@ -485,35 +589,71 @@ export default function AdminWorkbenchPage() {
                           alignItems: 'flex-end',
                           marginLeft: 'auto',
                           flexShrink: 0,
-                          minWidth: '180px',
+                          minWidth: '200px',
                         }}
                       >
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'right' }}>
-                          {report.admin ? (
-                            <span>Ditangani: <strong style={{ color: 'var(--text-primary)' }}>{report.admin.nama}</strong></span>
-                          ) : (
-                            <span style={{ color: 'var(--status-masuk)' }}>Belum ada konservator</span>
-                          )}
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)' }}>Pelapor: </span>
+                            <strong style={{ color: 'var(--text-primary)' }}>{report.pelapor?.nama || 'Masyarakat'}</strong>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)' }}>Petugas: </span>
+                            {report.admin ? (
+                              <strong style={{ color: 'var(--action-primary)' }}>{report.admin.nama}</strong>
+                            ) : (
+                              <span style={{ color: 'var(--status-masuk)', fontStyle: 'italic', fontWeight: 600 }}>Belum Ditugaskan</span>
+                            )}
+                          </div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                          {report.status === 'LAPORAN_MASUK' && (
+                        <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
+                          {/* Superadmin: Tugaskan Petugas Konservator (Alur Sibersih) */}
+                          {isSuperadmin && (
+                            <button
+                              onClick={() => openAssignModal(report)}
+                              className="btn btn-secondary btn-sm"
+                              title={report.admin ? 'Ubah Petugas Konservator' : 'Tugaskan Petugas Konservator'}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                            >
+                              <UserCheck size={13} style={{ color: 'var(--action-primary)' }} />
+                              <span>{report.admin ? 'Ubah Petugas' : 'Tugaskan'}</span>
+                            </button>
+                          )}
+
+                          {/* Admin: Ambil alih penanganan jika belum ditugaskan */}
+                          {!isSuperadmin && report.status === 'LAPORAN_MASUK' && !report.admin && (
                             <button
                               onClick={() => handleTakeOwnership(report.id)}
                               className="btn btn-outline btn-sm"
                               title="Ambil Alih Penanganan"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                             >
                               <Play size={13} />
                               <span>Ambil Alih</span>
                             </button>
                           )}
 
+                          {/* Superadmin: Validasi Langsung Selesai jika laporan sedang diproses/ditangani */}
+                          {isSuperadmin && report.status === 'DIPROSES' && (
+                            <button
+                              onClick={() => handleDirectValidate(report.id, 'SELESAI')}
+                              className="btn btn-outline btn-sm"
+                              style={{ borderColor: 'var(--status-selesai)', color: 'var(--status-selesai)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                              title="Validasi & Sahkan Laporan Selesai (Publikasi ke Katalog)"
+                            >
+                              <CheckCircle2 size={13} />
+                              <span>Validasi Selesai</span>
+                            </button>
+                          )}
+
                           <button
                             onClick={() => openActionModal(report)}
                             className="btn btn-primary btn-sm"
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                           >
                             <Upload size={13} />
-                            <span>Tatalaksana</span>
+                            <span>{isSuperadmin ? 'Validasi / Tindak' : 'Tatalaksana'}</span>
                           </button>
 
                           <Link
@@ -528,7 +668,7 @@ export default function AdminWorkbenchPage() {
                       </div>
                     </div>
 
-                    {/* Jika sudah ada catatan penanganan lapangan */}
+                    {/* Jika sudah ada catatan penanganan lapangan (Gaya Sibersih) */}
                     {report.catatanPenanganan && (
                       <div
                         style={{
@@ -538,9 +678,12 @@ export default function AdminWorkbenchPage() {
                           fontSize: '0.825rem',
                           color: 'var(--text-secondary)',
                           borderLeft: '3px solid var(--action-primary)',
+                          marginTop: '0.85rem',
                         }}
                       >
-                        <strong style={{ color: 'var(--text-primary)' }}>Catatan Lapangan Terakhir: </strong>
+                        <strong style={{ color: 'var(--action-primary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.04em', display: 'block', marginBottom: '0.2rem' }}>
+                          Catatan Petugas:
+                        </strong>
                         {report.catatanPenanganan}
                       </div>
                     )}
@@ -684,6 +827,136 @@ export default function AdminWorkbenchPage() {
                   </button>
                   <button type="submit" disabled={submitting} className="btn btn-primary">
                     {submitting ? 'Menyimpan...' : 'Simpan Pembaruan Penanganan'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Penugasan Petugas Konservator (Alur Sibersih) */}
+        {assignModalOpen && reportToAssign && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 1000,
+              backgroundColor: 'rgba(0, 0, 0, 0.65)',
+              backdropFilter: 'blur(4px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1rem',
+            }}
+          >
+            <div
+              className="paper-card"
+              style={{
+                width: '100%',
+                maxWidth: '480px',
+                padding: 'clamp(1.5rem, 4vw, 2rem)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '1.25rem',
+                  borderBottom: '1px solid var(--border-hairline)',
+                  paddingBottom: '0.75rem',
+                }}
+              >
+                <div>
+                  <h3
+                    style={{
+                      fontSize: '1.2rem',
+                      color: 'var(--text-primary)',
+                      fontWeight: 600,
+                      margin: '0 0 0.25rem 0',
+                    }}
+                  >
+                    Tugaskan Petugas Konservasi
+                  </h3>
+                  <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
+                    Laporan: <strong style={{ color: 'var(--text-primary)' }}>{reportToAssign.judulPusaka}</strong>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAssignModalOpen(false)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
+                    padding: '0.25rem',
+                  }}
+                  aria-label="Tutup modal"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {assignError && (
+                <div
+                  style={{
+                    padding: '0.75rem 1rem',
+                    background: 'var(--status-masuk-bg)',
+                    color: 'var(--status-masuk)',
+                    border: '1px solid var(--status-masuk-border)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.85rem',
+                    marginBottom: '1.25rem',
+                  }}
+                >
+                  {assignError}
+                </div>
+              )}
+
+              <form onSubmit={handleAssignConservator}>
+                <div className="form-group">
+                  <label className="form-label">Pilih Petugas / Konservator Wilayah</label>
+                  <select
+                    value={selectedConservatorId}
+                    onChange={(e) => setSelectedConservatorId(e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="">-- Belum Ditugaskan (Kosongkan) --</option>
+                    {conservators.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.nama} ({c.email})
+                      </option>
+                    ))}
+                  </select>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', display: 'block' }}>
+                    Menugaskan petugas akan otomatis memperbarui status laporan menjadi &quot;Sedang Ditangani&quot;.
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: '0.75rem',
+                    marginTop: '1.75rem',
+                    borderTop: '1px solid var(--border-hairline)',
+                    paddingTop: '1.25rem',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setAssignModalOpen(false)}
+                    className="btn btn-secondary btn-sm"
+                    disabled={assigning}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-sm"
+                    disabled={assigning}
+                  >
+                    {assigning ? 'Menugaskan...' : 'Tetapkan Petugas'}
                   </button>
                 </div>
               </form>
