@@ -231,23 +231,6 @@ export default function LaporBudayaPage() {
         <div className="paper-card" style={{ padding: 'clamp(1.25rem, 4vw, 2.5rem)' }}>
           {/* Header */}
           <div style={{ marginBottom: '2rem' }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                color: 'var(--action-primary)',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                letterSpacing: '0.04em',
-                marginBottom: '0.65rem',
-                background: 'var(--color-terracotta-soft)',
-                padding: '0.2rem 0.6rem',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              Formulir Laporan
-            </div>
             <h1
               style={{
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.3rem)',
@@ -257,7 +240,7 @@ export default function LaporBudayaPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              Laporkan Cagar Budaya
+              Laporkan Budaya
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', lineHeight: 1.6, margin: 0 }}>
               Kirimkan laporan kondisi cagar budaya untuk ditindaklanjuti oleh tim konservator.
