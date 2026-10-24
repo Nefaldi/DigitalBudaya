@@ -1478,6 +1478,53 @@ a {
     width: 100% !important;
     height: 160px !important;
   }
+
+  /* Report Card Actions row alignment on mobile */
+  .report-card-actions {
+    align-items: flex-start !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    margin-left: 0 !important;
+    border-top: 1px solid var(--border-hairline);
+    padding-top: 0.75rem !important;
+    margin-top: 0.35rem !important;
+  }
+
+  .report-card-actions > div {
+    text-align: left !important;
+  }
+
+  .report-card-actions-buttons {
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+
+  /* Responsive mobile navbar layout */
+  .digiculture-nav-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.45rem 0.65rem !important;
+  }
+
+  .digiculture-nav-center {
+    display: none !important;
+  }
+
+  .digiculture-nav-left {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .digiculture-brand-title {
+    font-size: 0.88rem !important;
+    white-space: nowrap !important;
+  }
+
+  .digiculture-nav-right {
+    gap: 0.4rem !important;
+    flex-shrink: 0 !important;
+  }
 }
 
 

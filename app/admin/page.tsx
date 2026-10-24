@@ -634,6 +634,7 @@ export default function AdminWorkbenchPage() {
 
                       {/* Aksi & Status Penanganan (Alur Sibersih) */}
                       <div
+                        className="report-card-actions"
                         style={{
                           display: 'flex',
                           flexDirection: 'column',
@@ -649,7 +650,7 @@ export default function AdminWorkbenchPage() {
                           <span>{new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
+                        <div className="report-card-actions-buttons" style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
                           {/* Superadmin Actions ala Sibersih */}
                           {isSuperadmin && (
                             <>
