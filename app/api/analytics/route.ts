@@ -9,6 +9,7 @@ interface CachedAnalyticsPayload {
   statusBreakdown: {
     LAPORAN_MASUK: number;
     DIPROSES: number;
+    MENUNGGU_VALIDASI: number;
     SELESAI: number;
   };
   kategoriBreakdown: {
@@ -65,6 +66,7 @@ export async function GET(req: NextRequest) {
     let totalReports = 0;
     let laporanMasukCount = 0;
     let diprosesCount = 0;
+    let menungguValidasiCount = 0;
     let selesaiCount = 0;
 
     for (const item of statusGroup) {
@@ -72,6 +74,7 @@ export async function GET(req: NextRequest) {
       totalReports += count;
       if (item.status === StatusPenyelamatan.LAPORAN_MASUK) laporanMasukCount = count;
       else if (item.status === StatusPenyelamatan.DIPROSES) diprosesCount = count;
+      else if (item.status === StatusPenyelamatan.MENUNGGU_VALIDASI) menungguValidasiCount = count;
       else if (item.status === StatusPenyelamatan.SELESAI) selesaiCount = count;
     }
 
@@ -93,6 +96,7 @@ export async function GET(req: NextRequest) {
       statusBreakdown: {
         LAPORAN_MASUK: laporanMasukCount,
         DIPROSES: diprosesCount,
+        MENUNGGU_VALIDASI: menungguValidasiCount,
         SELESAI: selesaiCount,
       },
       kategoriBreakdown: {

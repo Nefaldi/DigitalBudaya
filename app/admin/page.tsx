@@ -22,6 +22,9 @@ import {
   Users,
   UserCheck,
   CheckCircle2,
+  Hourglass,
+  Trash2,
+  RotateCcw,
 } from 'lucide-react';
 
 // Module-level in-memory cache for instantaneous client navigation (SWR)
@@ -37,12 +40,12 @@ export default function AdminWorkbenchPage() {
   const initialSection = searchParams.get('tab') === 'users' ? 'users' : 'laporan';
   const [activeSection, setActiveSection] = useState<'laporan' | 'users'>(initialSection);
 
-  const [activeTab, setActiveTab] = useState<'ALL' | 'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI'>('ALL');
+  const [activeTab, setActiveTab] = useState<'ALL' | 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI'>('ALL');
 
   // Modal State for Digitalization & Status Update
   const [selectedReport, setSelectedReport] = useState<HeritageReportItem | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [updatingStatus, setUpdatingStatus] = useState<'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI'>('DIPROSES');
+  const [updatingStatus, setUpdatingStatus] = useState<'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI'>('MENUNGGU_VALIDASI');
   const [fotoDigitalisasi, setFotoDigitalisasi] = useState('');
   const [catatanPenanganan, setCatatanPenanganan] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -63,6 +66,9 @@ export default function AdminWorkbenchPage() {
     const tabParam = searchParams.get('tab');
     if (tabParam === 'users') {
       setActiveSection('users');
+    } else if (tabParam === 'validasi') {
+      setActiveSection('laporan');
+      setActiveTab('MENUNGGU_VALIDASI');
     } else if (tabParam === 'laporan') {
       setActiveSection('laporan');
     }
@@ -131,7 +137,12 @@ export default function AdminWorkbenchPage() {
 
   const openActionModal = (report: HeritageReportItem) => {
     setSelectedReport(report);
-    setUpdatingStatus(report.status === 'LAPORAN_MASUK' ? 'DIPROSES' : report.status);
+    if (user?.role === 'SUPERADMIN') {
+      setUpdatingStatus(report.status === 'LAPORAN_MASUK' ? 'DIPROSES' : report.status);
+    } else {
+      // Petugas Konservator: alur penyelesaian otomatis diajukan ke MENUNGGU_VALIDASI
+      setUpdatingStatus(report.status === 'SELESAI' ? 'SELESAI' : 'MENUNGGU_VALIDASI');
+    }
     setFotoDigitalisasi(report.fotoDigitalisasi || '');
     setCatatanPenanganan(report.catatanPenanganan || '');
     setActionError('');
@@ -188,7 +199,7 @@ export default function AdminWorkbenchPage() {
     }
   };
 
-  const handleDirectValidate = async (reportId: string, targetStatus: 'SELESAI' | 'DIPROSES') => {
+  const handleDirectValidate = async (reportId: string, targetStatus: 'SELESAI' | 'DIPROSES' | 'MENUNGGU_VALIDASI') => {
     setWorkbenchFeedback(null);
     try {
       const res = await fetch(`/api/reports/${reportId}`, {
@@ -212,13 +223,45 @@ export default function AdminWorkbenchPage() {
           type: 'success',
           message:
             targetStatus === 'SELESAI'
-              ? 'Laporan dan hasil penanganan berhasil divalidasi dan disahkan Selesai (terbit di Katalog Budaya).'
-              : 'Laporan dikembalikan ke status Sedang Ditangani.',
+              ? 'Laporan dan hasil penanganan berhasil divalidasi dan disahkan Selesai (resmi terbit di Katalog Budaya).'
+              : targetStatus === 'DIPROSES'
+              ? 'Laporan dikembalikan ke status Sedang Ditangani untuk direvisi petugas.'
+              : 'Laporan dialihkan ke status Menunggu Validasi.',
         });
       }
     } catch (err) {
       console.error('Validation error:', err);
       setWorkbenchFeedback({ type: 'error', message: 'Terjadi kesalahan saat memvalidasi laporan.' });
+    }
+  };
+
+  const handleRejectReport = async (reportId: string, judul: string) => {
+    if (!window.confirm(`Tolak dan hapus laporan "${judul}" secara permanen dari sistem? Seluruh foto dan rekaman akan dihapus dari server.`)) {
+      return;
+    }
+    setWorkbenchFeedback(null);
+    try {
+      const res = await fetch(`/api/reports/${reportId}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) {
+        setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal menolak laporan' });
+      } else {
+        setReports((prev) => {
+          const updated = prev.filter((r) => r.id !== reportId);
+          clientCachedReports = updated;
+          return updated;
+        });
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
+        }
+        setWorkbenchFeedback({
+          type: 'success',
+          message: `Laporan "${judul}" berhasil ditolak dan dihapus permanen dari sistem (ala tolak laporan palsu).`,
+        });
+      }
+    } catch (err) {
+      console.error('Reject report error:', err);
+      setWorkbenchFeedback({ type: 'error', message: 'Terjadi kesalahan saat menolak laporan.' });
     }
   };
 
@@ -305,6 +348,7 @@ export default function AdminWorkbenchPage() {
 
   const countMasuk = reports.filter((r) => r.status === 'LAPORAN_MASUK').length;
   const countDiproses = reports.filter((r) => r.status === 'DIPROSES').length;
+  const countMenungguValidasi = reports.filter((r) => r.status === 'MENUNGGU_VALIDASI').length;
   const countSelesai = reports.filter((r) => r.status === 'SELESAI').length;
 
   const isSuperadmin = user?.role === 'SUPERADMIN';
@@ -454,7 +498,7 @@ export default function AdminWorkbenchPage() {
             )}
 
             {/* Tab Filters */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
               <button
                 onClick={() => setActiveTab('ALL')}
                 className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
@@ -474,10 +518,22 @@ export default function AdminWorkbenchPage() {
                 Sedang Ditangani ({countDiproses})
               </button>
               <button
+                onClick={() => setActiveTab('MENUNGGU_VALIDASI')}
+                className={`btn btn-sm ${activeTab === 'MENUNGGU_VALIDASI' ? 'btn-primary' : 'btn-secondary'}`}
+                style={
+                  countMenungguValidasi > 0 && activeTab !== 'MENUNGGU_VALIDASI'
+                    ? { borderColor: '#fed7aa', color: '#c2410c', background: '#fff7ed', fontWeight: 600 }
+                    : undefined
+                }
+              >
+                <Hourglass size={12} style={{ display: 'inline', marginRight: '0.25rem' }} />
+                Menunggu Validasi ({countMenungguValidasi})
+              </button>
+              <button
                 onClick={() => setActiveTab('SELESAI')}
                 className={`btn btn-sm ${activeTab === 'SELESAI' ? 'btn-primary' : 'btn-secondary'}`}
               >
-                Selesai / Terverifikasi ({countSelesai})
+                Selesai & Terbit ({countSelesai})
               </button>
             </div>
 
@@ -531,16 +587,25 @@ export default function AdminWorkbenchPage() {
                             className={`badge ${
                               report.status === 'SELESAI'
                                 ? 'badge-selesai'
+                                : report.status === 'MENUNGGU_VALIDASI'
+                                ? 'badge-warning'
                                 : report.status === 'DIPROSES'
                                 ? 'badge-diproses'
                                 : 'badge-masuk'
                             }`}
+                            style={
+                              report.status === 'MENUNGGU_VALIDASI'
+                                ? { background: '#fff7ed', color: '#c2410c', borderColor: '#fed7aa', fontWeight: 600 }
+                                : undefined
+                            }
                           >
                             {report.status === 'LAPORAN_MASUK'
                               ? 'Laporan Masuk'
                               : report.status === 'DIPROSES'
                               ? 'Sedang Ditangani'
-                              : 'Selesai'}
+                              : report.status === 'MENUNGGU_VALIDASI'
+                              ? 'Butuh Review Validasi'
+                              : 'Selesai & Terbit'}
                           </span>
                           <span className={`badge ${report.kategori === 'BENDA' ? 'badge-benda' : 'badge-takbenda'}`}>
                             {report.kategori === 'BENDA' ? 'Benda / Cagar' : 'Takbenda / Tradisi'}
@@ -589,7 +654,7 @@ export default function AdminWorkbenchPage() {
                           alignItems: 'flex-end',
                           marginLeft: 'auto',
                           flexShrink: 0,
-                          minWidth: '200px',
+                          minWidth: '220px',
                         }}
                       >
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
@@ -608,53 +673,127 @@ export default function AdminWorkbenchPage() {
                         </div>
 
                         <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
-                          {/* Superadmin: Tugaskan Petugas Konservator (Alur Sibersih) */}
+                          {/* Superadmin Actions ala Sibersih */}
+                          {isSuperadmin && (
+                            <>
+                              {/* Tugaskan Petugas pada LAPORAN_MASUK atau DIPROSES */}
+                              {(report.status === 'LAPORAN_MASUK' || report.status === 'DIPROSES') && (
+                                <button
+                                  onClick={() => openAssignModal(report)}
+                                  className="btn btn-secondary btn-sm"
+                                  title={report.admin ? 'Ubah Petugas Konservator' : 'Tugaskan Petugas Konservator'}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                >
+                                  <UserCheck size={13} style={{ color: 'var(--action-primary)' }} />
+                                  <span>{report.admin ? 'Ubah Petugas' : 'Tugaskan'}</span>
+                                </button>
+                              )}
+
+                              {/* Validasi Selesai pada MENUNGGU_VALIDASI atau DIPROSES */}
+                              {(report.status === 'MENUNGGU_VALIDASI' || report.status === 'DIPROSES') && (
+                                <button
+                                  onClick={() => handleDirectValidate(report.id, 'SELESAI')}
+                                  className="btn btn-sm"
+                                  style={{
+                                    backgroundColor: 'var(--status-selesai-bg)',
+                                    color: 'var(--status-selesai)',
+                                    border: '1px solid var(--status-selesai-border)',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    fontWeight: 600,
+                                  }}
+                                  title="Validasi & Sahkan Laporan Selesai (Publikasi ke Katalog)"
+                                >
+                                  <CheckCircle2 size={13} />
+                                  <span>Setujui Selesai</span>
+                                </button>
+                              )}
+
+                              {/* Kembalikan ke Petugas jika MENUNGGU_VALIDASI */}
+                              {report.status === 'MENUNGGU_VALIDASI' && (
+                                <button
+                                  onClick={() => handleDirectValidate(report.id, 'DIPROSES')}
+                                  className="btn btn-outline btn-sm"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                  title="Kembalikan ke status Sedang Ditangani untuk revisi petugas"
+                                >
+                                  <RotateCcw size={13} />
+                                  <span>Revisi</span>
+                                </button>
+                              )}
+
+                              {/* Tolak Laporan Palsu / Hapus permanen */}
+                              <button
+                                onClick={() => handleRejectReport(report.id, report.judulPusaka)}
+                                className="btn btn-sm"
+                                style={{
+                                  backgroundColor: '#fef2f2',
+                                  color: '#dc2626',
+                                  border: '1px solid #fecaca',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                }}
+                                title="Tolak dan hapus laporan palsu secara permanen"
+                              >
+                                <Trash2 size={13} />
+                                <span>Tolak</span>
+                              </button>
+                            </>
+                          )}
+
+                          {/* Admin (Konservator) Actions ala Sibersih */}
+                          {!isSuperadmin && (
+                            <>
+                              {report.status === 'LAPORAN_MASUK' && !report.admin && (
+                                <button
+                                  onClick={() => handleTakeOwnership(report.id)}
+                                  className="btn btn-outline btn-sm"
+                                  title="Ambil Alih Penanganan Tugas"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                >
+                                  <Play size={13} />
+                                  <span>Ambil Alih</span>
+                                </button>
+                              )}
+
+                              {report.status === 'DIPROSES' && (
+                                <button
+                                  onClick={() => openActionModal(report)}
+                                  className="btn btn-primary btn-sm"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                >
+                                  <Upload size={13} />
+                                  <span>Ajukan Penyelesaian</span>
+                                </button>
+                              )}
+
+                              {report.status === 'MENUNGGU_VALIDASI' && (
+                                <button
+                                  onClick={() => openActionModal(report)}
+                                  className="btn btn-secondary btn-sm"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                >
+                                  <Upload size={13} />
+                                  <span>Perbarui Bukti</span>
+                                </button>
+                              )}
+                            </>
+                          )}
+
+                          {/* Tombol Evaluasi / Detail Universal */}
                           {isSuperadmin && (
                             <button
-                              onClick={() => openAssignModal(report)}
+                              onClick={() => openActionModal(report)}
                               className="btn btn-secondary btn-sm"
-                              title={report.admin ? 'Ubah Petugas Konservator' : 'Tugaskan Petugas Konservator'}
                               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                              title="Buka form evaluasi dan catatan teknis"
                             >
-                              <UserCheck size={13} style={{ color: 'var(--action-primary)' }} />
-                              <span>{report.admin ? 'Ubah Petugas' : 'Tugaskan'}</span>
+                              <Upload size={13} />
+                              <span>Evaluasi</span>
                             </button>
                           )}
-
-                          {/* Admin: Ambil alih penanganan jika belum ditugaskan */}
-                          {!isSuperadmin && report.status === 'LAPORAN_MASUK' && !report.admin && (
-                            <button
-                              onClick={() => handleTakeOwnership(report.id)}
-                              className="btn btn-outline btn-sm"
-                              title="Ambil Alih Penanganan"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                            >
-                              <Play size={13} />
-                              <span>Ambil Alih</span>
-                            </button>
-                          )}
-
-                          {/* Superadmin: Validasi Langsung Selesai jika laporan sedang diproses/ditangani */}
-                          {isSuperadmin && report.status === 'DIPROSES' && (
-                            <button
-                              onClick={() => handleDirectValidate(report.id, 'SELESAI')}
-                              className="btn btn-outline btn-sm"
-                              style={{ borderColor: 'var(--status-selesai)', color: 'var(--status-selesai)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                              title="Validasi & Sahkan Laporan Selesai (Publikasi ke Katalog)"
-                            >
-                              <CheckCircle2 size={13} />
-                              <span>Validasi Selesai</span>
-                            </button>
-                          )}
-
-                          <button
-                            onClick={() => openActionModal(report)}
-                            className="btn btn-primary btn-sm"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                          >
-                            <Upload size={13} />
-                            <span>{isSuperadmin ? 'Validasi / Tindak' : 'Tatalaksana'}</span>
-                          </button>
 
                           <Link
                             href={`/katalog/${report.id}`}
@@ -668,8 +807,57 @@ export default function AdminWorkbenchPage() {
                       </div>
                     </div>
 
-                    {/* Jika sudah ada catatan penanganan lapangan (Gaya Sibersih) */}
-                    {report.catatanPenanganan && (
+                    {/* Perbandingan Sebelum vs Sesudah (Tampilan Khusus Validasi Sibersih) */}
+                    {(report.status === 'MENUNGGU_VALIDASI' || (report.status === 'SELESAI' && report.fotoDigitalisasi)) && (
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                          gap: '1rem',
+                          padding: '0.9rem',
+                          borderRadius: 'var(--radius-sm)',
+                          background: report.status === 'MENUNGGU_VALIDASI' ? '#fffaf5' : 'var(--bg-canvas)',
+                          border: report.status === 'MENUNGGU_VALIDASI' ? '1px solid #fed7aa' : '1px solid var(--border-hairline)',
+                          marginTop: '0.5rem',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94a3b8' }} /> Sebelum (Laporan Awal)
+                          </div>
+                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)' }}>
+                            <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 400)} alt="Sebelum" fill sizes="260px" style={{ objectFit: 'cover' }} />
+                          </div>
+                          <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem', lineHeight: 1.4, margin: '0.4rem 0 0 0' }}>
+                            {report.deskripsiKrisis}
+                          </p>
+                        </div>
+
+                        <div>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} /> Sesudah (Hasil Penanganan Petugas)
+                          </div>
+                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #86efac' }}>
+                            {report.fotoDigitalisasi ? (
+                              <Image src={optimizeCloudinaryUrl(report.fotoDigitalisasi, 400)} alt="Sesudah" fill sizes="260px" style={{ objectFit: 'cover' }} />
+                            ) : (
+                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '0.75rem', background: '#f8fafc' }}>
+                                (Belum ada foto digitalisasi)
+                              </div>
+                            )}
+                          </div>
+                          {report.catatanPenanganan && (
+                            <div style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: 'var(--text-primary)', background: '#ffffff', padding: '0.4rem 0.6rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                              <strong style={{ fontSize: '0.7rem', color: '#15803d', display: 'block', textTransform: 'uppercase' }}>Catatan Petugas:</strong>
+                              {report.catatanPenanganan}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Jika ada catatan penanganan lapangan dan bukan mode validasi gambar */}
+                    {report.catatanPenanganan && report.status !== 'MENUNGGU_VALIDASI' && !(report.status === 'SELESAI' && report.fotoDigitalisasi) && (
                       <div
                         style={{
                           padding: '0.75rem 1rem',
@@ -778,16 +966,34 @@ export default function AdminWorkbenchPage() {
               <form onSubmit={handleSaveResolution}>
                 {/* Status Transition Selector */}
                 <div className="form-group">
-                  <label className="form-label">Ubah Status Alur Kerja (Workflow State)</label>
-                  <select
-                    value={updatingStatus}
-                    onChange={(e) => setUpdatingStatus(e.target.value as 'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI')}
-                    className="form-select"
-                  >
-                    <option value="DIPROSES">DIPROSES (Investigasi Lapangan Sedang Berjalan)</option>
-                    <option value="SELESAI">SELESAI (Konservasi Tuntas & Rilis ke Publik)</option>
-                    <option value="LAPORAN_MASUK">LAPORAN_MASUK (Kembalikan ke Antrean)</option>
-                  </select>
+                  <label className="form-label">
+                    {isSuperadmin ? 'Ubah Status Validasi Laporan' : 'Status Pengajuan Tugas'}
+                  </label>
+                  {isSuperadmin ? (
+                    <select
+                      value={updatingStatus}
+                      onChange={(e) => setUpdatingStatus(e.target.value as any)}
+                      className="form-select"
+                    >
+                      <option value="SELESAI">SELESAI (Validasi Disetujui & Terbitkan ke Katalog)</option>
+                      <option value="MENUNGGU_VALIDASI">MENUNGGU_VALIDASI (Butuh Review Hasil Petugas)</option>
+                      <option value="DIPROSES">DIPROSES (Kembalikan ke Penanganan Petugas)</option>
+                      <option value="LAPORAN_MASUK">LAPORAN_MASUK (Kembalikan ke Antrean Baru)</option>
+                    </select>
+                  ) : (
+                    <select
+                      value={updatingStatus}
+                      onChange={(e) => setUpdatingStatus(e.target.value as any)}
+                      className="form-select"
+                    >
+                      <option value="MENUNGGU_VALIDASI">
+                        Ajukan Penyelesaian untuk Divalidasi Superadmin
+                      </option>
+                      <option value="DIPROSES">
+                        Simpan Sebagai Draf Penanganan (Masih Berlangsung)
+                      </option>
+                    </select>
+                  )}
                 </div>
 
                 {/* Foto Hasil Digitalisasi / Pemugaran */}
@@ -826,7 +1032,13 @@ export default function AdminWorkbenchPage() {
                     Batal
                   </button>
                   <button type="submit" disabled={submitting} className="btn btn-primary">
-                    {submitting ? 'Menyimpan...' : 'Simpan Pembaruan Penanganan'}
+                    {submitting
+                      ? 'Menyimpan...'
+                      : isSuperadmin
+                      ? 'Simpan Validasi'
+                      : updatingStatus === 'MENUNGGU_VALIDASI'
+                      ? 'Ajukan untuk Validasi Superadmin'
+                      : 'Simpan Draf Penanganan'}
                   </button>
                 </div>
               </form>

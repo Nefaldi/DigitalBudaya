@@ -19,7 +19,7 @@ export interface HeritageReportItem {
   fotoDigitalisasi?: string | null;
   rekamanAudioUrl?: string | null;
   catatanPenanganan?: string | null;
-  status: 'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI';
+  status: 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI';
   createdAt: string;
   pelapor?: { id: string; nama: string; email: string };
   admin?: { id: string; nama: string; email: string } | null;
@@ -36,7 +36,21 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'SELESAI':
-        return <span className="badge badge-selesai">Terverifikasi</span>;
+        return <span className="badge badge-selesai">Selesai & Terbit</span>;
+      case 'MENUNGGU_VALIDASI':
+        return (
+          <span
+            className="badge"
+            style={{
+              background: '#fff7ed',
+              color: '#c2410c',
+              borderColor: '#fed7aa',
+              fontWeight: 600,
+            }}
+          >
+            Menunggu Validasi
+          </span>
+        );
       case 'DIPROSES':
         return <span className="badge badge-diproses">Diproses</span>;
       default:

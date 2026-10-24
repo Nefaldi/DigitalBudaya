@@ -22,6 +22,7 @@ enum KategoriPusaka {
 enum StatusPenyelamatan {
   LAPORAN_MASUK
   DIPROSES
+  MENUNGGU_VALIDASI
   SELESAI
 }
 

@@ -196,7 +196,7 @@ export default function PelaporDashboardPage() {
   }
 
   const countMasuk = reports.filter((r) => r.status === 'LAPORAN_MASUK').length;
-  const countDiproses = reports.filter((r) => r.status === 'DIPROSES').length;
+  const countDiproses = reports.filter((r) => r.status === 'DIPROSES' || r.status === 'MENUNGGU_VALIDASI').length;
   const countSelesai = reports.filter((r) => r.status === 'SELESAI').length;
 
   return (

@@ -123,13 +123,25 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       }
 
       if (status) {
-        // Workflow Validation: LAPORAN_MASUK -> DIPROSES -> SELESAI
+        // Workflow Validation ala Sibersih: LAPORAN_MASUK -> DIPROSES -> MENUNGGU_VALIDASI -> SELESAI
         if (status === 'DIPROSES') {
           dataToUpdate.status = StatusPenyelamatan.DIPROSES;
           if (dataToUpdate.adminId === undefined && !report.adminId) {
             dataToUpdate.adminId = user.id; // Take ownership if unassigned
           }
+        } else if (status === 'MENUNGGU_VALIDASI') {
+          dataToUpdate.status = StatusPenyelamatan.MENUNGGU_VALIDASI;
+          if (dataToUpdate.adminId === undefined && !report.adminId) {
+            dataToUpdate.adminId = user.id;
+          }
         } else if (status === 'SELESAI') {
+          // Hanya Superadmin yang berwenang memvalidasi dan menyelesaikan laporan (ala Sibersih)
+          if (user.role !== 'SUPERADMIN') {
+            return NextResponse.json(
+              { error: 'Hanya Superadmin yang berwenang memvalidasi dan mengesahkan laporan selesai.' },
+              { status: 403 }
+            );
+          }
           dataToUpdate.status = StatusPenyelamatan.SELESAI;
           if (dataToUpdate.adminId === undefined && !report.adminId) {
             dataToUpdate.adminId = user.id;
@@ -137,6 +149,12 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
         } else if (status === 'LAPORAN_MASUK') {
           dataToUpdate.status = StatusPenyelamatan.LAPORAN_MASUK;
         }
+      }
+
+      // Jika Petugas (Admin) mengunggah bukti pengerjaan/catatan tanpa ubah status eksplisit, otomatis ajukan ke MENUNGGU_VALIDASI
+      if (user.role === 'ADMIN' && fotoDigitalisasi && !status && report.status !== 'SELESAI') {
+        dataToUpdate.status = StatusPenyelamatan.MENUNGGU_VALIDASI;
+        if (!report.adminId) dataToUpdate.adminId = user.id;
       }
 
       if (fotoDigitalisasi !== undefined) dataToUpdate.fotoDigitalisasi = fotoDigitalisasi;
@@ -166,8 +184,12 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       const actionMessage =
         adminId !== undefined && !status
           ? (adminId ? 'Tugas laporan berhasil ditugaskan ke Konservator' : 'Penugasan konservator berhasil direset')
-          : status === 'SELESAI'
-          ? 'Laporan berhasil divalidasi dan disahkan selesai (terbit di katalog)'
+          : dataToUpdate.status === StatusPenyelamatan.MENUNGGU_VALIDASI
+          ? 'Hasil pekerjaan berhasil diajukan! Menunggu persetujuan validasi Superadmin'
+          : dataToUpdate.status === StatusPenyelamatan.SELESAI
+          ? 'Laporan berhasil disetujui & disahkan selesai (resmi terbit di katalog publik)'
+          : dataToUpdate.status === StatusPenyelamatan.DIPROSES
+          ? 'Laporan dipindahkan ke penanganan aktif petugas'
           : 'Data laporan berhasil diperbarui';
 
       return NextResponse.json({ message: actionMessage, report: updated });

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, Clock, Hourglass, CheckCircle2 } from 'lucide-react';
 
 interface WorkflowStepperProps {
-  currentStatus: 'LAPORAN_MASUK' | 'DIPROSES' | 'SELESAI';
+  currentStatus: 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI';
   adminName?: string | null;
   updatedAt?: string;
   compact?: boolean;
@@ -20,25 +20,40 @@ export default function WorkflowStepper({
     {
       id: 'LAPORAN_MASUK',
       title: '1. Laporan Masuk',
-      desc: 'Laporan tercatat dan menunggu verifikasi.',
+      shortTitle: 'Masuk',
+      desc: 'Laporan tercatat di sistem, menunggu penugasan petugas.',
       icon: AlertCircle,
     },
     {
       id: 'DIPROSES',
-      title: '2. Investigasi Lapangan',
-      desc: adminName ? `Ditangani oleh: ${adminName}` : 'Sedang dalam survei konservator.',
+      title: '2. Penanganan Petugas',
+      shortTitle: 'Ditangani',
+      desc: adminName ? `Sedang ditangani oleh: ${adminName}` : 'Sedang dalam penanganan petugas konservator.',
       icon: Clock,
     },
     {
+      id: 'MENUNGGU_VALIDASI',
+      title: '3. Validasi Superadmin',
+      shortTitle: 'Validasi',
+      desc: 'Hasil kerja diajukan petugas, menunggu review Superadmin.',
+      icon: Hourglass,
+    },
+    {
       id: 'SELESAI',
-      title: '3. Selesai & Terbit',
-      desc: 'Preservasi selesai dan masuk katalog publik.',
+      title: '4. Selesai & Terbit',
+      shortTitle: 'Selesai',
+      desc: 'Divalidasi Superadmin dan resmi terbit di katalog publik.',
       icon: CheckCircle2,
     },
   ];
 
   const getStepStatus = (stepId: string) => {
     if (currentStatus === 'SELESAI') return 'completed';
+    if (currentStatus === 'MENUNGGU_VALIDASI') {
+      if (stepId === 'LAPORAN_MASUK' || stepId === 'DIPROSES') return 'completed';
+      if (stepId === 'MENUNGGU_VALIDASI') return 'active';
+      return 'pending';
+    }
     if (currentStatus === 'DIPROSES') {
       if (stepId === 'LAPORAN_MASUK') return 'completed';
       if (stepId === 'DIPROSES') return 'active';
@@ -60,16 +75,16 @@ export default function WorkflowStepper({
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Status Penanganan
+            Status Alur Pelaporan
           </span>
           {adminName && currentStatus !== 'LAPORAN_MASUK' && (
             <span style={{ fontSize: '0.75rem', color: 'var(--action-primary)', fontWeight: 500 }}>
-              Konservator: {adminName}
+              Petugas: {adminName}
             </span>
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', position: 'relative' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', position: 'relative' }}>
           {steps.map((step, idx) => {
             const status = getStepStatus(step.id);
             const Icon = step.icon;
@@ -132,7 +147,7 @@ export default function WorkflowStepper({
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {idx + 1}. {step.id === 'LAPORAN_MASUK' ? 'Masuk' : step.id === 'DIPROSES' ? 'Investigasi' : 'Selesai'}
+                    {idx + 1}. {step.shortTitle}
                   </div>
                   <div
                     style={{

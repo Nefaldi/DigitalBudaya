@@ -353,12 +353,25 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
                     className={`badge ${
                       report.status === 'SELESAI'
                         ? 'badge-selesai'
+                        : report.status === 'MENUNGGU_VALIDASI'
+                        ? 'badge-warning'
                         : report.status === 'DIPROSES'
                         ? 'badge-diproses'
                         : 'badge-masuk'
                     }`}
+                    style={
+                      report.status === 'MENUNGGU_VALIDASI'
+                        ? { background: '#fff7ed', color: '#c2410c', borderColor: '#fed7aa', fontWeight: 600 }
+                        : undefined
+                    }
                   >
-                    {report.status}
+                    {report.status === 'SELESAI'
+                      ? 'Terverifikasi'
+                      : report.status === 'MENUNGGU_VALIDASI'
+                      ? 'Menunggu Validasi'
+                      : report.status === 'DIPROSES'
+                      ? 'Diproses'
+                      : 'Laporan Masuk'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
