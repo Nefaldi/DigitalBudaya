@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import WorkflowStepper from '@/components/WorkflowStepper';
 import SultengMap from '@/components/SultengMap';
 import { HeritageReportItem } from '@/components/HeritageCard';
@@ -87,7 +86,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
     notFound();
   }
 
-  const hasRestorationComparison = Boolean(report.fotoKondisiAwal && report.fotoDigitalisasi);
+  const displayImage = report.fotoDigitalisasi || report.fotoKondisiAwal;
 
   return (
     <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
@@ -175,46 +174,45 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
           </div>
         </div>
 
-        {/* Media Presentation: Before-After Slider or Single Photo */}
+        {/* Media Presentation: Foto Dokumentasi Cagar Budaya */}
         <div style={{ marginBottom: '1.5rem' }}>
-          {hasRestorationComparison ? (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 500, color: 'var(--text-primary)' }}>
-                  Komparasi Visual Pemugaran Cagar Budaya
-                </span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  Interaktif: Geser pemisah untuk melihat perubahan
-                </span>
+          <div
+            style={{
+              width: '100%',
+              height: 'clamp(280px, 45vw, 440px)',
+              borderRadius: 'var(--radius-sm)',
+              overflow: 'hidden',
+              border: '1px solid var(--border-hairline)',
+              backgroundColor: 'var(--bg-surface)',
+              position: 'relative',
+            }}
+          >
+            <Image
+              src={optimizeCloudinaryUrl(displayImage, 1200)}
+              alt={report.judulPusaka}
+              fill
+              priority
+              unoptimized
+              sizes="(max-width: 1024px) 100vw, 800px"
+              style={{ objectFit: 'cover' }}
+            />
+            {report.fotoDigitalisasi ? (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                  color: '#ffffff',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: 'var(--radius-xs)',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                }}
+              >
+                Foto Hasil Preservasi & Digitalisasi
               </div>
-              <BeforeAfterSlider
-                beforeImage={optimizeCloudinaryUrl(report.fotoKondisiAwal, 1200)}
-                afterImage={optimizeCloudinaryUrl(report.fotoDigitalisasi!, 1200)}
-                beforeLabel="Kondisi Krisis Awal"
-                afterLabel="Hasil Konservasi Lapangan"
-              />
-            </div>
-          ) : (
-            <div
-              style={{
-                width: '100%',
-                height: 'clamp(280px, 45vw, 440px)',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                border: '1px solid var(--border-hairline)',
-                backgroundColor: 'var(--bg-surface)',
-                position: 'relative',
-              }}
-            >
-              <Image
-                src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 1200)}
-                alt={report.judulPusaka}
-                fill
-                priority
-                unoptimized
-                sizes="(max-width: 1024px) 100vw, 800px"
-                style={{ objectFit: 'cover' }}
-              />
+            ) : (
               <div
                 style={{
                   position: 'absolute',
@@ -230,8 +228,8 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
               >
                 Foto Kondisi Awal Saat Dilaporkan
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Workflow Stepper */}
