@@ -385,146 +385,174 @@ export default function PelaporDashboardPage() {
                   key={report.id}
                   className="paper-card"
                   style={{
-                    padding: 'clamp(1rem, 2vw, 1.35rem)',
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-hairline)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '1.25rem',
+                    gap: '1.25rem',
                   }}
                 >
-                  <div className="pelapor-card-grid">
-                    {/* Thumbnail with balanced ratio and smooth rounded corners */}
+                  <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                    {/* Thumbnail Foto Awal */}
                     <div
                       style={{
+                        width: '130px',
+                        height: '95px',
                         position: 'relative',
-                        width: '100%',
-                        minHeight: '190px',
-                        aspectRatio: '16/10',
-                        borderRadius: '12px',
+                        borderRadius: 'var(--radius-sm)',
                         overflow: 'hidden',
-                        background: 'var(--bg-canvas)',
+                        flexShrink: 0,
+                        backgroundColor: 'var(--bg-canvas)',
                         border: '1px solid var(--border-hairline)',
                       }}
                     >
                       <Image
-                        src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 600)}
+                        src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 300)}
                         alt={report.judulPusaka}
                         fill
-                        unoptimized
-                        sizes="(max-width: 768px) 100vw, 300px"
+                        sizes="130px"
                         style={{ objectFit: 'cover' }}
                       />
                     </div>
 
-                    {/* Report Information */}
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.85rem' }}>
-                      <div>
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
-                          <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
-                            {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
-                          </span>
-                          <span style={{ fontSize: '0.8rem', color: 'var(--border-hairline)' }}>/</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>
-                            <MapPin size={13} style={{ color: 'var(--action-primary)' }} />
-                            <span>{report.kabupatenKota} ({report.lokasiSpesifik})</span>
-                          </div>
-                        </div>
-
-                        <h3
-                          style={{
-                            fontSize: '1.25rem',
-                            marginBottom: '0.4rem',
-                            color: 'var(--text-primary)',
-                            fontWeight: 600,
-                            letterSpacing: '-0.02em',
-                          }}
+                    {/* Info Laporan */}
+                    <div style={{ flex: '1 1 280px', minWidth: '240px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.4rem' }}>
+                        <span
+                          className={`badge ${
+                            report.status === 'SELESAI'
+                              ? 'badge-selesai'
+                              : report.status === 'MENUNGGU_VALIDASI'
+                              ? 'badge-validasi'
+                              : report.status === 'DIPROSES'
+                              ? 'badge-diproses'
+                              : 'badge-masuk'
+                          }`}
                         >
-                          {report.judulPusaka}
-                        </h3>
-
-                        <p
-                          style={{
-                            fontSize: '0.875rem',
-                            color: 'var(--text-secondary)',
-                            marginBottom: '0.85rem',
-                            lineHeight: 1.55,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {report.deskripsiKrisis}
-                        </p>
+                          {report.status === 'LAPORAN_MASUK'
+                            ? 'Laporan Masuk'
+                            : report.status === 'DIPROSES'
+                            ? 'Sedang Ditangani'
+                            : report.status === 'MENUNGGU_VALIDASI'
+                            ? 'Menunggu Validasi'
+                            : 'Selesai'}
+                        </span>
+                        <span className={`badge ${report.kategori === 'BENDA' ? 'badge-benda' : 'badge-takbenda'}`}>
+                          {report.kategori === 'BENDA' ? 'Benda / Cagar' : 'Takbenda / Tradisi'}
+                        </span>
                       </div>
 
-                      {/* Actions Bar */}
-                      <div
+                      <h3
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          borderTop: '1px solid var(--border-hairline)',
-                          paddingTop: '1rem',
-                          flexWrap: 'wrap',
-                          gap: '0.75rem',
+                          fontSize: '1.15rem',
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                          margin: '0 0 0.35rem 0',
+                          lineHeight: 1.3,
                         }}
                       >
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                          Dikirim pada {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </span>
+                        {report.judulPusaka}
+                      </h3>
 
-                        <div style={{ display: 'flex', gap: '0.6rem' }}>
-                          <button
-                            type="button"
-                            onClick={() => toggleReportDetail(report.id)}
-                            className="btn btn-secondary btn-sm"
-                            title={expandedReportIds[report.id] ? 'Tutup Detail Laporan' : 'Lihat Detail Laporan'}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                          >
-                            <span>Detail</span>
-                            {expandedReportIds[report.id] ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-                          </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+                        <MapPin size={13} />
+                        <span>{report.lokasiSpesifik}, {report.kabupatenKota}</span>
+                      </div>
 
-                          {/* Pelapor can edit or cancel only if status is LAPORAN_MASUK */}
-                          {report.status === 'LAPORAN_MASUK' ? (
-                            <>
-                              <button
-                                onClick={() => openEditModal(report)}
-                                className="btn btn-secondary btn-sm"
-                                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                              >
-                                <Edit3 size={13} />
-                                <span>Koreksi</span>
-                              </button>
-                              <button
-                                onClick={() => setReportToDelete(report)}
-                                disabled={deletingId === report.id}
-                                className="btn btn-secondary btn-sm"
-                                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                                title="Hapus laporan ini"
-                              >
-                                <Trash2 size={13} style={{ color: 'var(--action-danger)' }} />
-                                <span style={{ color: 'var(--action-danger)' }}>{deletingId === report.id ? 'Menghapus...' : 'Hapus'}</span>
-                              </button>
-                            </>
+                      <p
+                        style={{
+                          color: 'var(--text-secondary)',
+                          fontSize: '0.85rem',
+                          lineHeight: 1.5,
+                          margin: 0,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {report.deskripsiKrisis}
+                      </p>
+                    </div>
+
+                    {/* Aksi & Metadata Kanan */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.65rem',
+                        alignItems: 'flex-end',
+                        marginLeft: 'auto',
+                        flexShrink: 0,
+                        minWidth: '220px',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                        <div>
+                          <span style={{ color: 'var(--text-muted)' }}>Petugas: </span>
+                          {report.admin ? (
+                            <strong style={{ color: 'var(--action-primary)' }}>{report.admin.nama}</strong>
                           ) : (
-                            <div
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.35rem',
-                                fontSize: '0.75rem',
-                                color: 'var(--text-muted)',
-                                padding: '0.35rem 0.65rem',
-                                background: 'var(--bg-canvas)',
-                                borderRadius: 'var(--radius-sm)',
-                                border: '1px solid var(--border-hairline)',
-                              }}
-                            >
-                              <Lock size={12} />
-                              <span>Ditangani Konservator</span>
-                            </div>
+                            <span style={{ color: 'var(--status-masuk)', fontStyle: 'italic', fontWeight: 600 }}>Menunggu Penugasan</span>
                           )}
                         </div>
+                        <div>
+                          <span style={{ color: 'var(--text-muted)' }}>Tanggal Lapor: </span>
+                          <span>{new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => toggleReportDetail(report.id)}
+                          className="btn btn-secondary btn-sm"
+                          title={expandedReportIds[report.id] ? 'Tutup Detail Laporan' : 'Lihat Detail Laporan'}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                        >
+                          <span>Detail</span>
+                          {expandedReportIds[report.id] ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                        </button>
+
+                        {/* Pelapor can edit or cancel only if status is LAPORAN_MASUK */}
+                        {report.status === 'LAPORAN_MASUK' ? (
+                          <>
+                            <button
+                              onClick={() => openEditModal(report)}
+                              className="btn btn-secondary btn-sm"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                            >
+                              <Edit3 size={13} />
+                              <span>Koreksi</span>
+                            </button>
+                            <button
+                              onClick={() => setReportToDelete(report)}
+                              disabled={deletingId === report.id}
+                              className="btn btn-secondary btn-sm"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                              title="Hapus laporan ini"
+                            >
+                              <Trash2 size={13} style={{ color: 'var(--action-danger)' }} />
+                              <span style={{ color: 'var(--action-danger)' }}>{deletingId === report.id ? 'Menghapus...' : 'Hapus'}</span>
+                            </button>
+                          </>
+                        ) : (
+                          <div
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              fontSize: '0.75rem',
+                              color: 'var(--text-muted)',
+                              padding: '0.35rem 0.65rem',
+                              background: 'var(--bg-canvas)',
+                              borderRadius: 'var(--radius-sm)',
+                              border: '1px solid var(--border-hairline)',
+                            }}
+                          >
+                            <Lock size={12} />
+                            <span>Ditangani Konservator</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -533,7 +561,6 @@ export default function PelaporDashboardPage() {
                   {expandedReportIds[report.id] && (
                     <div
                       style={{
-                        marginTop: '1.25rem',
                         padding: '1.25rem',
                         borderRadius: 'var(--radius-sm)',
                         background: 'var(--bg-subtle)',

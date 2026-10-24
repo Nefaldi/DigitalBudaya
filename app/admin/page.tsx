@@ -588,8 +588,8 @@ export default function AdminWorkbenchPage() {
                               : report.status === 'DIPROSES'
                               ? 'Sedang Ditangani'
                               : report.status === 'MENUNGGU_VALIDASI'
-                              ? 'Butuh Review Validasi'
-                              : 'Selesai & Terbit'}
+                              ? 'Menunggu Validasi'
+                              : 'Selesai'}
                           </span>
                           <span className={`badge ${report.kategori === 'BENDA' ? 'badge-benda' : 'badge-takbenda'}`}>
                             {report.kategori === 'BENDA' ? 'Benda / Cagar' : 'Takbenda / Tradisi'}
