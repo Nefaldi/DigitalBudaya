@@ -167,7 +167,7 @@ function KatalogContent() {
     <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header */}
-        <div style={{ marginBottom: '1.25rem' }}>
+        <div style={{ marginBottom: '1rem' }}>
           <h1 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', color: 'var(--text-primary)', marginBottom: '0.35rem', fontWeight: 600, letterSpacing: '-0.025em' }}>
             Katalog Publik Warisan Leluhur
           </h1>
@@ -177,7 +177,7 @@ function KatalogContent() {
         </div>
 
         {/* Quick Kategori Filter Tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => setSelectedKategori('Semua')}
@@ -207,7 +207,7 @@ function KatalogContent() {
         </div>
 
         {/* Filter Bar */}
-        <div className="paper-card" style={{ padding: '1.15rem 1.25rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-md, 12px)' }}>
+        <div className="paper-card" style={{ padding: '1.15rem 1.25rem', marginBottom: '1.15rem', borderRadius: 'var(--radius-md, 12px)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
             {/* Search Input */}
             <div className="form-group" style={{ marginBottom: 0 }}>
@@ -295,12 +295,8 @@ function KatalogContent() {
           </div>
         ) : reports.length > 0 ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-              <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-                Menampilkan <strong style={{ color: 'var(--text-primary)' }}>{reports.length}</strong> dari <strong style={{ color: 'var(--text-primary)' }}>{totalCount || reports.length}</strong> entri arsip
-              </span>
-
-              {isFiltered && (
+            {isFiltered && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.85rem' }}>
                 <button
                   type="button"
                   onClick={handleResetFilters}
@@ -320,8 +316,8 @@ function KatalogContent() {
                   <RotateCcw size={12} />
                   <span>Reset Filter</span>
                 </button>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="grid-cols-3">
               {reports.map((report) => (
