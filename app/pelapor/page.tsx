@@ -226,23 +226,6 @@ export default function PelaporDashboardPage() {
           }}
         >
           <div>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  color: 'var(--action-primary)',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  marginBottom: '0.5rem',
-                  background: 'var(--color-terracotta-soft)',
-                  padding: '0.2rem 0.6rem',
-                  borderRadius: 'var(--radius-sm)',
-                }}
-              >
-                Dashboard Pelapor
-              </div>
             <h1
               style={{
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
