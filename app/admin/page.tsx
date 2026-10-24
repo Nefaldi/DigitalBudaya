@@ -721,23 +721,25 @@ export default function AdminWorkbenchPage() {
                                 </button>
                               )}
 
-                              {/* Tolak Laporan Palsu / Hapus permanen */}
-                              <button
-                                onClick={() => handleRejectReport(report.id, report.judulPusaka)}
-                                className="btn btn-sm"
-                                style={{
-                                  backgroundColor: '#fef2f2',
-                                  color: '#dc2626',
-                                  border: '1px solid #fecaca',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '0.35rem',
-                                }}
-                                title="Tolak dan hapus laporan palsu secara permanen"
-                              >
-                                <Trash2 size={13} />
-                                <span>Tolak</span>
-                              </button>
+                              {/* Tolak Laporan Palsu / Hapus permanen (Hanya untuk laporan yang belum disetujui selesai) */}
+                              {report.status !== 'SELESAI' && (
+                                <button
+                                  onClick={() => handleRejectReport(report.id, report.judulPusaka)}
+                                  className="btn btn-sm"
+                                  style={{
+                                    backgroundColor: '#fef2f2',
+                                    color: '#dc2626',
+                                    border: '1px solid #fecaca',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                  }}
+                                  title="Tolak dan hapus laporan palsu secara permanen"
+                                >
+                                  <Trash2 size={13} />
+                                  <span>Tolak</span>
+                                </button>
+                              )}
                             </>
                           )}
 
