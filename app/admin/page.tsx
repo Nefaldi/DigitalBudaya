@@ -762,13 +762,13 @@ export default function AdminWorkbenchPage() {
                     {expandedReportIds[report.id] && (
                       <div
                         style={{
-                          padding: '1rem',
+                          padding: '1.25rem',
                           borderRadius: 'var(--radius-sm)',
                           background: 'var(--bg-subtle)',
                           border: '1px solid var(--border-hairline)',
                           display: 'flex',
                           flexDirection: 'column',
-                          gap: '0.85rem',
+                          gap: '1rem',
                         }}
                       >
                         <div
@@ -777,7 +777,7 @@ export default function AdminWorkbenchPage() {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             borderBottom: '1px solid var(--border-hairline)',
-                            paddingBottom: '0.5rem',
+                            paddingBottom: '0.6rem',
                           }}
                         >
                           <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
@@ -794,7 +794,8 @@ export default function AdminWorkbenchPage() {
                           </Link>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.825rem' }}>
+                        {/* Grid Informasi Metadata */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem', fontSize: '0.825rem' }}>
                           <div>
                             <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Pelapor:</span>
                             <strong style={{ color: 'var(--text-primary)' }}>{report.pelapor?.nama || 'Anonim'}</strong>
@@ -832,82 +833,79 @@ export default function AdminWorkbenchPage() {
                         </div>
 
                         <div>
-                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
                             Deskripsi Kerusakan / Kondisi Awal:
                           </span>
-                          <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.5, background: 'var(--bg-canvas)', padding: '0.6rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
-                            {report.deskripsiKrisis}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Perbandingan Sebelum vs Sesudah (Tampilan Khusus Validasi Sibersih) */}
-                    {(report.status === 'MENUNGGU_VALIDASI' || (report.status === 'SELESAI' && report.fotoDigitalisasi)) && (
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                          gap: '1rem',
-                          padding: '0.9rem',
-                          borderRadius: 'var(--radius-sm)',
-                          background: 'var(--bg-subtle)',
-                          border: '1px solid var(--border-hairline)',
-                          marginTop: '0.5rem',
-                        }}
-                      >
-                        <div>
-                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }} /> Sebelum (Laporan Awal)
-                          </div>
-                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-canvas)' }}>
-                            <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 400)} alt="Sebelum" fill sizes="260px" style={{ objectFit: 'cover' }} />
-                          </div>
-                          <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem', lineHeight: 1.4, margin: '0.4rem 0 0 0' }}>
+                          <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.5, background: 'var(--bg-canvas)', padding: '0.65rem 0.85rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
                             {report.deskripsiKrisis}
                           </p>
                         </div>
 
+                        {/* Dokumentasi Foto Sebelum dan Sesudah di dalam Dropdown */}
                         <div>
-                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--status-selesai)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--status-selesai)' }} /> Sesudah (Hasil Penanganan Petugas)
-                          </div>
-                          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-canvas)' }}>
-                            {report.fotoDigitalisasi ? (
-                              <Image src={optimizeCloudinaryUrl(report.fotoDigitalisasi, 400)} alt="Sesudah" fill sizes="260px" style={{ objectFit: 'cover' }} />
-                            ) : (
-                              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', background: 'var(--bg-canvas)' }}>
-                                (Belum ada foto digitalisasi)
+                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.45rem', fontWeight: 600 }}>
+                            Dokumentasi Penanganan (Sebelum & Sesudah):
+                          </span>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                              gap: '1rem',
+                              padding: '0.85rem',
+                              borderRadius: 'var(--radius-sm)',
+                              background: 'var(--bg-canvas)',
+                              border: '1px solid var(--border-hairline)',
+                            }}
+                          >
+                            {/* Sebelum */}
+                            <div>
+                              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }} /> Foto Sebelum (Laporan Awal)
                               </div>
-                            )}
-                          </div>
-                          {report.catatanPenanganan && (
-                            <div style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: 'var(--text-primary)', background: 'var(--bg-surface)', padding: '0.45rem 0.65rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
-                              <strong style={{ fontSize: '0.7rem', color: 'var(--status-selesai)', display: 'block', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Catatan Petugas:</strong>
-                              <span style={{ color: 'var(--text-secondary)' }}>{report.catatanPenanganan}</span>
+                              <div style={{ position: 'relative', width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-surface)' }}>
+                                <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 500)} alt="Sebelum" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
 
-                    {/* Jika ada catatan penanganan lapangan dan bukan mode validasi gambar */}
-                    {report.catatanPenanganan && report.status !== 'MENUNGGU_VALIDASI' && !(report.status === 'SELESAI' && report.fotoDigitalisasi) && (
-                      <div
-                        style={{
-                          padding: '0.75rem 1rem',
-                          backgroundColor: 'var(--bg-canvas)',
-                          borderRadius: 'var(--radius-sm)',
-                          fontSize: '0.825rem',
-                          color: 'var(--text-secondary)',
-                          borderLeft: '3px solid var(--action-primary)',
-                          marginTop: '0.85rem',
-                        }}
-                      >
-                        <strong style={{ color: 'var(--action-primary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.04em', display: 'block', marginBottom: '0.2rem' }}>
-                          Catatan Petugas:
-                        </strong>
-                        {report.catatanPenanganan}
+                            {/* Sesudah */}
+                            <div>
+                              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--status-selesai)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--status-selesai)' }} /> Foto Sesudah (Hasil Penanganan)
+                              </div>
+                              <div style={{ position: 'relative', width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-surface)' }}>
+                                {report.fotoDigitalisasi ? (
+                                  <Image src={optimizeCloudinaryUrl(report.fotoDigitalisasi, 500)} alt="Sesudah" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                                ) : (
+                                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.78rem', background: 'var(--bg-surface)' }}>
+                                    (Belum ada foto digitalisasi / penanganan)
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Catatan Petugas Konservator (Jika Ada) */}
+                        {report.catatanPenanganan && (
+                          <div
+                            style={{
+                              padding: '0.65rem 0.85rem',
+                              backgroundColor: 'var(--bg-canvas)',
+                              borderRadius: 'var(--radius-sm)',
+                              fontSize: '0.825rem',
+                              color: 'var(--text-secondary)',
+                              borderLeft: '3px solid var(--action-primary)',
+                              borderTop: '1px solid var(--border-hairline)',
+                              borderRight: '1px solid var(--border-hairline)',
+                              borderBottom: '1px solid var(--border-hairline)',
+                            }}
+                          >
+                            <strong style={{ color: 'var(--action-primary)', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.04em', display: 'block', marginBottom: '0.2rem' }}>
+                              Catatan Petugas Konservator:
+                            </strong>
+                            {report.catatanPenanganan}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
