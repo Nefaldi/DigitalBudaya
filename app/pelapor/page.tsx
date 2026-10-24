@@ -456,30 +456,6 @@ export default function PelaporDashboardPage() {
                         </p>
                       </div>
 
-                      {/* Catatan Petugas (Alur Sibersih) */}
-                      {report.catatanPenanganan && (
-                        <div
-                          style={{
-                            padding: '0.65rem 0.85rem',
-                            backgroundColor: 'var(--bg-canvas)',
-                            borderRadius: 'var(--radius-sm)',
-                            fontSize: '0.8rem',
-                            color: 'var(--text-secondary)',
-                            borderLeft: '3px solid var(--action-primary)',
-                          }}
-                        >
-                          <strong style={{ color: 'var(--action-primary)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '0.2rem' }}>
-                            Catatan Petugas:
-                          </strong>
-                          {report.catatanPenanganan}
-                        </div>
-                      )}
-
-                      {/* Stepper Preview (Compact & Connected) */}
-                      <div>
-                        <WorkflowStepper currentStatus={report.status} adminName={report.admin?.nama} compact={true} />
-                      </div>
-
                       {/* Actions Bar */}
                       <div
                         style={{
@@ -598,6 +574,11 @@ export default function PelaporDashboardPage() {
                             ? 'Menunggu Validasi'
                             : 'Selesai'}
                         </span>
+                      </div>
+
+                      {/* Status Alur Laporan (Workflow Stepper) */}
+                      <div>
+                        <WorkflowStepper currentStatus={report.status} adminName={report.admin?.nama} compact={true} />
                       </div>
 
                       {/* Grid Informasi Metadata */}

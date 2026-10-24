@@ -7,6 +7,7 @@ import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import LoadingScreen from '@/components/LoadingScreen';
+import WorkflowStepper from '@/components/WorkflowStepper';
 import UserManagementSection from '@/components/admin/UserManagementSection';
 import { UserSession } from '@/types';
 import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
@@ -806,6 +807,11 @@ export default function AdminWorkbenchPage() {
                               ? 'Menunggu Validasi'
                               : 'Selesai'}
                           </span>
+                        </div>
+
+                        {/* Status Alur Laporan (Workflow Stepper) */}
+                        <div>
+                          <WorkflowStepper currentStatus={report.status} adminName={report.admin?.nama} compact={true} />
                         </div>
 
                         {/* Grid Informasi Metadata */}
