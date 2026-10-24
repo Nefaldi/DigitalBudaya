@@ -359,8 +359,11 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                       </span>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      <div>Lapor: {u._count?.laporanDikirim || 0}</div>
-                      <div>Tangani: {u._count?.laporanDiproses || 0}</div>
+                      {u.role === 'PELAPOR' ? (
+                        <div>Lapor: {u._count?.laporanDikirim || 0}</div>
+                      ) : (
+                        <div>Tangani: {u._count?.laporanDiproses || 0}</div>
+                      )}
                     </td>
                     <td style={{ padding: '1rem 1.25rem' }}>
                       <select
