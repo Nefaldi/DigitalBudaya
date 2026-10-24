@@ -29,9 +29,9 @@ Semua akun hasil seeding menggunakan password default: `password123`
 
 | Peran (Role) | Email | Akses & Kewenangan |
 |---|---|---|
-| **Superadmin** | `superadmin@digiculture.id` | Manajemen pengguna se-provinsi, analitik regional, hapus laporan |
-| **Admin** | `admin@digiculture.id` | Konservator lapangan: verifikasi status, upload foto restorasi & audio WBTB |
-| **Pelapor** | `pelapor@digiculture.id` | Masyarakat umum: kirim laporan kondisi cagar budaya, kelola draft laporan mandiri |
+| **Superadmin** | `superadmin@digiculture.id` | Validasi & pengesahan laporan (terbit ke katalog), penugasan petugas, manajemen pengguna (RBAC), analitik regional |
+| **Admin** | `admin@digiculture.id` | Konservator lapangan: penanganan investigasi, unggah foto digitalisasi & catatan teknis konservasi, ajukan validasi tugas |
+| **Pelapor** | `pelapor@digiculture.id` | Masyarakat umum: kirim laporan kondisi cagar budaya, kelola draft laporan mandiri, manajemen profil akun |
 
 ---
 
@@ -145,12 +145,11 @@ Antarmuka mengadopsi filosofi **Nordic-Swiss Cultural Archival / Contemporary Cu
 - **Framed Archival Hero & Live Metrics:** Tampilan beranda berbingkai arsip resmi BPK Wilayah XVIII dengan indikator registri aktif dan metrik kuantitatif langsung dari basis data.
 - **Katalog Geospasial Publik:** Direktori pencarian budaya mencakup 13 Kabupaten/Kota se-Sulawesi Tengah dengan sinkronisasi parameter URL dua arah, filter kategori, status konservasi, dan pencarian teks *case-insensitive*.
 - **Peta Interaktif Leaflet:** Pembatasan wilayah spesifik Sulteng (119.0°E - 124.5°E, -3.8°S - 2.2°N) dengan penanda pin SVG bertema perisai Tadulako dan lompatan langsung dari navigasi (`/#peta`).
-- **Before-After Slider Modern:** Komponen komparasi visual interaktif dengan Pointer Capture API, dukungan sentuh mobile, dan penempatan posisi instan via klik.
-- **Dossier Lembar Arsip & Cetak Fisik:** Halaman detail dua kolom yang memuat metadata registrasi, peta lokasi terverifikasi, dan tombol cetak dossier A4.
-- **Audio Wave Player:** Pemutar audio HTML5 untuk pelestarian Warisan Budaya Takbenda (WBTB), sastra tutur lisan, dan rekaman dialek daerah.
-- **Formulir Laporan Lapangan:** Input data komprehensif, kompresi foto klien otomatis, penanda GPS interaktif, dan peringatan draf offline berbasis penyimpanan lokal.
-- **Meja Kerja Konservator (Admin):** Alur verifikasi laporan, pengambilan alih investigasi, serta pengunggahan foto restorasi dan rekaman audio.
-- **Panel Tata Kelola & Analitik (Superadmin):** Visualisasi sebaran lengkap 13 Kabupaten/Kota se-Sulawesi Tengah dan manajemen akun dengan kontrol RBAC.
+- **Dossier Lembar Arsip & Cetak Fisik:** Halaman detail dua kolom yang memuat foto dokumentasi resmi cagar budaya, metadata registrasi, peta lokasi terverifikasi, dan tombol cetak dossier format A4.
+- **Formulir Laporan Lapangan:** Input data komprehensif, kompresor citra klien otomatis, pengambilan foto langsung dari kamera perangkat, penanda GPS interaktif, dan penyimpanan draf lokal otomatis.
+- **Meja Kerja Konservator (Admin):** Alur penanganan terpadu ala Sibersih (`LAPORAN_MASUK` -> `DIPROSES` -> `MENUNGGU_VALIDASI` -> `SELESAI`), pengambilan alih investigasi, pengunggahan foto digitalisasi/preservasi, dan pencatatan teknis lapangan.
+- **Panel Tata Kelola & Validasi (Superadmin):** Pengesahan akhir penyelesaian laporan (publikasi resmi ke katalog), penugasan petugas wilayah, visualisasi analitik KPI 13 Kabupaten/Kota, dan manajemen pengguna terpadu dengan kontrol RBAC.
+- **Portal & Manajemen Profil Pengguna:** Layanan mandiri bagi pelapor dan staf untuk pemantauan riwayat laporan, pembaruan informasi profil akun, pembaruan kata sandi, dan penghapusan akun mandiri.
 
 ---
 
@@ -159,21 +158,23 @@ Antarmuka mengadopsi filosofi **Nordic-Swiss Cultural Archival / Contemporary Cu
 ```
 DigitalBudaya/
 ├── app/
-│   ├── admin/                 # Meja kerja verifikasi konservator (/admin)
+│   ├── admin/                 # Meja kerja penanganan konservator & Superadmin (/admin)
 │   ├── api/                   # Route handlers REST API
-│   │   ├── analytics/         # GET /api/analytics
+│   │   ├── analytics/         # GET /api/analytics (KPI agregat se-provinsi)
 │   │   ├── auth/              # login, register, me, logout
+│   │   ├── health/            # Health check endpoint
 │   │   ├── reports/           # CRUD katalog & laporan cagar budaya
-│   │   ├── upload/            # Upload foto & audio ke Cloudinary
+│   │   │   └── [id]/          # Operasi detail, update status alur, & hapus laporan
+│   │   ├── upload/            # Upload foto & hapus berkas Cloudinary
 │   │   └── users/             # Manajemen user & profil akun
-│   │       ├── [id]/          # Operasi per pengguna (Superadmin)
-│   │       └── profile/       # GET/PATCH profil pengguna login
+│   │       ├── [id]/          # Operasi per pengguna & RBAC (Superadmin)
+│   │       └── profile/       # GET/PATCH/DELETE profil pengguna mandiri
 │   ├── katalog/               # Direktori publik geospasial
-│   │   └── [id]/              # Dossier detail budaya & slider pemugaran
+│   │   └── [id]/              # Dossier lembar registrasi cagar budaya & cetak resmi
 │   ├── login/                 # Halaman autentikasi login
 │   ├── pelapor/               # Portal pelapor masyarakat (/pelapor)
 │   │   ├── lapor/             # Form pelaporan dengan kompresor kanvas & peta
-│   │   └── profil/            # Manajemen profil & riwayat pelapor
+│   │   └── profil/            # Manajemen profil & pengaturan akun pengguna
 │   ├── register/              # Halaman pendaftaran pelapor
 │   ├── superadmin/            # Panel kontrol provinsi
 │   │   ├── analytics/         # Visualisasi sebaran lengkap 13 Kab/Kota
@@ -183,24 +184,30 @@ DigitalBudaya/
 │   └── page.tsx               # Beranda berbingkai kuratorial & metrik live
 │
 ├── components/                # Komponen antarmuka mandiri
-│   ├── AudioWavePlayer.tsx    # Pemutar audio WBTB
-│   ├── BeforeAfterSlider.tsx  # Slider komparasi foto (Pointer Capture API)
-│   ├── Footer.tsx             # Footer institusional 4 kolom
+│   ├── admin/                 # Komponen khusus panel administrasi
+│   │   └── UserManagementSection.tsx # Konsol manajemen pengguna (RBAC)
+│   ├── Footer.tsx             # Footer institusional & kontak sosial
 │   ├── HeritageCard.tsx       # Kartu katalog cagar budaya (rasio 16:10)
-│   ├── ImageCompressorUpload.tsx # Kompresor gambar HTML5 canvas
-│   ├── MapPicker.tsx          # Penentu titik koordinat laporan
+│   ├── HeroActionButtons.tsx  # Tombol aksi hero adaptif sesi
+│   ├── HeroBackground.tsx     # Latar belakang animasi hero
+│   ├── HomeAuthRedirect.tsx   # Pengalihan otomatis beranda bagi user login
+│   ├── ImageCompressorUpload.tsx # Kompresor gambar HTML5 canvas & live camera
+│   ├── LoadingScreen.tsx      # Indikator animasi loading antarmuka
+│   ├── MapPicker.tsx          # Penentu titik koordinat laporan (Leaflet)
 │   ├── Navbar.tsx             # Navigasi responsif (56px fixed, jump to #peta)
 │   ├── PrintDossierButton.tsx # Tombol cetak berkas arsip resmi A4
 │   ├── SultengMap.tsx         # Peta spasial cagar budaya (Leaflet)
 │   ├── ThemeToggle.tsx        # Toggle tema terang / gelap
-│   └── WorkflowStepper.tsx    # Indikator alur status penanganan
+│   └── WorkflowStepper.tsx    # Indikator alur status penanganan 4 tahap
 │
 ├── lib/                       # Modul driver & helper
 │   ├── auth.ts                # Verifikasi JWT & hash kata sandi bcrypt
-│   ├── cloudinary.ts          # Driver upload stream Cloudinary SDK
+│   ├── clientSession.ts       # Manajemen sesi klien reaktif (SWR in-memory)
+│   ├── cloudinary.ts          # Driver upload stream Cloudinary SDK & GC
 │   ├── imageUtils.ts          # Optimasi format & ukuran URL Cloudinary
 │   ├── prisma.ts              # Singleton PrismaClient
-│   ├── rateLimit.ts           # Rate limiter memori dengan unref lifecycle
+│   ├── rateLimit.ts           # Dual-key rate limiter dengan unref lifecycle
+│   ├── serverCache.ts         # In-memory server caching dengan invalidasi prefix
 │   └── sultengLocations.ts    # Validasi koordinat batas wilayah Sulteng
 │
 ├── prisma/
