@@ -227,12 +227,12 @@ export default function Navbar() {
               href="/"
               className="group"
               style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}
-              title="DigiCulture Care - Beranda Sistem"
+              title="Digiculture Care - Beranda Sistem"
             >
               <div className="digiculture-logo-badge">
                 <Image
                   src="/logo-transparent.png"
-                  alt="DigiCulture Care Logo"
+                  alt="Digiculture Care Logo"
                   width={24}
                   height={24}
                   priority
@@ -241,7 +241,7 @@ export default function Navbar() {
                 />
                 <Image
                   src="/logo-light-transparent.png"
-                  alt="DigiCulture Care Logo"
+                  alt="Digiculture Care Logo"
                   width={24}
                   height={24}
                   priority
@@ -250,7 +250,7 @@ export default function Navbar() {
                 />
               </div>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="digiculture-brand-title">DigiCulture Care</span>
+                <span className="digiculture-brand-title">Digiculture Care</span>
               </div>
             </Link>
           </div>
@@ -563,7 +563,7 @@ export default function Navbar() {
                 margin: '0 0 1.5rem 0',
               }}
             >
-              Apakah Anda yakin ingin mengakhiri sesi dan keluar dari sistem DigiCulture Care? Anda akan diarahkan kembali ke beranda.
+              Apakah Anda yakin ingin mengakhiri sesi dan keluar dari sistem Digiculture Care? Anda akan diarahkan kembali ke beranda.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
