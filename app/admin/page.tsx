@@ -275,7 +275,7 @@ export default function AdminWorkbenchPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal mengambil alih laporan' });
+        setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal menangani laporan' });
       } else {
         setReports((prev) => {
           const updated = prev.map((r) => (r.id === reportId ? data.report : r));
@@ -285,7 +285,7 @@ export default function AdminWorkbenchPage() {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
         }
-        setWorkbenchFeedback({ type: 'success', message: 'Laporan berhasil diambil alih untuk penanganan konservasi.' });
+        setWorkbenchFeedback({ type: 'success', message: 'Laporan berhasil ditangani oleh konservator.' });
       }
     } catch (err) {
       console.error('Take ownership error:', err);
@@ -750,11 +750,11 @@ export default function AdminWorkbenchPage() {
                                 <button
                                   onClick={() => handleTakeOwnership(report.id)}
                                   className="btn btn-outline btn-sm"
-                                  title="Ambil Alih Penanganan Tugas"
+                                  title="Tangani Laporan Ini"
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
                                   <Play size={13} />
-                                  <span>Ambil Alih</span>
+                                  <span>Tangani</span>
                                 </button>
                               )}
 
