@@ -16,8 +16,6 @@ export default function HeroActionButtons() {
         setUser(u);
         setReady(true);
       });
-    } else {
-      setReady(true);
     }
     const onAuthUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<UserSession | null>;

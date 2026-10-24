@@ -94,10 +94,7 @@ export default function Navbar() {
   useEffect(() => {
     let ignore = false;
 
-    if (isSessionFetched()) {
-      setUser(getCachedUser());
-      setLoading(false);
-    } else {
+    if (!isSessionFetched()) {
       fetchUserSession().then((u) => {
         if (!ignore) {
           setUser(u);

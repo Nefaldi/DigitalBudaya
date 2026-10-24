@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding DigiCulture Care database...');
+  console.log('Seeding DigiCulture Care database with authentic Central Sulawesi heritage...');
 
   // 1. Create Default Users
   const hashedPassword = await bcrypt.hash('password123', 10);
@@ -47,7 +47,7 @@ async function main() {
   // 2. Clear existing reports to avoid duplicate seeds
   await prisma.heritageReport.deleteMany({});
 
-  // 3. Create Demonstration Mock Reports (PRD Section 6)
+  // 3. Create Demonstration Mock Reports with Real Photos of Sulteng Heritage
   const report1 = await prisma.heritageReport.create({
     data: {
       judulPusaka: 'Situs Batu Megalitikum Pokekea',
@@ -56,11 +56,11 @@ async function main() {
       kabupatenKota: 'Kabupaten Poso',
       latitude: -1.7083,
       longitude: 120.3015,
-      deskripsiKrisis: 'Kompleks patung batu purba megalitikum dan Kalamba (tempayan batu purba) mengalami erosi permukaan akibat cuaca ekstrem serta berpotensi rusak karena tumbuhnya lumut tebal dan aktivitas manusia yang tak terkontrol.',
-      fotoKondisiAwal: 'https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&q=80&w=1000',
-      fotoDigitalisasi: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=1000',
-      rekamanAudioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a74e50.mp3?filename=nature-ambient-110756.mp3',
-      catatanPenanganan: 'Pembersihan lumut mikro dan konservasi bahan batu oleh tim arkeolog gabungan Sulteng. Pembatasan zonasi pagar pengaman dan pembuatan katalog pemetaan 3D koordinat Kalamba telah rampung dilaksanakan secara transparan.',
+      deskripsiKrisis: 'Kompleks kalamba (tempayan kubur batu purba) dan patung megalitik di padang savana Lembah Besoa peninggalan peradaban ribuan tahun silam. Memerlukan pembersihan lumut kerak mikro dan pemantauan erosi permukaan tanah secara berkala.',
+      fotoKondisiAwal: 'https://res.cloudinary.com/bhzprhkh/image/upload/v1792857227/digiculture_care/katalog/situs-megalitikum-pokekea.jpg',
+      fotoDigitalisasi: 'https://res.cloudinary.com/bhzprhkh/image/upload/v1792857227/digiculture_care/katalog/situs-megalitikum-pokekea.jpg',
+      rekamanAudioUrl: null,
+      catatanPenanganan: 'Pembersihan lumut mikro dan konservasi bahan batu oleh tim arkeolog gabungan Sulteng. Pembuatan zonasi pagar pengaman dan pemetaan koordinat 3D Kalamba telah rampung dilaksanakan secara transparan.',
       status: StatusPenyelamatan.SELESAI,
       pelaporId: pelapor.id,
       adminId: admin.id,
@@ -69,18 +69,18 @@ async function main() {
 
   const report2 = await prisma.heritageReport.create({
     data: {
-      judulPusaka: 'Rumah Adat Tambi Lore Lindu',
+      judulPusaka: 'Rumah Adat Souraja (Banua Mbaso)',
       kategori: KategoriPusaka.BENDA,
-      lokasiSpesifik: 'Dataran Tinggi Lore, Taman Nasional Lore Lindu',
-      kabupatenKota: 'Kabupaten Sigi',
-      latitude: -1.4167,
-      longitude: 120.1500,
-      deskripsiKrisis: 'Struktur atap ijuk tradisional dan tiang penyangga kayu murni pada bangunan Soura & Tambi mulai mengalami pelapukan berat akibat termakan usia dan kelembapan udara tinggi.',
-      fotoKondisiAwal: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000',
-      fotoDigitalisasi: null,
+      lokasiSpesifik: 'Kelurahan Lere, Kecamatan Palu Barat',
+      kabupatenKota: 'Kota Palu',
+      latitude: -0.8917,
+      longitude: 119.8542,
+      deskripsiKrisis: 'Rumah panggung kayu peninggalan Kerajaan Palu abad ke-19 dengan arsitektur tahan gempa tanpa menggunakan paku. Struktur tiang penopang kayu ulin dan atap sirap membutuhkan preservasi berkala dari risiko pelapukan kayu.',
+      fotoKondisiAwal: 'https://res.cloudinary.com/bhzprhkh/image/upload/v1792857228/digiculture_care/katalog/rumah-adat-souraja.webp',
+      fotoDigitalisasi: 'https://res.cloudinary.com/bhzprhkh/image/upload/v1792857228/digiculture_care/katalog/rumah-adat-souraja.webp',
       rekamanAudioUrl: null,
-      catatanPenanganan: 'Tim konservator wilayah telah mendarat di lokasi Sigi untuk survei kelayakan kayu pengganti dan mengumpulkan dana restorasi atap ijuk bersama tokoh adat setempat.',
-      status: StatusPenyelamatan.DIPROSES,
+      catatanPenanganan: 'Proses pemugaran tiang ulin dan preservasi kayu alami anti rayap selesai dilakukan bersama balai pelestarian kebudayaan.',
+      status: StatusPenyelamatan.SELESAI,
       pelaporId: pelapor.id,
       adminId: admin.id,
     },
@@ -88,20 +88,20 @@ async function main() {
 
   const report3 = await prisma.heritageReport.create({
     data: {
-      judulPusaka: 'Tradisi Lisan & Bahasa Daerah Rampi',
-      kategori: KategoriPusaka.TAKBENDA,
-      lokasiSpesifik: 'Wilayah Perbatasan Pegunungan Rampi',
-      kabupatenKota: 'Kabupaten Morowali Utara',
-      latitude: -2.0167,
-      longitude: 121.2500,
-      deskripsiKrisis: 'Penutur asli bahasa daerah Rampi dan cerita rakyat lisan generasi tua tersisa kurang dari 500 jiwa. Belum ada dokumentasi audio atau buku tata bahasa resmi yang memadai sehingga terancam punah total.',
-      fotoKondisiAwal: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=1000',
-      fotoDigitalisasi: null,
-      rekamanAudioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=flute-ambient-14023.mp3',
-      catatanPenanganan: null,
-      status: StatusPenyelamatan.LAPORAN_MASUK,
+      judulPusaka: 'Patung Megalitikum Palindo (Watu Palindo)',
+      kategori: KategoriPusaka.BENDA,
+      lokasiSpesifik: 'Desa Kolori, Lembah Bada, Lore Barat',
+      kabupatenKota: 'Kabupaten Poso',
+      latitude: -1.8667,
+      longitude: 120.2500,
+      deskripsiKrisis: 'Monolit batu raksasa berketinggian 4,5 meter dengan ekspresi wajah ceria yang berdiri megah di padang savana Lembah Bada. Mengalami potensi kemiringan mikro fondasi tanah akibat limpasan air hujan deras.',
+      fotoKondisiAwal: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Patung_Palindo_Lembah_Bada_Taman_Nasional_Lore_Lindu.jpg',
+      fotoDigitalisasi: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Patung_Palindo_Lembah_Bada_Taman_Nasional_Lore_Lindu.jpg',
+      rekamanAudioUrl: null,
+      catatanPenanganan: 'Pemasangan patok pengukur stabilitas tanah dan penataan pagar perimeter konservasi cagar budaya nasional.',
+      status: StatusPenyelamatan.SELESAI,
       pelaporId: pelapor.id,
-      adminId: null,
+      adminId: admin.id,
     },
   });
 
@@ -111,7 +111,7 @@ async function main() {
     report3: report3.judulPusaka,
   });
 
-  console.log('Database seeding finished successfully!');
+  console.log('Database seeding finished successfully (3 heritage cards)!');
 }
 
 main()

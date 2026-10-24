@@ -12,7 +12,6 @@ import UserManagementSection from '@/components/admin/UserManagementSection';
 import { UserSession } from '@/types';
 import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
 import {
-  Shield,
   Upload,
   X,
   MapPin,
@@ -20,7 +19,6 @@ import {
   Users,
   UserCheck,
   CheckCircle2,
-  Hourglass,
   Trash2,
   ChevronDown,
   ChevronUp,
@@ -35,11 +33,14 @@ export default function AdminWorkbenchPage() {
   const [loading, setLoading] = useState<boolean>(!clientCachedReports);
   const [user, setUser] = useState<UserSession | null>(getCachedUser());
 
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialSection = searchParams.get('tab') === 'users' ? 'users' : 'laporan';
-  const [activeSection, setActiveSection] = useState<'laporan' | 'users'>(initialSection);
+  const tabParam = searchParams.get('tab');
+  const initialSection = tabParam === 'users' ? 'users' : 'laporan';
+  const initialTab = tabParam === 'validasi' ? 'MENUNGGU_VALIDASI' : 'ALL';
 
-  const [activeTab, setActiveTab] = useState<'ALL' | 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI'>('ALL');
+  const [activeSection, setActiveSection] = useState<'laporan' | 'users'>(initialSection);
+  const [activeTab, setActiveTab] = useState<'ALL' | 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI'>(initialTab);
 
   // Modal State for Digitalization & Status Update
   const [selectedReport, setSelectedReport] = useState<HeritageReportItem | null>(null);
@@ -69,10 +70,10 @@ export default function AdminWorkbenchPage() {
     }));
   };
 
-  const router = useRouter();
-
-  useEffect(() => {
-    const tabParam = searchParams.get('tab');
+  // Sync state during render if tabParam in URL changes
+  const [prevTab, setPrevTab] = useState(tabParam);
+  if (prevTab !== tabParam) {
+    setPrevTab(tabParam);
     if (tabParam === 'users') {
       setActiveSection('users');
     } else if (tabParam === 'validasi') {
@@ -81,7 +82,7 @@ export default function AdminWorkbenchPage() {
     } else if (tabParam === 'laporan') {
       setActiveSection('laporan');
     }
-  }, [searchParams]);
+  }
 
   useEffect(() => {
     let ignore = false;
@@ -1009,7 +1010,7 @@ export default function AdminWorkbenchPage() {
                   {isSuperadmin ? (
                     <select
                       value={updatingStatus}
-                      onChange={(e) => setUpdatingStatus(e.target.value as any)}
+                      onChange={(e) => setUpdatingStatus(e.target.value as 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI')}
                       className="form-select"
                     >
                       <option value="SELESAI">SELESAI (Validasi Disetujui & Terbitkan ke Katalog)</option>
@@ -1020,7 +1021,7 @@ export default function AdminWorkbenchPage() {
                   ) : (
                     <select
                       value={updatingStatus}
-                      onChange={(e) => setUpdatingStatus(e.target.value as any)}
+                      onChange={(e) => setUpdatingStatus(e.target.value as 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI')}
                       className="form-select"
                     >
                       <option value="MENUNGGU_VALIDASI">

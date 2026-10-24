@@ -21,6 +21,7 @@ export interface HeritageReportItem {
   catatanPenanganan?: string | null;
   status: 'LAPORAN_MASUK' | 'DIPROSES' | 'MENUNGGU_VALIDASI' | 'SELESAI';
   createdAt: string;
+  updatedAt?: string | Date;
   pelapor?: { id: string; nama: string; email: string };
   admin?: { id: string; nama: string; email: string } | null;
 }

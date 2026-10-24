@@ -21,7 +21,6 @@ export default function HomeAuthRedirect() {
 
     const cached = getCachedUser();
     if (cached?.role) {
-      setIsLoggedIn(true);
       handleRedirect(cached.role);
       return;
     }

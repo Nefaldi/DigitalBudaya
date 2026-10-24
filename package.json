@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx prisma/seed.ts",
+    "db:update-image": "npx tsx prisma/update-image.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

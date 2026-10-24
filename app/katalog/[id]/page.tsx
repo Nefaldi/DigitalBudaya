@@ -27,7 +27,7 @@ export const revalidate = 60;
 // Deduped and cached fetcher for single heritage report
 const getReportDetail = cache(async (id: string) => {
   const cacheKey = `reports:detail:${id}`;
-  const memoryCached = getCached<any>(cacheKey, 30_000);
+  const memoryCached = getCached<HeritageReportItem>(cacheKey, 30_000);
   if (memoryCached) return memoryCached;
 
   try {
@@ -239,7 +239,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
           <WorkflowStepper
             currentStatus={report.status}
             adminName={report.admin?.nama}
-            updatedAt={report.updatedAt ? report.updatedAt.toISOString() : undefined}
+            updatedAt={report.updatedAt ? new Date(report.updatedAt).toISOString() : undefined}
           />
         </div>
 

@@ -35,7 +35,7 @@ export default function LaporBudayaPage() {
   const [draftTimestamp, setDraftTimestamp] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<'PELAPOR' | 'ADMIN' | 'SUPERADMIN'>(() => {
     const cached = getCachedUser();
-    return (cached?.role as any) || 'PELAPOR';
+    return (cached?.role as 'PELAPOR' | 'ADMIN' | 'SUPERADMIN') || 'PELAPOR';
   });
   const router = useRouter();
 
@@ -72,7 +72,7 @@ export default function LaporBudayaPage() {
           router.replace('/superadmin/analytics');
           return;
         }
-        setUserRole(user.role as any);
+        setUserRole(user.role as 'PELAPOR' | 'ADMIN' | 'SUPERADMIN');
       } catch {
         router.push('/login?redirect=/pelapor/lapor');
       }

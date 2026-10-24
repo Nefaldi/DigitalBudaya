@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     // Fast In-Memory Cache Lookup (15s TTL)
     const cacheKey = `reports:${req.url}:${currentUser ? currentUser.id : 'guest'}`;
-    const cachedResponse = getCached<any>(cacheKey, 15_000);
+    const cachedResponse = getCached<Record<string, unknown>>(cacheKey, 15_000);
     if (cachedResponse) {
       return NextResponse.json(cachedResponse, {
         headers: {

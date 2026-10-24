@@ -49,7 +49,7 @@ export default function PelaporProfilPage() {
         id: cachedUser.id,
         nama: cachedUser.nama,
         email: cachedUser.email,
-        role: cachedUser.role as any,
+        role: cachedUser.role,
         createdAt: '',
         updatedAt: '',
       };
