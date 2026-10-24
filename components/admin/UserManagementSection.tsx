@@ -355,7 +355,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                             : 'badge-takbenda'
                         }`}
                       >
-                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Admin (Konservator)'}
+                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Admin'}
                       </span>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
