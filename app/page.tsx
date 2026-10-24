@@ -5,87 +5,110 @@ import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import SultengMap from '@/components/SultengMap';
 import HeroBackground from '@/components/HeroBackground';
 import HeroActionButtons from '@/components/HeroActionButtons';
+import { getCached, setCached } from '@/lib/serverCache';
 import { MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers, BookOpen } from 'lucide-react';
+
+interface HomePageData {
+  reports: HeritageReportItem[];
+  mapReports: HeritageReportItem[];
+  totalVerified: number;
+  countBenda: number;
+  countTakbenda: number;
+}
+
+const HOME_CACHE_KEY = 'home:page_data';
 
 // Enable true Edge-level Incremental Static Regeneration (ISR)
 export const revalidate = 60;
 
 export default async function HomePage() {
-  let reports: HeritageReportItem[] = [];
-  let mapReports: HeritageReportItem[] = [];
-  let totalVerified = 0;
-  let countBenda = 0;
-  let countTakbenda = 0;
+  const cachedData = getCached<HomePageData>(HOME_CACHE_KEY, 30_000);
 
-  try {
-    const [rawReports, kategoriGroup, rawMapReports] = await Promise.all([
-      // 1. Ambil 6 arsip cagar budaya terverifikasi terkini
-      prisma.heritageReport.findMany({
-        where: { status: 'SELESAI' },
-        include: {
-          pelapor: { select: { id: true, nama: true, email: true } },
-          admin: { select: { id: true, nama: true, email: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 6,
-      }),
+  let reports: HeritageReportItem[] = cachedData?.reports || [];
+  let mapReports: HeritageReportItem[] = cachedData?.mapReports || [];
+  let totalVerified = cachedData?.totalVerified || 0;
+  let countBenda = cachedData?.countBenda || 0;
+  let countTakbenda = cachedData?.countTakbenda || 0;
 
-      // 2. Agregasi statistik kategori dalam 1 query terpadu
-      prisma.heritageReport.groupBy({
-        by: ['kategori'],
-        where: { status: 'SELESAI' },
-        _count: { _all: true },
-      }),
+  if (!cachedData) {
+    try {
+      const [rawReports, kategoriGroup, rawMapReports] = await Promise.all([
+        // 1. Ambil 6 arsip cagar budaya terverifikasi terkini
+        prisma.heritageReport.findMany({
+          where: { status: 'SELESAI' },
+          include: {
+            pelapor: { select: { id: true, nama: true, email: true } },
+            admin: { select: { id: true, nama: true, email: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 6,
+        }),
 
-      // 3. Ambil koordinat titik geospasial untuk peta sebaran
-      prisma.heritageReport.findMany({
-        where: {
-          status: 'SELESAI',
-          latitude: { not: null },
-          longitude: { not: null },
-        },
-        select: {
-          id: true,
-          judulPusaka: true,
-          kategori: true,
-          lokasiSpesifik: true,
-          kabupatenKota: true,
-          latitude: true,
-          longitude: true,
-          fotoKondisiAwal: true,
-          fotoDigitalisasi: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 100,
-      }),
-    ]);
+        // 2. Agregasi statistik kategori dalam 1 query terpadu
+        prisma.heritageReport.groupBy({
+          by: ['kategori'],
+          where: { status: 'SELESAI' },
+          _count: { _all: true },
+        }),
 
-    for (const item of kategoriGroup) {
-      if (item.kategori === 'BENDA') {
-        countBenda = item._count._all;
-      } else if (item.kategori === 'TAKBENDA') {
-        countTakbenda = item._count._all;
+        // 3. Ambil koordinat titik geospasial untuk peta sebaran
+        prisma.heritageReport.findMany({
+          where: {
+            status: 'SELESAI',
+            latitude: { not: null },
+            longitude: { not: null },
+          },
+          select: {
+            id: true,
+            judulPusaka: true,
+            kategori: true,
+            lokasiSpesifik: true,
+            kabupatenKota: true,
+            latitude: true,
+            longitude: true,
+            fotoKondisiAwal: true,
+            fotoDigitalisasi: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 100,
+        }),
+      ]);
+
+      for (const item of kategoriGroup) {
+        if (item.kategori === 'BENDA') {
+          countBenda = item._count._all;
+        } else if (item.kategori === 'TAKBENDA') {
+          countTakbenda = item._count._all;
+        }
+        totalVerified += item._count._all;
       }
-      totalVerified += item._count._all;
+
+      reports = rawReports.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString(),
+      }));
+
+      mapReports = rawMapReports.map((r) => ({
+        ...r,
+        deskripsiKrisis: '',
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString(),
+      }));
+
+      setCached(HOME_CACHE_KEY, {
+        reports,
+        mapReports,
+        totalVerified,
+        countBenda,
+        countTakbenda,
+      });
+    } catch (error) {
+      console.error('Error fetching home data:', error);
     }
-
-    reports = rawReports.map((r) => ({
-      ...r,
-      createdAt: r.createdAt.toISOString(),
-      updatedAt: r.updatedAt.toISOString(),
-    }));
-
-    mapReports = rawMapReports.map((r) => ({
-      ...r,
-      deskripsiKrisis: '',
-      createdAt: r.createdAt.toISOString(),
-      updatedAt: r.updatedAt.toISOString(),
-    }));
-  } catch (error) {
-    console.error('Error fetching home data:', error);
   }
 
   return (
