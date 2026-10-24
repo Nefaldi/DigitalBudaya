@@ -125,19 +125,19 @@ export default function PelaporDashboardPage() {
       const res = await fetch(`/api/reports/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (!res.ok) {
-        setFeedback({ type: 'error', message: data.error || 'Gagal membatalkan laporan' });
+        setFeedback({ type: 'error', message: data.error || 'Gagal menghapus laporan' });
       } else {
         setReports((prev) => {
           const updated = prev.filter((r) => r.id !== id);
           clientCachedMyReports = updated;
           return updated;
         });
-        setFeedback({ type: 'success', message: 'Laporan berhasil dibatalkan.' });
+        setFeedback({ type: 'success', message: 'Laporan berhasil dihapus.' });
         setReportToDelete(null);
       }
     } catch (err) {
       console.error('Delete error:', err);
-      setFeedback({ type: 'error', message: 'Terjadi kesalahan saat membatalkan laporan.' });
+      setFeedback({ type: 'error', message: 'Terjadi kesalahan saat menghapus laporan.' });
     } finally {
       setDeletingId(null);
     }
@@ -498,10 +498,12 @@ export default function PelaporDashboardPage() {
                               <button
                                 onClick={() => setReportToDelete(report)}
                                 disabled={deletingId === report.id}
-                                className="btn btn-danger btn-sm"
+                                className="btn btn-secondary btn-sm"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                                title="Hapus laporan ini"
                               >
-                                <Trash2 size={13} />
-                                <span>{deletingId === report.id ? 'Membatalkan...' : 'Batalkan'}</span>
+                                <Trash2 size={13} style={{ color: 'var(--action-danger)' }} />
+                                <span style={{ color: 'var(--action-danger)' }}>{deletingId === report.id ? 'Menghapus...' : 'Hapus'}</span>
                               </button>
                             </>
                           ) : (
@@ -957,10 +959,10 @@ export default function PelaporDashboardPage() {
         >
           <div className="paper-card" style={{ maxWidth: '440px', width: '100%', padding: '1.75rem' }}>
             <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '0.5rem', fontWeight: 600 }}>
-              Konfirmasi Pembatalan Laporan
+              Konfirmasi Hapus Laporan
             </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '1.5rem' }}>
-              Apakah Anda yakin ingin membatalkan laporan <strong>&ldquo;{reportToDelete.judulPusaka}&rdquo;</strong>? Tindakan ini tidak dapat diurungkan.
+              Apakah Anda yakin ingin menghapus laporan <strong>&ldquo;{reportToDelete.judulPusaka}&rdquo;</strong>? Tindakan ini tidak dapat diurungkan.
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
               <button
@@ -977,7 +979,7 @@ export default function PelaporDashboardPage() {
                 onClick={confirmDeleteReport}
                 className="btn btn-danger btn-sm"
               >
-                {deletingId ? 'Menghapus...' : 'Ya, Batalkan Laporan'}
+                {deletingId ? 'Menghapus...' : 'Ya, Hapus Laporan'}
               </button>
             </div>
           </div>
