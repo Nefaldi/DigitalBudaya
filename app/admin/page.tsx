@@ -687,8 +687,8 @@ export default function AdminWorkbenchPage() {
                                 </button>
                               )}
 
-                              {/* Validasi Selesai pada MENUNGGU_VALIDASI atau DIPROSES */}
-                              {(report.status === 'MENUNGGU_VALIDASI' || report.status === 'DIPROSES') && (
+                              {/* Validasi Selesai HANYA pada laporan yang sudah selesai dikerjakan petugas (MENUNGGU_VALIDASI) */}
+                              {report.status === 'MENUNGGU_VALIDASI' && (
                                 <button
                                   onClick={() => handleDirectValidate(report.id, 'SELESAI')}
                                   className="btn btn-sm"

@@ -142,6 +142,13 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
               { status: 403 }
             );
           }
+          // Validasi alur Sibersih: Hanya laporan yang sudah selesai dikerjakan & diajukan petugas (MENUNGGU_VALIDASI) yang dapat disahkan selesai
+          if (report.status !== StatusPenyelamatan.MENUNGGU_VALIDASI) {
+            return NextResponse.json(
+              { error: 'Laporan belum diajukan penyelesaiannya oleh petugas konservator.' },
+              { status: 400 }
+            );
+          }
           dataToUpdate.status = StatusPenyelamatan.SELESAI;
           if (dataToUpdate.adminId === undefined && !report.adminId) {
             dataToUpdate.adminId = user.id;
