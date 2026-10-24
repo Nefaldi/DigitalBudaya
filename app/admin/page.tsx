@@ -641,19 +641,9 @@ export default function AdminWorkbenchPage() {
                           minWidth: '220px',
                         }}
                       >
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                          <div>
-                            <span style={{ color: 'var(--text-muted)' }}>Pelapor: </span>
-                            <strong style={{ color: 'var(--text-primary)' }}>{report.pelapor?.nama || 'Masyarakat'}</strong>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-muted)' }}>Petugas: </span>
-                            {report.admin ? (
-                              <strong style={{ color: 'var(--action-primary)' }}>{report.admin.nama}</strong>
-                            ) : (
-                              <span style={{ color: 'var(--status-masuk)', fontStyle: 'italic', fontWeight: 600 }}>Belum Ditugaskan</span>
-                            )}
-                          </div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textAlign: 'right' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Tanggal Lapor: </span>
+                          <span>{new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                         </div>
 
                         <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
