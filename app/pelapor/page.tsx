@@ -93,8 +93,16 @@ export default function PelaporDashboardPage() {
 
     fetchMyReports();
 
+    const onReportsUpdate = () => {
+      clientCachedMyReports = null;
+      lastMyReportsFetched = 0;
+      fetchMyReports();
+    };
+    window.addEventListener('digiculture-reports-update', onReportsUpdate);
+
     return () => {
       ignore = true;
+      window.removeEventListener('digiculture-reports-update', onReportsUpdate);
     };
   }, [router]);
 

@@ -135,6 +135,9 @@ export default function AdminWorkbenchPage() {
           clientCachedReports = updated;
           return updated;
         });
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
+        }
         setWorkbenchFeedback({ type: 'success', message: 'Laporan berhasil diambil alih untuk penanganan konservasi.' });
       }
     } catch (err) {
@@ -171,6 +174,9 @@ export default function AdminWorkbenchPage() {
         clientCachedReports = updated;
         return updated;
       });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
+      }
       setModalOpen(false);
     } catch (err: unknown) {
       setActionError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan pembaruan.');

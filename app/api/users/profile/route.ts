@@ -28,12 +28,24 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Pengguna tidak ditemukan' }, { status: 404 });
     }
 
-    const [totalReports, countMasuk, countDiproses, countSelesai] = await Promise.all([
-      prisma.heritageReport.count({ where: { pelaporId: user.id } }),
-      prisma.heritageReport.count({ where: { pelaporId: user.id, status: 'LAPORAN_MASUK' } }),
-      prisma.heritageReport.count({ where: { pelaporId: user.id, status: 'DIPROSES' } }),
-      prisma.heritageReport.count({ where: { pelaporId: user.id, status: 'SELESAI' } }),
-    ]);
+    const statusGroups = await prisma.heritageReport.groupBy({
+      by: ['status'],
+      where: { pelaporId: user.id },
+      _count: { _all: true },
+    });
+
+    let countMasuk = 0;
+    let countDiproses = 0;
+    let countSelesai = 0;
+    let totalReports = 0;
+
+    for (const item of statusGroups) {
+      const c = item._count._all;
+      totalReports += c;
+      if (item.status === 'LAPORAN_MASUK') countMasuk = c;
+      else if (item.status === 'DIPROSES') countDiproses = c;
+      else if (item.status === 'SELESAI') countSelesai = c;
+    }
 
     return NextResponse.json({
       user,
