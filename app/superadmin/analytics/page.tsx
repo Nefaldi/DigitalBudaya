@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import LoadingScreen from '@/components/LoadingScreen';
 import { fetchUserSession } from '@/lib/clientSession';
-import Link from 'next/link';
 import {
   BarChart3,
   ShieldCheck,
@@ -15,7 +14,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Hourglass,
-  ArrowRight,
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -180,69 +178,6 @@ export default function AnalyticsDashboardPage() {
             </p>
           </div>
         </div>
-
-        {/* Banner Validasi Petugas ala Sibersih */}
-        {data.statusBreakdown.MENUNGGU_VALIDASI > 0 && (
-          <div
-            style={{
-              padding: '1rem 1.25rem',
-              borderRadius: '12px',
-              backgroundColor: 'var(--color-terracotta-soft)',
-              border: '1px solid var(--border-strong)',
-              marginBottom: '1.5rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '8px',
-                  background: 'var(--bg-card)',
-                  color: 'var(--color-terracotta)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  border: '1px solid var(--border-hairline)',
-                }}
-              >
-                <Hourglass size={18} />
-              </div>
-              <div>
-                <h4 style={{ margin: 0, fontSize: '0.925rem', fontWeight: 650, color: 'var(--text-primary)' }}>
-                  Validasi Pekerjaan Petugas Butuh Persetujuan Anda
-                </h4>
-                <p style={{ margin: '0.15rem 0 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Terdapat {data.statusBreakdown.MENUNGGU_VALIDASI} laporan dengan hasil penanganan lapangan yang menunggu validasi Superadmin.
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/admin?tab=validasi"
-              className="btn btn-sm"
-              style={{
-                backgroundColor: 'var(--color-terracotta)',
-                color: '#ffffff',
-                border: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                fontWeight: 600,
-                padding: '0.45rem 0.9rem',
-                borderRadius: '8px',
-              }}
-            >
-              <span>Validasi Sekarang</span>
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-        )}
 
         {/* 5 KPI Metric Cards */}
         <div
@@ -432,7 +367,7 @@ export default function AnalyticsDashboardPage() {
               {/* Visual Split Ratio Bar */}
               <div style={{ display: 'flex', width: '100%', height: '8px', borderRadius: '9999px', overflow: 'hidden', marginBottom: '1rem' }}>
                 <div style={{ width: `${bendaPct}%`, background: 'var(--action-primary)', transition: 'width 0.4s ease' }} title={`Benda: ${bendaPct}%`} />
-                <div style={{ width: `${takbendaPct}%`, background: 'var(--action-emerald)', transition: 'width 0.4s ease' }} title={`Takbenda: ${takbendaPct}%`} />
+                <div style={{ width: `${takbendaPct}%`, background: 'var(--border-strong)', transition: 'width 0.4s ease' }} title={`Takbenda: ${takbendaPct}%`} />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
@@ -462,7 +397,7 @@ export default function AnalyticsDashboardPage() {
                   }}
                 >
                   <span className="badge badge-takbenda" style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem' }}>Takbenda</span>
-                  <div style={{ fontSize: '1.45rem', fontWeight: 700, color: 'var(--action-emerald)', marginTop: '0.35rem', lineHeight: 1 }}>
+                  <div style={{ fontSize: '1.45rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.35rem', lineHeight: 1 }}>
                     {data.kategoriBreakdown.TAKBENDA}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>

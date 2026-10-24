@@ -90,7 +90,7 @@ export default function SultengMap({
           const popupContent = `
             <div style="font-family:'Plus Jakarta Sans',sans-serif;min-width:200px;max-width:240px;padding:2px;">
               ${imageHtml}
-              <div style="font-size:11px;font-weight:600;color:${rep.kategori === 'TAKBENDA' ? '#1e4030' : '#142948'};margin-bottom:3px;">
+              <div style="font-size:11px;font-weight:600;color:#142948;margin-bottom:3px;">
                 ${rep.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'} • ${rep.kabupatenKota}
               </div>
               <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;line-height:1.3;">
