@@ -7,7 +7,7 @@ import HeroBackground from '@/components/HeroBackground';
 import HeroActionButtons from '@/components/HeroActionButtons';
 import HomeAuthRedirect from '@/components/HomeAuthRedirect';
 import { getCached, setCached } from '@/lib/serverCache';
-import { MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers, BookOpen } from 'lucide-react';
+import { MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers } from 'lucide-react';
 
 interface HomePageData {
   reports: HeritageReportItem[];
@@ -154,10 +154,6 @@ export default async function HomePage() {
       {/* 2. STATISTIK & POTENSI WILAYAH (DigiCulture Stat Cards) */}
       <section id="statistik" className="container" style={{ scrollMarginTop: '90px' }}>
         <div className="digiculture-stats-header">
-          <div className="digiculture-section-tag">
-            <span className="digiculture-tag-dot" />
-            <span className="mono">RINGKASAN PRESERVASI PROVINSI</span>
-          </div>
           <h2 className="digiculture-stats-title">
             Cakupan Dokumentasi & Warisan Budaya
           </h2>
@@ -237,41 +233,17 @@ export default async function HomePage() {
       <section id="katalog-terkini" className="container" style={{ scrollMarginTop: '80px' }}>
         <div
           style={{
-            marginBottom: '1.75rem',
+            marginBottom: '1.25rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '0.85rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            flexWrap: 'wrap',
-            gap: '1rem',
+            paddingBottom: '0.75rem',
           }}
         >
-          <div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
-              Katalog Terkini
-            </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-              Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
-            </p>
-          </div>
-
-          <Link
-            href="/katalog"
-            className="digiculture-hero-btn-primary"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.55rem 1.15rem',
-              fontSize: '0.84rem',
-              textDecoration: 'none',
-              borderRadius: '9999px',
-            }}
-          >
-            <BookOpen size={14} />
-            <span>Lihat Seluruh Katalog ({totalVerified})</span>
-          </Link>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
+            Katalog Terkini
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+            Objek cagar budaya yang telah tervalidasi dan terdokumentasi secara digital.
+          </p>
         </div>
 
         {reports.length > 0 ? (

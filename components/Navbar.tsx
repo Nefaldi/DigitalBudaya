@@ -193,16 +193,16 @@ export default function Navbar() {
     ];
   } else if (user.role === 'ADMIN') {
     navLinks = [
-      { label: 'Workbench Verifikasi', href: '/admin' },
+      { label: 'Workbench Konservator', href: '/admin' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
       { label: 'Katalog Budaya', href: '/katalog' },
     ];
   } else if (user.role === 'SUPERADMIN') {
     // Menu disamakan menjadi 'Analitik Wilayah' agar seragam & tidak membingungkan
-    // Fitur 'Kelola Pengguna' diintegrasikan ke dalam 'Workbench Admin'
+    // Fitur 'Kelola Pengguna' diintegrasikan ke dalam 'Workbench Super Admin'
     navLinks = [
+      { label: 'Workbench Super Admin', href: '/admin' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
-      { label: 'Workbench Admin', href: '/admin' },
       { label: 'Katalog Budaya', href: '/katalog' },
     ];
   }
@@ -366,7 +366,20 @@ export default function Navbar() {
 
         {/* Floating Mobile Drawer Card */}
         {mobileMenuOpen && (
-          <div className="digiculture-mobile-drawer">
+          <>
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 998,
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                backdropFilter: 'blur(3px)',
+                WebkitBackdropFilter: 'blur(3px)',
+                pointerEvents: 'auto',
+              }}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className="digiculture-mobile-drawer" style={{ position: 'relative', zIndex: 999 }}>
             {/* User profile card in drawer when authenticated */}
             {user && (
               <Link
@@ -497,6 +510,7 @@ export default function Navbar() {
               )}
             </div>
           </div>
+          </>
         )}
       </header>
 

@@ -373,9 +373,10 @@ export default function PelaporDashboardPage() {
                     gap: '1.25rem',
                   }}
                 >
-                  <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                  <div className="report-card-row" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
                     {/* Thumbnail Foto Awal */}
                     <div
+                      className="report-card-thumbnail"
                       style={{
                         width: '130px',
                         height: '95px',

@@ -279,7 +279,7 @@ function LoginForm() {
               }}
             >
               <KeyRound size={14} style={{ color: 'var(--action-primary)' }} />
-              <span>Akses Cepat (Akun Demo Seeder):</span>
+              <span>Akses Cepat Akun Demo:</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
               <button
@@ -288,7 +288,7 @@ function LoginForm() {
                 className="btn btn-secondary btn-sm"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
-                <span>Pelapor (Masyarakat)</span>
+                <span>Pelapor</span>
                 <span className="mono" style={{ color: 'var(--text-muted)' }}>pelapor@digiculture.id</span>
               </button>
               <button
@@ -297,7 +297,7 @@ function LoginForm() {
                 className="btn btn-secondary btn-sm"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
-                <span>Konservator Wilayah (Admin)</span>
+                <span>Konservator Wilayah</span>
                 <span className="mono" style={{ color: 'var(--text-muted)' }}>admin@digiculture.id</span>
               </button>
               <button
@@ -306,7 +306,7 @@ function LoginForm() {
                 className="btn btn-secondary btn-sm"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
-                <span>Superadmin (Validasi Laporan & Tugas)</span>
+                <span>Superadmin</span>
                 <span className="mono" style={{ color: 'var(--text-muted)' }}>superadmin@digiculture.id</span>
               </button>
             </div>

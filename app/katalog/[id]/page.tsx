@@ -176,7 +176,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
         </div>
 
         {/* Media Presentation: Before-After Slider or Single Photo */}
-        <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
           {hasRestorationComparison ? (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>

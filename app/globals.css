@@ -182,12 +182,45 @@ a {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-sm);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.paper-card-interactive {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              background-color 0.2s ease;
 }
 
 .paper-card-interactive:hover, .card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
   border-color: var(--border-strong);
   background-color: var(--bg-card-hover);
+}
+
+[data-theme="dark"] .paper-card-interactive:hover, [data-theme="dark"] .card-interactive:hover {
+  box-shadow: 0 14px 30px -6px rgba(0, 0, 0, 0.45);
+}
+
+.heritage-card-img-wrap img {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.paper-card-interactive:hover .heritage-card-img-wrap img {
+  transform: scale(1.05);
+}
+
+.heritage-card-arrow {
+  transition: transform 0.18s ease;
+}
+
+.paper-card-interactive:hover .heritage-card-arrow {
+  transform: translateX(3px);
+}
+
+.heritage-card-title-link:hover {
+  color: var(--action-primary) !important;
 }
 
 /* ==============================================================================
@@ -477,8 +510,8 @@ a {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4.5rem;
-  padding-bottom: 6rem;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
 }
 
 /* 1. Full-screen Hero Section */
@@ -722,10 +755,10 @@ a {
 
 /* 2. DigiCulture Stat Cards Section */
 .digiculture-stats-header {
-  margin-bottom: 2rem;
-  text-align: center;
+  margin-bottom: 1.25rem;
+  text-align: left;
   max-width: 680px;
-  margin-left: auto;
+  margin-left: 0;
   margin-right: auto;
 }
 
@@ -1396,6 +1429,57 @@ a {
     background-position: -200% 0;
   }
 }
+
+/* ==============================================================================
+   Mobile Refinements & Touch Optimization (DigiCulture Spec)
+   ============================================================================== */
+@media (max-width: 640px) {
+  /* Prevent iOS Safari auto-zoom on input focus */
+  .form-input, .form-select, .form-textarea {
+    font-size: 16px !important;
+  }
+
+  /* Responsive Container edge padding on phones */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Responsive Hero scaling for mobile viewports */
+  .digiculture-hero-section {
+    min-height: 100svh !important;
+    padding-top: 85px !important;
+    padding-bottom: 35px !important;
+  }
+
+  .digiculture-hero-title {
+    font-size: clamp(2rem, 8.5vw, 2.85rem) !important;
+  }
+
+  .digiculture-hero-slogan {
+    font-size: 0.925rem !important;
+  }
+
+  .digiculture-hero-subtitle {
+    font-size: 0.825rem !important;
+  }
+
+  /* Compact grid gaps on mobile */
+  .grid-cols-2, .grid-cols-3 {
+    gap: 1rem !important;
+  }
+
+  /* Responsive cards on Pelapor & Admin */
+  .report-card-row {
+    flex-direction: column !important;
+  }
+
+  .report-card-thumbnail {
+    width: 100% !important;
+    height: 160px !important;
+  }
+}
+
 
 
 

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin } from 'lucide-react';
+import { MapPin, ArrowRight, Sparkles } from 'lucide-react';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 
 export interface HeritageReportItem {
@@ -55,11 +55,13 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
         flexDirection: 'column',
         height: '100%',
         overflow: 'hidden',
+        borderRadius: 'var(--radius-md, 12px)',
       }}
     >
       {/* Photograph Container */}
       <Link
         href={`/katalog/${report.id}`}
+        className="heritage-card-img-wrap"
         style={{
           position: 'relative',
           width: '100%',
@@ -68,6 +70,7 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
           backgroundColor: 'var(--bg-subtle)',
           display: 'block',
         }}
+        title={`Buka arsip ${report.judulPusaka}`}
       >
         <Image
           src={optimizeCloudinaryUrl(displayImage, 600)}
@@ -78,45 +81,87 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
           style={{ objectFit: 'cover' }}
         />
 
-        {/* Minimal Category & Audio Markers */}
+        {/* Minimal Category & Digitalization Markers */}
         <div
           style={{
             position: 'absolute',
-            top: '8px',
-            left: '8px',
-            right: '8px',
+            top: '10px',
+            left: '10px',
+            right: '10px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             pointerEvents: 'none',
           }}
         >
-          <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
-            {report.kategori === 'TAKBENDA' ? 'Takbenda' : 'Benda'}
+          <span
+            className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}
+            style={{
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.16)',
+              fontWeight: 600,
+            }}
+          >
+            {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}
           </span>
+
+          {report.fotoDigitalisasi && (
+            <span
+              className="badge"
+              style={{
+                backgroundColor: 'rgba(15, 23, 42, 0.72)',
+                color: '#ffffff',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                fontSize: '0.68rem',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                gap: '0.25rem',
+              }}
+            >
+              <Sparkles size={11} style={{ color: '#fbbf24' }} />
+              <span>Terdigitalisasi</span>
+            </span>
+          )}
         </div>
       </Link>
 
       {/* Content Section */}
-      <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+      <div style={{ padding: '1.15rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         {/* Status & Region Row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem', gap: '0.5rem', flexWrap: 'wrap' }}>
           {getStatusBadge(report.status)}
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
-            <MapPin size={11} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+            <MapPin size={12} style={{ color: 'var(--action-primary)' }} />
             <span>{report.kabupatenKota}</span>
           </span>
         </div>
 
         {/* Heritage Title */}
-        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 0.35rem 0', lineHeight: 1.35 }}>
-          <Link href={`/katalog/${report.id}`} style={{ color: 'inherit' }}>
+        <h3
+          style={{
+            fontSize: '1.05rem',
+            fontWeight: 600,
+            color: 'var(--text-primary)',
+            margin: '0 0 0.25rem 0',
+            lineHeight: 1.35,
+          }}
+        >
+          <Link
+            href={`/katalog/${report.id}`}
+            style={{
+              color: 'inherit',
+              textDecoration: 'none',
+              transition: 'color 0.15s ease',
+            }}
+            className="heritage-card-title-link"
+          >
             {report.judulPusaka}
           </Link>
         </h3>
 
         {/* Specific Location */}
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.65rem' }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.65rem' }}>
           {report.lokasiSpesifik}
         </div>
 
@@ -124,74 +169,57 @@ export default function HeritageCard({ report, hideOpenArchive = false }: Herita
         <p
           style={{
             fontSize: '0.84rem',
-            lineHeight: 1.5,
+            lineHeight: 1.55,
             color: 'var(--text-secondary)',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             margin: '0 0 1rem 0',
-            flexGrow: 1,
           }}
         >
           {report.deskripsiKrisis}
         </p>
-
-        {/* Info Pelapor & Petugas (Alur Sibersih) */}
-        <div
-          style={{
-            fontSize: '0.75rem',
-            color: 'var(--text-muted)',
-            borderTop: '1px solid var(--border-hairline)',
-            paddingTop: '0.5rem',
-            marginBottom: '0.65rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '0.5rem',
-            flexWrap: 'wrap',
-          }}
-        >
-          <span>
-            Pelapor: <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{report.pelapor?.nama || 'Masyarakat'}</strong>
-          </span>
-          <span>
-            Petugas:{' '}
-            {report.admin?.nama ? (
-              <strong style={{ color: 'var(--action-primary)', fontWeight: 600 }}>{report.admin.nama}</strong>
-            ) : (
-              <span style={{ color: 'var(--status-masuk)', fontStyle: 'italic', fontWeight: 600 }}>Belum Ditugaskan</span>
-            )}
-          </span>
-        </div>
 
         {/* Footer Row */}
         <div
           style={{
             borderTop: '1px solid var(--border-hairline)',
             paddingTop: '0.75rem',
+            marginTop: 'auto',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             fontSize: '0.78rem',
           }}
         >
-          <span style={{ color: 'var(--text-muted)' }}>
-            {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+              {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </span>
+            {report.pelapor?.nama && (
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                Oleh <strong style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{report.pelapor.nama}</strong>
+              </span>
+            )}
+          </div>
 
           {!hideOpenArchive && (
             <Link
               href={`/katalog/${report.id}`}
+              className="btn btn-secondary btn-sm"
               style={{
-                color: 'var(--text-primary)',
-                fontWeight: 500,
+                fontSize: '0.76rem',
+                padding: '0.35rem 0.75rem',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.25rem',
+                gap: '0.35rem',
+                textDecoration: 'none',
+                borderRadius: 'var(--radius-xs)',
               }}
             >
               <span>Buka Arsip</span>
+              <ArrowRight size={12} className="heritage-card-arrow" />
             </Link>
           )}
         </div>

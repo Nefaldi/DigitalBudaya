@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
-import { Search, Compass, Loader2, RotateCcw } from 'lucide-react';
+import { Search, Compass, Loader2, RotateCcw, X, MapPin, SlidersHorizontal, Layers, Sparkles } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
 // Module-level in-memory cache for default catalog view
@@ -167,73 +167,116 @@ function KatalogContent() {
     <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', color: 'var(--text-primary)', marginBottom: '0.35rem', fontWeight: 460 }}>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <h1 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', color: 'var(--text-primary)', marginBottom: '0.35rem', fontWeight: 600, letterSpacing: '-0.025em' }}>
             Katalog Publik Warisan Leluhur
           </h1>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '680px', fontSize: '0.96rem', margin: 0 }}>
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '680px', fontSize: '0.925rem', lineHeight: 1.55, margin: 0 }}>
             Telusuri kompleks megalitikum Besoa & Bada, arsitektur suku Lore dan Kaili, serta tradisi lisan di 13 Kabupaten dan Kota se-Sulawesi Tengah.
           </p>
         </div>
 
+        {/* Quick Kategori Filter Tabs */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => setSelectedKategori('Semua')}
+            className={`btn btn-sm ${selectedKategori === 'Semua' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ borderRadius: '9999px', fontSize: '0.78rem', padding: '0.35rem 0.95rem' }}
+          >
+            Semua Warisan
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedKategori('BENDA')}
+            className={`btn btn-sm ${selectedKategori === 'BENDA' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ borderRadius: '9999px', fontSize: '0.78rem', padding: '0.35rem 0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+          >
+            <Layers size={13} />
+            <span>Cagar Budaya Benda</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedKategori('TAKBENDA')}
+            className={`btn btn-sm ${selectedKategori === 'TAKBENDA' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ borderRadius: '9999px', fontSize: '0.78rem', padding: '0.35rem 0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+          >
+            <Sparkles size={13} />
+            <span>Warisan Takbenda</span>
+          </button>
+        </div>
+
         {/* Filter Bar */}
-        <div className="paper-card" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
+        <div className="paper-card" style={{ padding: '1.15rem 1.25rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-md, 12px)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
             {/* Search Input */}
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <label className="form-label" style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Search size={13} style={{ color: 'var(--action-primary)' }} />
-                <span>Cari Objek / Desa</span>
+                <span>Cari Objek / Situs / Desa</span>
               </label>
-              <input
-                type="text"
-                placeholder="Contoh: Pokekea, Baruga, Ganda..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-input"
-                style={{ fontSize: '0.875rem' }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  placeholder="Contoh: Pokekea, Baruga, Kaili..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="form-input"
+                  style={{ paddingRight: searchTerm ? '2rem' : '0.85rem' }}
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    style={{
+                      position: 'absolute',
+                      right: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    title="Hapus pencarian"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Filter Kabupaten */}
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>Wilayah Administratif</label>
+              <label className="form-label" style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <MapPin size={13} style={{ color: 'var(--action-primary)' }} />
+                <span>Wilayah Administratif</span>
+              </label>
               <select
                 value={selectedKabupaten}
                 onChange={(e) => setSelectedKabupaten(e.target.value)}
                 className="form-select"
-                style={{ fontSize: '0.875rem' }}
               >
-                <option value="Semua">Seluruh Kabupaten / Kota</option>
+                <option value="Semua">Seluruh Kabupaten / Kota (13)</option>
                 {SULTENG_KABUPATEN_KOTA.map((kab) => (
                   <option key={kab} value={kab}>{kab}</option>
                 ))}
               </select>
             </div>
 
-            {/* Filter Kategori */}
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>Klasifikasi Budaya</label>
-              <select
-                value={selectedKategori}
-                onChange={(e) => setSelectedKategori(e.target.value)}
-                className="form-select"
-                style={{ fontSize: '0.875rem' }}
-              >
-                <option value="Semua">Semua Kategori</option>
-                <option value="BENDA">Benda</option>
-                <option value="TAKBENDA">Takbenda</option>
-              </select>
-            </div>
-
             {/* Filter Status */}
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontSize: '0.8rem' }}>Tahap Penanganan</label>
+              <label className="form-label" style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <SlidersHorizontal size={13} style={{ color: 'var(--action-primary)' }} />
+                <span>Tahap Penanganan</span>
+              </label>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="form-select"
-                style={{ fontSize: '0.875rem' }}
               >
                 <option value="Semua">Semua Status</option>
                 <option value="SELESAI">Terverifikasi (Selesai)</option>
@@ -287,7 +330,7 @@ function KatalogContent() {
             </div>
 
             {hasMore && (
-              <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+              <div style={{ textAlign: 'center', marginTop: '1.75rem' }}>
                 <button
                   type="button"
                   onClick={handleLoadMore}

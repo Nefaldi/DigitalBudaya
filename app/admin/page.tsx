@@ -392,7 +392,7 @@ export default function AdminWorkbenchPage() {
                 letterSpacing: '-0.028em',
               }}
             >
-              {isSuperadmin ? 'Workbench Admin' : 'Workbench Verifikasi'}
+              {isSuperadmin ? 'Workbench Super Admin' : 'Workbench Konservator'}
             </h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
               Petugas:{' '}
@@ -547,9 +547,10 @@ export default function AdminWorkbenchPage() {
                       gap: '1.25rem',
                     }}
                   >
-                    <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                    <div className="report-card-row" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
                       {/* Thumbnail Foto Awal */}
                       <div
+                        className="report-card-thumbnail"
                         style={{
                           width: '130px',
                           height: '95px',
