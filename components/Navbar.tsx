@@ -190,14 +190,12 @@ export default function Navbar() {
     }
   } else if (user.role === 'PELAPOR') {
     navLinks = [
-      { label: 'Beranda', href: '/' },
       { label: 'Laporan Saya', href: '/pelapor' },
       { label: 'Buat Laporan', href: '/pelapor/lapor' },
       { label: 'Katalog Budaya', href: '/katalog' },
     ];
   } else if (user.role === 'ADMIN') {
     navLinks = [
-      { label: 'Beranda', href: '/' },
       { label: 'Workbench Verifikasi', href: '/admin' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
       { label: 'Katalog Budaya', href: '/katalog' },
@@ -206,7 +204,6 @@ export default function Navbar() {
     // Menu disamakan menjadi 'Analitik Wilayah' agar seragam & tidak membingungkan
     // Fitur 'Kelola Pengguna' diintegrasikan ke dalam 'Workbench Admin'
     navLinks = [
-      { label: 'Beranda', href: '/' },
       { label: 'Analitik Wilayah', href: '/superadmin/analytics' },
       { label: 'Workbench Admin', href: '/admin' },
       { label: 'Katalog Budaya', href: '/katalog' },
@@ -224,10 +221,18 @@ export default function Navbar() {
           {/* Brand Logo & Title: KONSISTEN di sebelah kiri untuk SEMUA role */}
           <div className="digiculture-nav-left">
             <Link
-              href="/"
+              href={
+                !user
+                  ? '/'
+                  : user.role === 'SUPERADMIN'
+                  ? '/superadmin/analytics'
+                  : user.role === 'ADMIN'
+                  ? '/admin'
+                  : '/pelapor'
+              }
               className="group"
               style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}
-              title="Digiculture Care - Beranda Sistem"
+              title={user ? 'Digiculture Care' : 'Digiculture Care - Beranda Sistem'}
             >
               <div className="digiculture-logo-badge">
                 <Image

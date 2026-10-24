@@ -5,6 +5,7 @@ import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import SultengMap from '@/components/SultengMap';
 import HeroBackground from '@/components/HeroBackground';
 import HeroActionButtons from '@/components/HeroActionButtons';
+import HomeAuthRedirect from '@/components/HomeAuthRedirect';
 import { getCached, setCached } from '@/lib/serverCache';
 import { MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers, BookOpen } from 'lucide-react';
 
@@ -112,7 +113,9 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="homepage-root">
+    <>
+      <HomeAuthRedirect />
+      <div className="homepage-root">
       {/* 1. HERO SECTION: Full-screen DigiCulture-style Immersive Hero */}
       <section className="digiculture-hero-section">
         {/* Dynamic Zoom-In and Scroll Zoom-Out Background (Rumah Adat Souraja) */}
@@ -318,5 +321,6 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
+    </>
   );
 }
