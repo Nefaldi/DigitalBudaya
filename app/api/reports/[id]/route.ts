@@ -5,7 +5,6 @@ import { isWithinSulteng } from '@/lib/sultengLocations';
 import { Prisma, StatusPenyelamatan, KategoriPusaka } from '@prisma/client';
 import { deleteFromCloudinary } from '@/lib/cloudinary';
 import { checkRateLimit } from '@/lib/rateLimit';
-import { invalidateCache } from '@/lib/serverCache';
 
 export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   try {
@@ -103,8 +102,6 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
         },
       });
 
-      invalidateCache('reports:');
-      invalidateCache('analytics:');
       return NextResponse.json({ message: 'Laporan berhasil diperbarui oleh Pelapor', report: updated });
     }
 
@@ -150,8 +147,6 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
         },
       });
 
-      invalidateCache('reports:');
-      invalidateCache('analytics:');
       return NextResponse.json({ message: 'Status dan data penanganan berhasil diperbarui oleh Admin', report: updated });
     }
 
@@ -214,9 +209,6 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
     }
 
     await prisma.heritageReport.delete({ where: { id } });
-
-    invalidateCache('reports:');
-    invalidateCache('analytics:');
 
     return NextResponse.json({ message: 'Laporan berhasil dibatalkan/dihapus' });
   } catch (error) {

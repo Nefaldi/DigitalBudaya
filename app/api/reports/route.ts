@@ -4,7 +4,6 @@ import { getAuthenticatedUser } from '@/lib/auth';
 import { isWithinSulteng } from '@/lib/sultengLocations';
 import { checkRateLimit } from '@/lib/rateLimit';
 import { Prisma, KategoriPusaka, StatusPenyelamatan } from '@prisma/client';
-import { getCached, setCached, invalidateCache } from '@/lib/serverCache';
 
 export async function GET(req: NextRequest) {
   try {
@@ -24,18 +23,6 @@ export async function GET(req: NextRequest) {
 
     const currentUser = getAuthenticatedUser(req);
 
-    // Fast In-Memory Cache Lookup (15s TTL)
-    const cacheKey = `reports:${req.url}:${currentUser ? currentUser.id : 'guest'}`;
-    const cachedResponse = getCached<any>(cacheKey, 15_000);
-    if (cachedResponse) {
-      return NextResponse.json(cachedResponse, {
-        headers: {
-          'Cache-Control': 'private, s-maxage=15, stale-while-revalidate=45',
-          'X-Cache': 'HIT',
-        },
-      });
-    }
-
     // Build filter criteria
     const where: Prisma.HeritageReportWhereInput = {};
 
@@ -46,9 +33,9 @@ export async function GET(req: NextRequest) {
       where.pelaporId = currentUser.id;
     } else {
       // By default for public directory, only show SELESAI status unless admin specifies filter or user is logged in as Admin/Superadmin
-      if (statusParam && statusParam !== 'Semua') {
+      if (statusParam) {
         where.status = statusParam as StatusPenyelamatan;
-      } else if (!statusParam && (!currentUser || currentUser.role === 'PELAPOR')) {
+      } else if (!currentUser || currentUser.role === 'PELAPOR') {
         where.status = StatusPenyelamatan.SELESAI;
       }
     }
@@ -86,28 +73,24 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    const responseHeaders: Record<string, string> = {
-      'Cache-Control': 'private, s-maxage=15, stale-while-revalidate=45',
-      'X-Cache': 'MISS',
-    };
+    const responseHeaders: Record<string, string> = {};
     if (!myReports && (!currentUser || currentUser.role === 'PELAPOR')) {
       responseHeaders['Cache-Control'] = 'public, s-maxage=15, stale-while-revalidate=60';
     }
 
-    const payload = {
-      reports,
-      pagination: {
-        total: totalCount,
-        page,
-        limit,
-        totalPages: Math.ceil(totalCount / limit),
-        hasMore: skip + reports.length < totalCount,
+    return NextResponse.json(
+      {
+        reports,
+        pagination: {
+          total: totalCount,
+          page,
+          limit,
+          totalPages: Math.ceil(totalCount / limit),
+          hasMore: skip + reports.length < totalCount,
+        },
       },
-    };
-
-    setCached(cacheKey, payload);
-
-    return NextResponse.json(payload, { headers: responseHeaders });
+      { headers: responseHeaders }
+    );
   } catch (error) {
     console.error('Error fetching reports:', error);
     return NextResponse.json({ error: 'Gagal mengambil data laporan' }, { status: 500 });
@@ -183,10 +166,6 @@ export async function POST(req: NextRequest) {
         pelapor: { select: { id: true, nama: true, email: true } },
       },
     });
-
-    // Invalidate reports and analytics memory caches on new report
-    invalidateCache('reports:');
-    invalidateCache('analytics:');
 
     return NextResponse.json({
       message: 'Laporan penyelamatan warisan budaya berhasil dikirimkan',
