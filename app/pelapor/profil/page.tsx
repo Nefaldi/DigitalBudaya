@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCachedUser, setCachedUser } from '@/lib/clientSession';
 import {
   User,
   Edit3,
@@ -33,36 +32,18 @@ interface UserProfileData {
 
 type ProfileTab = 'info' | 'edit' | 'settings';
 
-// Module-level in-memory cache for user profile
-let clientCachedProfile: UserProfileData | null = null;
-let lastProfileFetched = 0;
-
 export default function PelaporProfilPage() {
   const router = useRouter();
-  const cachedUser = getCachedUser();
 
-  // Initial State from cache if available
-  const [profile, setProfile] = useState<UserProfileData | null>(() => {
-    if (clientCachedProfile) return clientCachedProfile;
-    if (cachedUser) {
-      return {
-        id: cachedUser.id,
-        nama: cachedUser.nama,
-        email: cachedUser.email,
-        role: cachedUser.role as any,
-        createdAt: '',
-        updatedAt: '',
-      };
-    }
-    return null;
-  });
-  const [loading, setLoading] = useState<boolean>(() => !clientCachedProfile && !cachedUser);
+  // Initial State
+  const [profile, setProfile] = useState<UserProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Active Tab: 3 fitur utama (Informasi Pribadi, Edit Profil, Pengaturan Akun)
   const [activeTab, setActiveTab] = useState<ProfileTab>('info');
 
   // Form State: Edit Profile
-  const [nama, setNama] = useState<string>(() => clientCachedProfile?.nama || cachedUser?.nama || '');
+  const [nama, setNama] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSuccessMsg, setProfileSuccessMsg] = useState('');
   const [profileErrorMsg, setProfileErrorMsg] = useState('');
@@ -90,17 +71,6 @@ export default function PelaporProfilPage() {
 
     async function fetchProfile() {
       try {
-        const now = Date.now();
-        // Skip background fetch if data is fresh within 15 seconds
-        if (clientCachedProfile && now - lastProfileFetched < 15_000) {
-          if (!ignore) {
-            setProfile(clientCachedProfile);
-            setNama(clientCachedProfile.nama);
-            setLoading(false);
-          }
-          return;
-        }
-
         const res = await fetch('/api/users/profile');
         if (!res.ok) {
           if (res.status === 401) {
@@ -112,11 +82,8 @@ export default function PelaporProfilPage() {
         const data = await res.json();
         if (ignore) return;
 
-        clientCachedProfile = data.user;
-        lastProfileFetched = Date.now();
         setProfile(data.user);
         setNama(data.user.nama);
-        setCachedUser(data.user);
       } catch (err) {
         console.error('Fetch profile error:', err);
       } finally {
@@ -160,11 +127,8 @@ export default function PelaporProfilPage() {
         throw new Error(data.error || 'Gagal menyimpan perubahan profil.');
       }
 
-      clientCachedProfile = data.user;
-      lastProfileFetched = Date.now();
       setProfile(data.user);
       setNama(data.user.nama);
-      setCachedUser(data.user);
       setProfileSuccessMsg('Nama profil berhasil diperbarui!');
     } catch (err) {
       setProfileErrorMsg(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan profil.');
@@ -247,9 +211,6 @@ export default function PelaporProfilPage() {
       }
 
       setDeleteSuccess(true);
-      clientCachedProfile = null;
-      lastProfileFetched = 0;
-      setCachedUser(null);
       setTimeout(() => {
         router.push('/');
         router.refresh();

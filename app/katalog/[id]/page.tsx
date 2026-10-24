@@ -1,4 +1,4 @@
-import React, { cache } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -9,7 +9,6 @@ import SultengMap from '@/components/SultengMap';
 import { HeritageReportItem } from '@/components/HeritageCard';
 import { optimizeCloudinaryUrl } from '@/lib/imageUtils';
 import PrintDossierButton from '@/components/PrintDossierButton';
-import { getCached, setCached } from '@/lib/serverCache';
 import type { Metadata } from 'next';
 import {
   MapPin,
@@ -24,64 +23,45 @@ import {
 
 export const revalidate = 60;
 
-// Deduped and cached fetcher for single heritage report
-const getReportDetail = cache(async (id: string) => {
-  const cacheKey = `reports:detail:${id}`;
-  const memoryCached = getCached<any>(cacheKey, 30_000);
-  if (memoryCached) return memoryCached;
-
-  try {
-    const report = await prisma.heritageReport.findUnique({
-      where: { id },
-      include: {
-        pelapor: { select: { id: true, nama: true, email: true } },
-        admin: { select: { id: true, nama: true, email: true } },
-      },
-    });
-    if (report) {
-      setCached(cacheKey, report);
-    }
-    return report;
-  } catch (err) {
-    console.error('Error fetching report detail:', err);
-    return null;
-  }
-});
-
-// Pre-render verified items during build for instant loading
-export async function generateStaticParams() {
-  try {
-    const reports = await prisma.heritageReport.findMany({
-      where: { status: 'SELESAI' },
-      select: { id: true },
-      take: 20,
-    });
-    return reports.map((r) => ({ id: r.id }));
-  } catch {
-    return [];
-  }
-}
-
 export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const params = await props.params;
   const { id } = params;
 
-  const report = await getReportDetail(id);
-  if (!report) {
+  try {
+    const report = await prisma.heritageReport.findUnique({
+      where: { id },
+      select: { judulPusaka: true, kabupatenKota: true, deskripsiKrisis: true },
+    });
+
+    if (!report) {
+      return { title: 'Dossier Cagar Budaya — DigiCulture Care' };
+    }
+
+    return {
+      title: `${report.judulPusaka} (${report.kabupatenKota}) — Lembar Registrasi Cagar Budaya`,
+      description: report.deskripsiKrisis.slice(0, 160),
+    };
+  } catch {
     return { title: 'Dossier Cagar Budaya — DigiCulture Care' };
   }
-
-  return {
-    title: `${report.judulPusaka} (${report.kabupatenKota}) — Lembar Registrasi Cagar Budaya`,
-    description: report.deskripsiKrisis ? report.deskripsiKrisis.slice(0, 160) : '',
-  };
 }
 
 export default async function HeritageDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
 
-  const report = await getReportDetail(id);
+  let report = null;
+  try {
+    report = await prisma.heritageReport.findUnique({
+      where: { id },
+      include: {
+        pelapor: { select: { id: true, nama: true, email: true } },
+        admin: { select: { id: true, nama: true, email: true } },
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching single report:', error);
+  }
 
   if (!report) {
     notFound();

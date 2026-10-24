@@ -126,14 +126,6 @@ function KatalogContent() {
     };
   }, [searchTerm, selectedKabupaten, selectedKategori, selectedStatus]);
 
-  useEffect(() => {
-    const handleUpdate = () => {
-      defaultCatalogCache = null;
-    };
-    window.addEventListener('digiculture-reports-update', handleUpdate);
-    return () => window.removeEventListener('digiculture-reports-update', handleUpdate);
-  }, []);
-
   // Muat data tambahan secara inkremental (Pagination / Load More)
   const handleLoadMore = async () => {
     if (loadingMore || !hasMore) return;

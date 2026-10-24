@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LogIn, Key, Mail, AlertCircle, Loader2, KeyRound, Info } from 'lucide-react';
-import { setCachedUser, fetchUserSession, getCachedUser } from '@/lib/clientSession';
+import { setCachedUser } from '@/lib/clientSession';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -70,39 +70,32 @@ function LoginForm() {
   };
 
   useEffect(() => {
-    const handleRedirect = (role?: string) => {
-      if (role === 'SUPERADMIN') {
-        if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
-          router.replace(targetRedirect);
-        } else {
-          router.replace('/superadmin/analytics');
-        }
-      } else if (role === 'ADMIN') {
-        if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
-          router.replace(targetRedirect);
-        } else {
-          router.replace('/admin');
-        }
-      } else {
-        if (targetRedirect && targetRedirect !== '/') {
-          router.replace(targetRedirect);
-        } else {
-          router.replace('/pelapor');
-        }
-      }
-    };
-
-    const cached = getCachedUser();
-    if (cached?.role) {
-      handleRedirect(cached.role);
-      return;
-    }
-
     async function checkAuth() {
       try {
-        const user = await fetchUserSession();
-        if (user?.role) {
-          handleRedirect(user.role);
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          const role = data.user?.role;
+          if (role === 'SUPERADMIN') {
+            if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
+              router.replace(targetRedirect);
+            } else {
+              router.replace('/superadmin/analytics');
+            }
+          } else if (role === 'ADMIN') {
+            if (targetRedirect && targetRedirect !== '/' && !targetRedirect.startsWith('/pelapor/lapor')) {
+              router.replace(targetRedirect);
+            } else {
+              router.replace('/admin');
+            }
+          } else {
+            // PELAPOR role dedicated dashboard
+            if (targetRedirect && targetRedirect !== '/') {
+              router.replace(targetRedirect);
+            } else {
+              router.replace('/pelapor');
+            }
+          }
         }
       } catch {
         // Belum terotentikasi

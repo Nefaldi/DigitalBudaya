@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 
 export default function Navbar() {
-  const [user, setUser] = useState<UserSession | null>(() => getCachedUser());
-  const [loading, setLoading] = useState<boolean>(() => !isSessionFetched());
+  const [user, setUser] = useState<UserSession | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -5,12 +5,11 @@ import { useRouter } from 'next/navigation';
 import { UserSession } from '@/types';
 import LoadingScreen from '@/components/LoadingScreen';
 import UserManagementSection from '@/components/admin/UserManagementSection';
-import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
 import { Shield } from 'lucide-react';
 
 export default function UserManagementPage() {
-  const [currentUser, setCurrentUser] = useState<UserSession | null>(() => getCachedUser());
-  const [loading, setLoading] = useState<boolean>(() => !getCachedUser());
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,23 +17,18 @@ export default function UserManagementPage() {
 
     async function checkAuth() {
       try {
-        const cached = getCachedUser();
-        if (cached && cached.role !== 'SUPERADMIN') {
-          router.push('/admin');
-          return;
-        }
-
-        const user = await fetchUserSession();
-        if (!user) {
+        const authRes = await fetch('/api/auth/me');
+        if (!authRes.ok) {
           router.push('/login?redirect=/superadmin/users');
           return;
         }
-        if (user.role !== 'SUPERADMIN') {
+        const authData = await authRes.json();
+        if (authData.user.role !== 'SUPERADMIN') {
           router.push('/admin');
           return;
         }
         if (ignore) return;
-        setCurrentUser(user);
+        setCurrentUser(authData.user);
       } catch (err) {
         console.error('Auth error:', err);
       } finally {

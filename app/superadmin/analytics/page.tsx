@@ -84,16 +84,8 @@ export default function AnalyticsDashboardPage() {
     }
     fetchAnalytics();
 
-    const onUpdate = () => {
-      clientCachedAnalytics = null;
-      lastAnalyticsFetched = 0;
-      fetchAnalytics();
-    };
-    window.addEventListener('digiculture-reports-update', onUpdate);
-
     return () => {
       ignore = true;
-      window.removeEventListener('digiculture-reports-update', onUpdate);
     };
   }, [router]);
 
