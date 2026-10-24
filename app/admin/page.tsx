@@ -775,17 +775,65 @@ export default function AdminWorkbenchPage() {
                       >
                         <div
                           style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
                             borderBottom: '1px solid var(--border-hairline)',
                             paddingBottom: '0.6rem',
+                            flexWrap: 'wrap',
+                            gap: '0.5rem',
                           }}
                         >
                           <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                             Detail Lengkap Laporan #{report.id.slice(-6).toUpperCase()}
                           </div>
+                          <span
+                            className={`badge ${
+                              report.status === 'SELESAI'
+                                ? 'badge-selesai'
+                                : report.status === 'MENUNGGU_VALIDASI'
+                                ? 'badge-validasi'
+                                : report.status === 'DIPROSES'
+                                ? 'badge-diproses'
+                                : 'badge-masuk'
+                            }`}
+                          >
+                            {report.status === 'LAPORAN_MASUK'
+                              ? 'Laporan Masuk'
+                              : report.status === 'DIPROSES'
+                              ? 'Sedang Ditangani'
+                              : report.status === 'MENUNGGU_VALIDASI'
+                              ? 'Menunggu Validasi'
+                              : 'Selesai'}
+                          </span>
                         </div>
 
                         {/* Grid Informasi Metadata */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem', fontSize: '0.825rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem', fontSize: '0.825rem' }}>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Status Laporan:</span>
+                            <span
+                              className={`badge ${
+                                report.status === 'SELESAI'
+                                  ? 'badge-selesai'
+                                  : report.status === 'MENUNGGU_VALIDASI'
+                                  ? 'badge-validasi'
+                                  : report.status === 'DIPROSES'
+                                  ? 'badge-diproses'
+                                  : 'badge-masuk'
+                              }`}
+                              style={{ display: 'inline-block', marginTop: '0.2rem' }}
+                            >
+                              {report.status === 'LAPORAN_MASUK'
+                                ? 'Laporan Masuk'
+                                : report.status === 'DIPROSES'
+                                ? 'Sedang Ditangani'
+                                : report.status === 'MENUNGGU_VALIDASI'
+                                ? 'Menunggu Validasi'
+                                : 'Selesai'}
+                            </span>
+                          </div>
+
                           <div>
                             <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Pelapor:</span>
                             <strong style={{ color: 'var(--text-primary)' }}>{report.pelapor?.nama || 'Anonim'}</strong>
