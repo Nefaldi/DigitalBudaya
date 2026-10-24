@@ -392,6 +392,7 @@ export default function PelaporDashboardPage() {
                         src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 300)}
                         alt={report.judulPusaka}
                         fill
+                        unoptimized
                         sizes="130px"
                         style={{ objectFit: 'cover' }}
                       />
@@ -650,7 +651,7 @@ export default function PelaporDashboardPage() {
                               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-muted)' }} /> Foto Sebelum (Laporan Awal)
                             </div>
                             <div style={{ position: 'relative', width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-surface)' }}>
-                              <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 500)} alt="Sebelum" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                              <Image src={optimizeCloudinaryUrl(report.fotoKondisiAwal, 500)} alt="Sebelum" fill unoptimized sizes="300px" style={{ objectFit: 'cover' }} />
                             </div>
                             {/* Deskripsi dari Pelapor di bawah Gambar Pelapor */}
                             <div style={{ marginTop: '0.5rem', flex: 1 }}>
@@ -670,7 +671,7 @@ export default function PelaporDashboardPage() {
                             </div>
                             <div style={{ position: 'relative', width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-surface)' }}>
                               {report.fotoDigitalisasi ? (
-                                <Image src={optimizeCloudinaryUrl(report.fotoDigitalisasi, 500)} alt="Sesudah" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                                <Image src={optimizeCloudinaryUrl(report.fotoDigitalisasi, 500)} alt="Sesudah" fill unoptimized sizes="300px" style={{ objectFit: 'cover' }} />
                               ) : (
                                 <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.78rem', background: 'var(--bg-surface)' }}>
                                   (Belum ada foto digitalisasi / penanganan)
