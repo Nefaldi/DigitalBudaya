@@ -306,7 +306,7 @@ function LoginForm() {
                 className="btn btn-secondary btn-sm"
                 style={{ justifyContent: 'space-between', fontSize: '0.78rem' }}
               >
-                <span>Superadmin (Pimpinan)</span>
+                <span>Superadmin (Validasi Laporan & Tugas)</span>
                 <span className="mono" style={{ color: 'var(--text-muted)' }}>superadmin@digiculture.id</span>
               </button>
             </div>

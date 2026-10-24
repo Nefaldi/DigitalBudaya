@@ -375,7 +375,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                       >
                         <option value="PELAPOR">Pelapor (Masyarakat)</option>
                         <option value="ADMIN">Admin (Konservator)</option>
-                        <option value="SUPERADMIN">Superadmin (Pimpinan)</option>
+                        <option value="SUPERADMIN">Superadmin (Validasi Laporan & Tugas)</option>
                       </select>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', textAlign: 'right' }}>
@@ -510,10 +510,10 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                 >
                   <option value="ADMIN">Admin (Konservator - Petugas Wilayah)</option>
                   <option value="PELAPOR">Pelapor (Masyarakat Umum)</option>
-                  <option value="SUPERADMIN">Superadmin (Pimpinan / Pengelola Sistem)</option>
+                  <option value="SUPERADMIN">Superadmin (Validasi Laporan & Tugas)</option>
                 </select>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', display: 'block' }}>
-                  Admin berhak memverifikasi antrean dan mengunggah digitalisasi; Pelapor berhak mengirim laporan budaya.
+                  Superadmin bertugas memvalidasi laporan dan mengelola tugas; Admin menangani konservasi; Pelapor mengirim laporan budaya.
                 </span>
               </div>
 

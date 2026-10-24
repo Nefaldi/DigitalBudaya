@@ -338,7 +338,7 @@ export default function PelaporProfilPage() {
                   }}
                 >
                   {profile?.role === 'SUPERADMIN'
-                    ? 'Superadmin Sistem'
+                    ? 'Superadmin (Validasi Laporan & Tugas)'
                     : profile?.role === 'ADMIN'
                     ? 'Konservator Cagar Budaya'
                     : 'Pelapor Cagar Budaya'}
