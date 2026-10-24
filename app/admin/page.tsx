@@ -719,12 +719,12 @@ export default function AdminWorkbenchPage() {
                               {report.status === 'DIPROSES' && (
                                 <button
                                   onClick={() => openActionModal(report)}
-                                  className="btn btn-primary btn-sm"
-                                  title="Buka Laman Tatalaksana Digitalisasi & Restorasi"
+                                  className={report.fotoDigitalisasi || report.catatanPenanganan ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm'}
+                                  title={report.fotoDigitalisasi || report.catatanPenanganan ? 'Perbarui Tatalaksana Digitalisasi & Restorasi' : 'Buka Laman Tatalaksana Digitalisasi & Restorasi'}
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
                                   <Upload size={13} />
-                                  <span>Tangani</span>
+                                  <span>{report.fotoDigitalisasi || report.catatanPenanganan ? 'Perbarui' : 'Tangani'}</span>
                                 </button>
                               )}
 
@@ -732,10 +732,11 @@ export default function AdminWorkbenchPage() {
                                 <button
                                   onClick={() => openActionModal(report)}
                                   className="btn btn-secondary btn-sm"
+                                  title="Perbarui Tatalaksana Digitalisasi & Restorasi"
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
                                   <Upload size={13} />
-                                  <span>Perbarui Bukti</span>
+                                  <span>Perbarui</span>
                                 </button>
                               )}
                             </>
@@ -1043,7 +1044,9 @@ export default function AdminWorkbenchPage() {
                       : isSuperadmin
                       ? 'Simpan Validasi'
                       : updatingStatus === 'MENUNGGU_VALIDASI'
-                      ? 'Ajukan untuk Validasi Superadmin'
+                      ? selectedReport.fotoDigitalisasi || selectedReport.catatanPenanganan
+                        ? 'Perbarui & Ajukan Validasi'
+                        : 'Ajukan untuk Validasi Superadmin'
                       : 'Simpan Draf Penanganan'}
                   </button>
                 </div>
