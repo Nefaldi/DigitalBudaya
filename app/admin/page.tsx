@@ -12,7 +12,6 @@ import { UserSession } from '@/types';
 import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
 import {
   Shield,
-  Play,
   Upload,
   X,
   MapPin,
@@ -707,23 +706,27 @@ export default function AdminWorkbenchPage() {
                               {report.status === 'LAPORAN_MASUK' && !report.admin && (
                                 <button
                                   onClick={() => handleTakeOwnership(report)}
-                                  className="btn btn-outline btn-sm"
+                                  className="btn btn-secondary btn-sm"
                                   title="Tangani Laporan Ini (Buka Tatalaksana & Restorasi)"
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
-                                  <Play size={13} />
+                                  <Upload size={13} style={{ color: 'var(--action-primary)' }} />
                                   <span>Tangani</span>
                                 </button>
                               )}
 
-                              {report.status === 'DIPROSES' && (
+                              {(report.status === 'DIPROSES' || (report.status === 'LAPORAN_MASUK' && report.admin?.id === user?.id)) && (
                                 <button
                                   onClick={() => openActionModal(report)}
-                                  className={report.fotoDigitalisasi || report.catatanPenanganan ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm'}
-                                  title={report.fotoDigitalisasi || report.catatanPenanganan ? 'Perbarui Tatalaksana Digitalisasi & Restorasi' : 'Buka Laman Tatalaksana Digitalisasi & Restorasi'}
+                                  className="btn btn-secondary btn-sm"
+                                  title={
+                                    report.fotoDigitalisasi || report.catatanPenanganan
+                                      ? 'Perbarui Tatalaksana Digitalisasi & Restorasi'
+                                      : 'Tangani Laporan Ini (Buka Tatalaksana & Restorasi)'
+                                  }
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
-                                  <Upload size={13} />
+                                  <Upload size={13} style={{ color: 'var(--action-primary)' }} />
                                   <span>{report.fotoDigitalisasi || report.catatanPenanganan ? 'Perbarui' : 'Tangani'}</span>
                                 </button>
                               )}
@@ -735,7 +738,7 @@ export default function AdminWorkbenchPage() {
                                   title="Perbarui Tatalaksana Digitalisasi & Restorasi"
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
-                                  <Upload size={13} />
+                                  <Upload size={13} style={{ color: 'var(--action-primary)' }} />
                                   <span>Perbarui</span>
                                 </button>
                               )}
