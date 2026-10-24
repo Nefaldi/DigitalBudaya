@@ -90,7 +90,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
   const hasRestorationComparison = Boolean(report.fotoKondisiAwal && report.fotoDigitalisasi);
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container" style={{ maxWidth: '1040px' }}>
         {/* Official Print Dossier Header (Only visible on print) */}
         <div className="print-only official-print-header" style={{ marginBottom: '1.5rem', borderBottom: '2px solid #222', paddingBottom: '0.85rem' }}>
@@ -111,7 +111,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
         </div>
 
         {/* Action Bar (Back Link & Print Button) */}
-        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link
             href="/katalog"
             className="no-print"
@@ -131,7 +131,7 @@ export default async function HeritageDetailPage(props: { params: Promise<{ id: 
         </div>
 
         {/* Header Metadata */}
-        <div style={{ marginBottom: '2rem' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
             <span className={`badge ${report.kategori === 'TAKBENDA' ? 'badge-takbenda' : 'badge-benda'}`}>
               {report.kategori === 'TAKBENDA' ? 'Warisan Takbenda' : 'Cagar Budaya Benda'}

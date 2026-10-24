@@ -284,14 +284,14 @@ export default function PelaporProfilPage() {
   }
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container" style={{ maxWidth: '960px' }}>
         {/* User Identity Banner Card */}
         <div
           className="paper-card"
           style={{
-            padding: '1.75rem',
-            marginBottom: '2rem',
+            padding: '1.5rem',
+            marginBottom: '1.25rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

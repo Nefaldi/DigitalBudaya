@@ -210,7 +210,7 @@ export default function PelaporDashboardPage() {
   const countSelesai = reports.filter((r) => r.status === 'SELESAI').length;
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header Greeting */}
         <div
@@ -220,9 +220,9 @@ export default function PelaporDashboardPage() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             gap: '1.5rem',
-            marginBottom: '2.5rem',
+            marginBottom: '1.25rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '2rem',
+            paddingBottom: '1.15rem',
           }}
         >
           <div>
@@ -230,7 +230,7 @@ export default function PelaporDashboardPage() {
               style={{
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
                 color: 'var(--text-primary)',
-                marginBottom: '0.4rem',
+                marginBottom: '0.35rem',
                 fontWeight: 460,
                 letterSpacing: '-0.028em',
               }}
@@ -248,7 +248,7 @@ export default function PelaporDashboardPage() {
             style={{
               padding: '0.85rem 1.25rem',
               borderRadius: 'var(--radius-sm)',
-              marginBottom: '2rem',
+              marginBottom: '1.25rem',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -269,8 +269,8 @@ export default function PelaporDashboardPage() {
         )}
 
         {/* Quick Stats Metric Cards */}
-        <div className="grid-cols-3" style={{ marginBottom: '2.5rem' }}>
-          <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem' }}>
+        <div className="grid-cols-3" style={{ marginBottom: '1.5rem' }}>
+          <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.15rem 1.25rem' }}>
             <div
               style={{
                 width: '44px',
@@ -296,7 +296,7 @@ export default function PelaporDashboardPage() {
             </div>
           </div>
 
-          <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem' }}>
+          <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.15rem 1.25rem' }}>
             <div
               style={{
                 width: '44px',
@@ -321,7 +321,7 @@ export default function PelaporDashboardPage() {
             </div>
           </div>
 
-          <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem' }}>
+          <div className="paper-card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.15rem 1.25rem' }}>
             <div
               style={{
                 width: '44px',

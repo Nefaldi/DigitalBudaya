@@ -164,11 +164,11 @@ function KatalogContent() {
   };
 
   return (
-    <div style={{ paddingTop: '3.5rem', paddingBottom: '6rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', color: 'var(--text-primary)', marginBottom: '0.65rem', fontWeight: 460 }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', color: 'var(--text-primary)', marginBottom: '0.35rem', fontWeight: 460 }}>
             Katalog Publik Warisan Leluhur
           </h1>
           <p style={{ color: 'var(--text-secondary)', maxWidth: '680px', fontSize: '0.96rem', margin: 0 }}>
@@ -177,7 +177,7 @@ function KatalogContent() {
         </div>
 
         {/* Filter Bar */}
-        <div className="paper-card" style={{ padding: '1.25rem 1.5rem', marginBottom: '2.5rem' }}>
+        <div className="paper-card" style={{ padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
             {/* Search Input */}
             <div className="form-group" style={{ marginBottom: 0 }}>

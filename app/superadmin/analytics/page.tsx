@@ -128,7 +128,7 @@ export default function AnalyticsDashboardPage() {
   const takbendaPct = 100 - bendaPct;
 
   return (
-    <div style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header Section */}
         <div
@@ -138,9 +138,9 @@ export default function AnalyticsDashboardPage() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             gap: '1rem',
-            marginBottom: '1.75rem',
+            marginBottom: '1.25rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '1.25rem',
+            paddingBottom: '1.15rem',
           }}
         >
           <div>

@@ -60,7 +60,7 @@ export default function UserManagementPage() {
   }
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header */}
         <div
@@ -70,9 +70,9 @@ export default function UserManagementPage() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             gap: '1.5rem',
-            marginBottom: '2rem',
+            marginBottom: '1.25rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '1.75rem',
+            paddingBottom: '1.15rem',
           }}
         >
           <div>

@@ -366,7 +366,7 @@ export default function AdminWorkbenchPage() {
   const isSuperadmin = user?.role === 'SUPERADMIN';
 
   return (
-    <div style={{ paddingTop: '2.5rem', paddingBottom: '5rem' }}>
+    <div style={{ paddingTop: '1.25rem', paddingBottom: '3.5rem' }}>
       <div className="container">
         {/* Header */}
         <div
@@ -376,9 +376,9 @@ export default function AdminWorkbenchPage() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             gap: '1.5rem',
-            marginBottom: '1.5rem',
+            marginBottom: '1.25rem',
             borderBottom: '1px solid var(--border-hairline)',
-            paddingBottom: '1.75rem',
+            paddingBottom: '1.15rem',
           }}
         >
           <div>
@@ -386,7 +386,7 @@ export default function AdminWorkbenchPage() {
               style={{
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
                 color: 'var(--text-primary)',
-                marginBottom: '0.4rem',
+                marginBottom: '0.35rem',
                 fontWeight: 460,
                 letterSpacing: '-0.028em',
               }}
@@ -410,7 +410,7 @@ export default function AdminWorkbenchPage() {
               display: 'flex',
               gap: '0.5rem',
               borderBottom: '1px solid var(--border-hairline)',
-              marginBottom: '2rem',
+              marginBottom: '1.25rem',
             }}
           >
             <button
@@ -493,7 +493,7 @@ export default function AdminWorkbenchPage() {
             )}
 
             {/* Tab Filters */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
               <button
                 onClick={() => setActiveTab('ALL')}
                 className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
