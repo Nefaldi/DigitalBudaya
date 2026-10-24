@@ -24,6 +24,8 @@ import {
   CheckCircle2,
   Hourglass,
   Trash2,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 // Module-level in-memory cache for instantaneous client navigation (SWR)
@@ -58,6 +60,16 @@ export default function AdminWorkbenchPage() {
   const [selectedConservatorId, setSelectedConservatorId] = useState('');
   const [assigning, setAssigning] = useState(false);
   const [assignError, setAssignError] = useState('');
+
+  // Dropdown Detail Laporan
+  const [expandedReportIds, setExpandedReportIds] = useState<Record<string, boolean>>({});
+
+  const toggleReportDetail = (id: string) => {
+    setExpandedReportIds((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const router = useRouter();
 
@@ -372,23 +384,6 @@ export default function AdminWorkbenchPage() {
           }}
         >
           <div>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                color: 'var(--action-primary)',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                letterSpacing: '0.04em',
-                marginBottom: '0.5rem',
-                background: 'var(--color-terracotta-soft)',
-                padding: '0.2rem 0.6rem',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              <Shield size={14} /> Meja Konservator
-            </div>
             <h1
               style={{
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
@@ -522,20 +517,14 @@ export default function AdminWorkbenchPage() {
               <button
                 onClick={() => setActiveTab('MENUNGGU_VALIDASI')}
                 className={`btn btn-sm ${activeTab === 'MENUNGGU_VALIDASI' ? 'btn-primary' : 'btn-secondary'}`}
-                style={
-                  countMenungguValidasi > 0 && activeTab !== 'MENUNGGU_VALIDASI'
-                    ? { borderColor: 'var(--border-strong)', color: 'var(--color-terracotta)', background: 'var(--color-terracotta-soft)', fontWeight: 600 }
-                    : undefined
-                }
               >
-                <Hourglass size={12} style={{ display: 'inline', marginRight: '0.25rem' }} />
                 Menunggu Validasi ({countMenungguValidasi})
               </button>
               <button
                 onClick={() => setActiveTab('SELESAI')}
                 className={`btn btn-sm ${activeTab === 'SELESAI' ? 'btn-primary' : 'btn-secondary'}`}
               >
-                Selesai & Terbit ({countSelesai})
+                Selesai ({countSelesai})
               </button>
             </div>
 
@@ -690,20 +679,12 @@ export default function AdminWorkbenchPage() {
                               {report.status === 'MENUNGGU_VALIDASI' && (
                                 <button
                                   onClick={() => handleDirectValidate(report.id, 'SELESAI')}
-                                  className="btn btn-sm"
-                                  style={{
-                                    backgroundColor: 'var(--status-selesai-bg)',
-                                    color: 'var(--status-selesai)',
-                                    border: '1px solid var(--status-selesai-border)',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '0.35rem',
-                                    fontWeight: 600,
-                                  }}
+                                  className="btn btn-secondary btn-sm"
                                   title="Validasi & Sahkan Laporan Selesai (Publikasi ke Katalog)"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
-                                  <CheckCircle2 size={13} />
-                                  <span>Setujui Selesai</span>
+                                  <CheckCircle2 size={13} style={{ color: 'var(--status-selesai)' }} />
+                                  <span>Setujui</span>
                                 </button>
                               )}
 
@@ -711,19 +692,12 @@ export default function AdminWorkbenchPage() {
                               {report.status !== 'SELESAI' && (
                                 <button
                                   onClick={() => handleRejectReport(report.id, report.judulPusaka)}
-                                  className="btn btn-sm"
-                                  style={{
-                                    backgroundColor: '#fef2f2',
-                                    color: '#dc2626',
-                                    border: '1px solid #fecaca',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '0.35rem',
-                                  }}
+                                  className="btn btn-secondary btn-sm"
                                   title="Tolak dan hapus laporan palsu secara permanen"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
-                                  <Trash2 size={13} />
-                                  <span>Tolak</span>
+                                  <Trash2 size={13} style={{ color: 'var(--action-danger)' }} />
+                                  <span style={{ color: 'var(--action-danger)' }}>Tolak</span>
                                 </button>
                               )}
                             </>
@@ -769,18 +743,104 @@ export default function AdminWorkbenchPage() {
                             </>
                           )}
 
-                          {/* Link Pratinjau Dossier Publik */}
-                          <Link
-                            href={`/katalog/${report.id}`}
+                          {/* Tombol Dropdown Detail Laporan */}
+                          <button
+                            type="button"
+                            onClick={() => toggleReportDetail(report.id)}
                             className="btn btn-secondary btn-sm"
-                            target="_blank"
-                            title="Pratinjau Dossier Publik"
+                            title={expandedReportIds[report.id] ? 'Tutup Detail Laporan' : 'Lihat Detail Laporan'}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                           >
-                            <ExternalLink size={13} />
-                          </Link>
+                            <span>Detail</span>
+                            {expandedReportIds[report.id] ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                          </button>
                         </div>
                       </div>
                     </div>
+
+                    {/* Panel Dropdown Detail Laporan */}
+                    {expandedReportIds[report.id] && (
+                      <div
+                        style={{
+                          padding: '1rem',
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'var(--bg-subtle)',
+                          border: '1px solid var(--border-hairline)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.85rem',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            borderBottom: '1px solid var(--border-hairline)',
+                            paddingBottom: '0.5rem',
+                          }}
+                        >
+                          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                            Detail Lengkap Laporan #{report.id.slice(-6).toUpperCase()}
+                          </div>
+                          <Link
+                            href={`/katalog/${report.id}`}
+                            target="_blank"
+                            className="text-link"
+                            style={{ fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                          >
+                            <span>Buka Laman Publik</span>
+                            <ExternalLink size={12} />
+                          </Link>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.825rem' }}>
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Pelapor:</span>
+                            <strong style={{ color: 'var(--text-primary)' }}>{report.pelapor?.nama || 'Anonim'}</strong>
+                            {report.pelapor?.email && <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{report.pelapor.email}</div>}
+                          </div>
+
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Konservator / Petugas:</span>
+                            {report.admin ? (
+                              <>
+                                <strong style={{ color: 'var(--action-primary)' }}>{report.admin.nama}</strong>
+                                <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{report.admin.email}</div>
+                              </>
+                            ) : (
+                              <span style={{ color: 'var(--status-masuk)', fontStyle: 'italic' }}>Belum Ditugaskan</span>
+                            )}
+                          </div>
+
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Wilayah Administratif:</span>
+                            <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{report.kabupatenKota}</span>
+                            <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{report.lokasiSpesifik}</div>
+                          </div>
+
+                          <div>
+                            <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Koordinat GPS:</span>
+                            {report.latitude && report.longitude ? (
+                              <span style={{ color: 'var(--text-primary)', fontFamily: 'monospace', fontSize: '0.78rem' }}>
+                                {report.latitude.toFixed(5)}, {report.longitude.toFixed(5)}
+                              </span>
+                            ) : (
+                              <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Tidak tercatat</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                            Deskripsi Kerusakan / Kondisi Awal:
+                          </span>
+                          <p style={{ margin: 0, fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.5, background: 'var(--bg-canvas)', padding: '0.6rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-hairline)' }}>
+                            {report.deskripsiKrisis}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Perbandingan Sebelum vs Sesudah (Tampilan Khusus Validasi Sibersih) */}
                     {(report.status === 'MENUNGGU_VALIDASI' || (report.status === 'SELESAI' && report.fotoDigitalisasi)) && (
