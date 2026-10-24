@@ -8,34 +8,30 @@ import { UserSession } from '@/types';
 
 export default function HeroActionButtons() {
   const [user, setUser] = useState<UserSession | null>(getCachedUser());
+  const [ready, setReady] = useState<boolean>(isSessionFetched());
 
   useEffect(() => {
     if (!isSessionFetched()) {
-      fetchUserSession().then((u) => setUser(u));
+      fetchUserSession().then((u) => {
+        setUser(u);
+        setReady(true);
+      });
+    } else {
+      setReady(true);
     }
     const onAuthUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<UserSession | null>;
       setUser(customEvent.detail !== undefined ? customEvent.detail : getCachedUser());
+      setReady(true);
     };
     window.addEventListener('digiculture-auth-update', onAuthUpdate);
     return () => window.removeEventListener('digiculture-auth-update', onAuthUpdate);
   }, []);
 
-  const laporHref =
-    user?.role === 'SUPERADMIN'
-      ? '/superadmin/analytics'
-      : user?.role === 'ADMIN'
-      ? '/admin'
-      : user
-      ? '/pelapor/lapor'
-      : '/login?redirect=/pelapor/lapor';
-
-  const laporLabel =
-    user?.role === 'ADMIN'
-      ? 'Meja Kerja Konservator'
-      : user?.role === 'SUPERADMIN'
-      ? 'Analitik Provinsi'
-      : 'Kirim Laporan Temuan';
+  // Sembunyikan tombol hero setelah login untuk semua role (PELAPOR, ADMIN, SUPERADMIN)
+  if (!ready || user) {
+    return null;
+  }
 
   return (
     <div className="digiculture-hero-actions">
@@ -44,9 +40,9 @@ export default function HeroActionButtons() {
         <span>Telusuri Katalog Budaya</span>
       </Link>
 
-      <Link href={laporHref} className="digiculture-hero-btn-secondary">
+      <Link href="/login?redirect=/pelapor/lapor" className="digiculture-hero-btn-secondary">
         <FilePlus size={15} />
-        <span>{laporLabel}</span>
+        <span>Kirim Laporan Temuan</span>
       </Link>
     </div>
   );
