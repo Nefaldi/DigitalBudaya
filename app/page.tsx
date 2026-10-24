@@ -1,20 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import HeritageCard, { HeritageReportItem } from '@/components/HeritageCard';
 import SultengMap from '@/components/SultengMap';
 import HeroBackground from '@/components/HeroBackground';
-import { FilePlus, MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers, BookOpen } from 'lucide-react';
+import HeroActionButtons from '@/components/HeroActionButtons';
+import { MapPin, Compass, ChevronDown, Landmark, Sparkles, Layers, BookOpen } from 'lucide-react';
 
+// Enable true Edge-level Incremental Static Regeneration (ISR)
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-  const user = token ? verifyToken(token) : null;
-
   let reports: HeritageReportItem[] = [];
   let mapReports: HeritageReportItem[] = [];
   let totalVerified = 0;
@@ -22,7 +18,8 @@ export default async function HomePage() {
   let countTakbenda = 0;
 
   try {
-    const [rawReports, count, bendaCount, takbendaCount, rawMapReports] = await Promise.all([
+    const [rawReports, kategoriGroup, rawMapReports] = await Promise.all([
+      // 1. Ambil 6 arsip cagar budaya terverifikasi terkini
       prisma.heritageReport.findMany({
         where: { status: 'SELESAI' },
         include: {
@@ -32,15 +29,15 @@ export default async function HomePage() {
         orderBy: { createdAt: 'desc' },
         take: 6,
       }),
-      prisma.heritageReport.count({
+
+      // 2. Agregasi statistik kategori dalam 1 query terpadu
+      prisma.heritageReport.groupBy({
+        by: ['kategori'],
         where: { status: 'SELESAI' },
+        _count: { _all: true },
       }),
-      prisma.heritageReport.count({
-        where: { kategori: 'BENDA' },
-      }),
-      prisma.heritageReport.count({
-        where: { kategori: 'TAKBENDA' },
-      }),
+
+      // 3. Ambil koordinat titik geospasial untuk peta sebaran
       prisma.heritageReport.findMany({
         where: {
           status: 'SELESAI',
@@ -66,14 +63,21 @@ export default async function HomePage() {
       }),
     ]);
 
-    totalVerified = count;
-    countBenda = bendaCount;
-    countTakbenda = takbendaCount;
+    for (const item of kategoriGroup) {
+      if (item.kategori === 'BENDA') {
+        countBenda = item._count._all;
+      } else if (item.kategori === 'TAKBENDA') {
+        countTakbenda = item._count._all;
+      }
+      totalVerified += item._count._all;
+    }
+
     reports = rawReports.map((r) => ({
       ...r,
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
     }));
+
     mapReports = rawMapReports.map((r) => ({
       ...r,
       deskripsiKrisis: '',
@@ -83,16 +87,6 @@ export default async function HomePage() {
   } catch (error) {
     console.error('Error fetching home data:', error);
   }
-
-  const catalogHref = '/katalog';
-  const laporHref =
-    user?.role === 'SUPERADMIN'
-      ? '/superadmin/analytics'
-      : user?.role === 'ADMIN'
-      ? '/admin'
-      : user
-      ? '/pelapor/lapor'
-      : '/login?redirect=/pelapor/lapor';
 
   return (
     <div className="homepage-root">
@@ -118,24 +112,8 @@ export default async function HomePage() {
             Platform Penyelamatan & Dokumentasi Warisan Budaya Sulawesi Tengah
           </p>
 
-          {/* Action Buttons */}
-          <div className="digiculture-hero-actions">
-            <Link href={catalogHref} className="digiculture-hero-btn-primary">
-              <BookOpen size={15} />
-              <span>Telusuri Katalog Budaya</span>
-            </Link>
-
-            <Link href={laporHref} className="digiculture-hero-btn-secondary">
-              <FilePlus size={15} />
-              <span>
-                {user?.role === 'ADMIN'
-                  ? 'Meja Kerja Konservator'
-                  : user?.role === 'SUPERADMIN'
-                  ? 'Analitik Provinsi'
-                  : 'Kirim Laporan Temuan'}
-              </span>
-            </Link>
-          </div>
+          {/* Action Buttons (Reactive & Dynamic based on client session) */}
+          <HeroActionButtons />
 
           {/* Scroll Down Indicator */}
           <div className="digiculture-hero-scroll-wrap">
