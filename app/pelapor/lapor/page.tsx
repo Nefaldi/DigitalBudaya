@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import MapPicker from '@/components/MapPicker';
 import ImageCompressorUpload from '@/components/ImageCompressorUpload';
 import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
+import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
 import {
   AlertCircle,
   Loader2,
@@ -32,35 +33,55 @@ export default function LaporBudayaPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [hasSavedDraft, setHasSavedDraft] = useState(false);
   const [draftTimestamp, setDraftTimestamp] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<'PELAPOR' | 'ADMIN' | 'SUPERADMIN'>('PELAPOR');
+  const [userRole, setUserRole] = useState<'PELAPOR' | 'ADMIN' | 'SUPERADMIN'>(() => {
+    const cached = getCachedUser();
+    return (cached?.role as any) || 'PELAPOR';
+  });
   const router = useRouter();
 
   // Check authentication
   useEffect(() => {
+    let ignore = false;
+
     async function checkAuth() {
       try {
-        const res = await fetch('/api/auth/me');
-        if (!res.ok) {
-          router.push('/login?redirect=/pelapor/lapor');
-          return;
-        }
-        const data = await res.json();
-        if (data.user?.role) {
-          if (data.user.role === 'ADMIN') {
+        const cached = getCachedUser();
+        if (cached) {
+          if (cached.role === 'ADMIN') {
             router.replace('/admin');
             return;
           }
-          if (data.user.role === 'SUPERADMIN') {
+          if (cached.role === 'SUPERADMIN') {
             router.replace('/superadmin/analytics');
             return;
           }
-          setUserRole(data.user.role);
         }
+
+        const user = await fetchUserSession();
+        if (!user) {
+          router.push('/login?redirect=/pelapor/lapor');
+          return;
+        }
+        if (ignore) return;
+
+        if (user.role === 'ADMIN') {
+          router.replace('/admin');
+          return;
+        }
+        if (user.role === 'SUPERADMIN') {
+          router.replace('/superadmin/analytics');
+          return;
+        }
+        setUserRole(user.role as any);
       } catch {
         router.push('/login?redirect=/pelapor/lapor');
       }
     }
     checkAuth();
+
+    return () => {
+      ignore = true;
+    };
   }, [router]);
 
   const dashboardHref =
@@ -187,6 +208,10 @@ export default function LaporBudayaPage() {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
       } catch {
         // Ignore
+      }
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
       }
 
       router.push(dashboardHref);

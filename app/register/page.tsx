@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { UserPlus, User, Mail, Key, AlertCircle, Loader2 } from 'lucide-react';
+import { setCachedUser, fetchUserSession, getCachedUser } from '@/lib/clientSession';
 
 function RegisterForm() {
   const [nama, setNama] = useState('');
@@ -19,6 +20,36 @@ function RegisterForm() {
     redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//')
       ? redirectParam
       : null;
+
+  useEffect(() => {
+    const handleRedirect = (role?: string) => {
+      if (role === 'SUPERADMIN') {
+        router.replace('/superadmin/analytics');
+      } else if (role === 'ADMIN') {
+        router.replace('/admin');
+      } else {
+        router.replace('/pelapor');
+      }
+    };
+
+    const cached = getCachedUser();
+    if (cached?.role) {
+      handleRedirect(cached.role);
+      return;
+    }
+
+    async function checkAuth() {
+      try {
+        const user = await fetchUserSession();
+        if (user?.role) {
+          handleRedirect(user.role);
+        }
+      } catch {
+        // Belum login
+      }
+    }
+    checkAuth();
+  }, [router]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +67,8 @@ function RegisterForm() {
       if (!res.ok) {
         throw new Error(data.error || 'Gagal mendaftar akun');
       }
+
+      setCachedUser(data.user || null);
 
       router.push(targetRedirect && targetRedirect !== '/' ? targetRedirect : '/pelapor');
       router.refresh();
