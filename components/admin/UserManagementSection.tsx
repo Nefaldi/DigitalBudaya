@@ -173,7 +173,8 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
       }
 
       setUsers((prev) => [data.user, ...prev]);
-      setFeedback({ type: 'success', message: `Pengguna "${newNama}" berhasil didaftarkan sebagai ${newRole}.` });
+      const roleDisplayName = newRole === 'SUPERADMIN' ? 'Superadmin' : newRole === 'PELAPOR' ? 'Pelapor' : 'Admin';
+      setFeedback({ type: 'success', message: `Pengguna "${newNama}" berhasil didaftarkan sebagai ${roleDisplayName}.` });
       setAddModalOpen(false);
       setNewNama('');
       setNewEmail('');
@@ -282,7 +283,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
               onClick={() => setRoleFilter(r)}
               className={`btn btn-sm ${roleFilter === r ? 'btn-primary' : 'btn-secondary'}`}
             >
-              {r === 'ADMIN' ? 'Konservator (Admin)' : r}
+              {r === 'ADMIN' ? 'Konservator (Admin)' : r === 'SUPERADMIN' ? 'Superadmin' : r === 'PELAPOR' ? 'Pelapor' : r}
             </button>
           ))}
         </div>
@@ -354,7 +355,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                             : 'badge-takbenda'
                         }`}
                       >
-                        {u.role}
+                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Admin'}
                       </span>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -369,9 +370,9 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                         className="form-select"
                         style={{ padding: '0.4rem 0.65rem', fontSize: '0.8rem', width: 'auto' }}
                       >
-                        <option value="PELAPOR">PELAPOR (Masyarakat)</option>
-                        <option value="ADMIN">ADMIN (Konservator)</option>
-                        <option value="SUPERADMIN">SUPERADMIN (Pimpinan)</option>
+                        <option value="PELAPOR">Pelapor (Masyarakat)</option>
+                        <option value="ADMIN">Admin (Konservator)</option>
+                        <option value="SUPERADMIN">Superadmin (Pimpinan)</option>
                       </select>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', textAlign: 'right' }}>
@@ -504,9 +505,9 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                   onChange={(e) => setNewRole(e.target.value as UserRole)}
                   className="form-select"
                 >
-                  <option value="ADMIN">ADMIN (Petugas / Konservator Wilayah)</option>
-                  <option value="PELAPOR">PELAPOR (Masyarakat Umum)</option>
-                  <option value="SUPERADMIN">SUPERADMIN (Pimpinan / Pengelola Sistem)</option>
+                  <option value="ADMIN">Admin (Petugas / Konservator Wilayah)</option>
+                  <option value="PELAPOR">Pelapor (Masyarakat Umum)</option>
+                  <option value="SUPERADMIN">Superadmin (Pimpinan / Pengelola Sistem)</option>
                 </select>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', display: 'block' }}>
                   Admin berhak memverifikasi antrean dan mengunggah digitalisasi; Pelapor berhak mengirim laporan budaya.
