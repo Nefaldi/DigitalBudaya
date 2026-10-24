@@ -168,22 +168,6 @@ function KatalogContent() {
       <div className="container">
         {/* Header */}
         <div style={{ marginBottom: '2.5rem' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            color: 'var(--action-primary)',
-            background: 'var(--color-terracotta-soft)',
-            padding: '0.25rem 0.75rem',
-            borderRadius: 'var(--radius-xs)',
-            border: '1px solid var(--border-hairline)',
-            fontSize: '0.8rem',
-            fontWeight: 500,
-            marginBottom: '0.75rem',
-          }}>
-            <Compass size={14} />
-            <span>Direktori Cagar Budaya Sulawesi Tengah</span>
-          </div>
           <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', color: 'var(--text-primary)', marginBottom: '0.65rem', fontWeight: 460 }}>
             Katalog Publik Warisan Leluhur
           </h1>

@@ -6,7 +6,6 @@ import { SULTENG_KABUPATEN_KOTA } from '@/lib/sultengLocations';
 import LoadingScreen from '@/components/LoadingScreen';
 import { fetchUserSession } from '@/lib/clientSession';
 import {
-  BarChart3,
   ShieldCheck,
   Clock,
   Layers,
@@ -145,23 +144,6 @@ export default function AnalyticsDashboardPage() {
           }}
         >
           <div>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                color: 'var(--action-primary)',
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                letterSpacing: '0.04em',
-                marginBottom: '0.4rem',
-                background: 'var(--color-terracotta-soft)',
-                padding: '0.2rem 0.55rem',
-                borderRadius: '6px',
-              }}
-            >
-              <BarChart3 size={13} /> Analitik Wilayah
-            </div>
             <h1
               style={{
                 fontSize: 'clamp(1.5rem, 3vw, 2rem)',

@@ -6,7 +6,6 @@ import { UserSession } from '@/types';
 import LoadingScreen from '@/components/LoadingScreen';
 import UserManagementSection from '@/components/admin/UserManagementSection';
 import { fetchUserSession, getCachedUser } from '@/lib/clientSession';
-import { Shield } from 'lucide-react';
 
 export default function UserManagementPage() {
   const [currentUser, setCurrentUser] = useState<UserSession | null>(() => getCachedUser());
@@ -77,23 +76,6 @@ export default function UserManagementPage() {
           }}
         >
           <div>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                color: 'var(--action-primary)',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                letterSpacing: '0.04em',
-                marginBottom: '0.5rem',
-                background: 'var(--color-terracotta-soft)',
-                padding: '0.2rem 0.6rem',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              <Shield size={14} /> Akses Pengguna
-            </div>
             <h1
               style={{
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.4rem)',
