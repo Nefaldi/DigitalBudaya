@@ -265,10 +265,13 @@ export default function AdminWorkbenchPage() {
     }
   };
 
-  const handleTakeOwnership = async (reportId: string) => {
+  const handleTakeOwnership = async (report: HeritageReportItem) => {
     setWorkbenchFeedback(null);
+    // Langsung buka laman/modal Tatalaksana Digitalisasi & Restorasi seketika
+    openActionModal(report);
+
     try {
-      const res = await fetch(`/api/reports/${reportId}`, {
+      const res = await fetch(`/api/reports/${report.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'DIPROSES' }),
@@ -278,14 +281,14 @@ export default function AdminWorkbenchPage() {
         setWorkbenchFeedback({ type: 'error', message: data.error || 'Gagal menangani laporan' });
       } else {
         setReports((prev) => {
-          const updated = prev.map((r) => (r.id === reportId ? data.report : r));
+          const updated = prev.map((r) => (r.id === report.id ? data.report : r));
           clientCachedReports = updated;
           return updated;
         });
+        setSelectedReport(data.report);
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('digiculture-reports-update'));
         }
-        setWorkbenchFeedback({ type: 'success', message: 'Laporan berhasil ditangani oleh konservator.' });
       }
     } catch (err) {
       console.error('Take ownership error:', err);
@@ -748,9 +751,9 @@ export default function AdminWorkbenchPage() {
                             <>
                               {report.status === 'LAPORAN_MASUK' && !report.admin && (
                                 <button
-                                  onClick={() => handleTakeOwnership(report.id)}
+                                  onClick={() => handleTakeOwnership(report)}
                                   className="btn btn-outline btn-sm"
-                                  title="Tangani Laporan Ini"
+                                  title="Tangani Laporan Ini (Buka Tatalaksana & Restorasi)"
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
                                   <Play size={13} />
@@ -762,10 +765,11 @@ export default function AdminWorkbenchPage() {
                                 <button
                                   onClick={() => openActionModal(report)}
                                   className="btn btn-primary btn-sm"
+                                  title="Buka Laman Tatalaksana Digitalisasi & Restorasi"
                                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                 >
                                   <Upload size={13} />
-                                  <span>Ajukan Penyelesaian</span>
+                                  <span>Tangani</span>
                                 </button>
                               )}
 
