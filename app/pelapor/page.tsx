@@ -613,27 +613,10 @@ export default function PelaporDashboardPage() {
                       {/* Grid Informasi Metadata */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem', fontSize: '0.825rem' }}>
                         <div>
-                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Status Laporan:</span>
-                          <span
-                            className={`badge ${
-                              report.status === 'SELESAI'
-                                ? 'badge-selesai'
-                                : report.status === 'MENUNGGU_VALIDASI'
-                                ? 'badge-validasi'
-                                : report.status === 'DIPROSES'
-                                ? 'badge-diproses'
-                                : 'badge-masuk'
-                            }`}
-                            style={{ display: 'inline-block', marginTop: '0.2rem' }}
-                          >
-                            {report.status === 'LAPORAN_MASUK'
-                              ? 'Laporan Masuk'
-                              : report.status === 'DIPROSES'
-                              ? 'Sedang Ditangani'
-                              : report.status === 'MENUNGGU_VALIDASI'
-                              ? 'Menunggu Validasi'
-                              : 'Selesai'}
-                          </span>
+                          <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.72rem', textTransform: 'uppercase' }}>Tanggal Lapor:</span>
+                          <strong style={{ color: 'var(--text-primary)', display: 'block', marginTop: '0.2rem' }}>
+                            {new Date(report.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </strong>
                         </div>
 
                         <div>
