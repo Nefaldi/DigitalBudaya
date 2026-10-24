@@ -24,7 +24,6 @@ import {
   CheckCircle2,
   Hourglass,
   Trash2,
-  RotateCcw,
 } from 'lucide-react';
 
 // Module-level in-memory cache for instantaneous client navigation (SWR)
@@ -705,19 +704,6 @@ export default function AdminWorkbenchPage() {
                                 >
                                   <CheckCircle2 size={13} />
                                   <span>Setujui Selesai</span>
-                                </button>
-                              )}
-
-                              {/* Kembalikan ke Petugas jika MENUNGGU_VALIDASI */}
-                              {report.status === 'MENUNGGU_VALIDASI' && (
-                                <button
-                                  onClick={() => handleDirectValidate(report.id, 'DIPROSES')}
-                                  className="btn btn-outline btn-sm"
-                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
-                                  title="Kembalikan ke status Sedang Ditangani untuk revisi petugas"
-                                >
-                                  <RotateCcw size={13} />
-                                  <span>Revisi</span>
                                 </button>
                               )}
 
