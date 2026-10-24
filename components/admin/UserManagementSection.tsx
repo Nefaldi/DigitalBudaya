@@ -173,7 +173,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
       }
 
       setUsers((prev) => [data.user, ...prev]);
-      const roleDisplayName = newRole === 'SUPERADMIN' ? 'Superadmin' : newRole === 'PELAPOR' ? 'Pelapor' : 'Admin';
+      const roleDisplayName = newRole === 'SUPERADMIN' ? 'Superadmin' : newRole === 'PELAPOR' ? 'Pelapor' : 'Konservator (Admin)';
       setFeedback({ type: 'success', message: `Pengguna "${newNama}" berhasil didaftarkan sebagai ${roleDisplayName}.` });
       setAddModalOpen(false);
       setNewNama('');
@@ -355,7 +355,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                             : 'badge-takbenda'
                         }`}
                       >
-                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Admin'}
+                        {u.role === 'SUPERADMIN' ? 'Superadmin' : u.role === 'PELAPOR' ? 'Pelapor' : 'Konservator (Admin)'}
                       </span>
                     </td>
                     <td style={{ padding: '1rem 1.25rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -371,7 +371,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                         style={{ padding: '0.4rem 0.65rem', fontSize: '0.8rem', width: 'auto' }}
                       >
                         <option value="PELAPOR">Pelapor (Masyarakat)</option>
-                        <option value="ADMIN">Admin (Konservator)</option>
+                        <option value="ADMIN">Konservator (Admin)</option>
                         <option value="SUPERADMIN">Superadmin (Pimpinan)</option>
                       </select>
                     </td>
@@ -505,7 +505,7 @@ export default function UserManagementSection({ currentUser }: UserManagementSec
                   onChange={(e) => setNewRole(e.target.value as UserRole)}
                   className="form-select"
                 >
-                  <option value="ADMIN">Admin (Petugas / Konservator Wilayah)</option>
+                  <option value="ADMIN">Konservator (Admin - Petugas Wilayah)</option>
                   <option value="PELAPOR">Pelapor (Masyarakat Umum)</option>
                   <option value="SUPERADMIN">Superadmin (Pimpinan / Pengelola Sistem)</option>
                 </select>
