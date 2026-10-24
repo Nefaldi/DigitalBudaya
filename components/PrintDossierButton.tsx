@@ -20,7 +20,8 @@ export default function PrintDossierButton() {
       title="Cetak lembar registrasi arsip resmi"
     >
       <Printer size={15} />
-      <span>Cetak Lembar Registrasi</span>
+      <span className="print-btn-label-full">Cetak Lembar Registrasi</span>
+      <span className="print-btn-label-mobile">Cetak</span>
     </button>
   );
 }

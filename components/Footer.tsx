@@ -80,6 +80,7 @@ export default function Footer() {
     >
       <div className="container">
         <div
+          className="footer-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -296,6 +297,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div
+          className="footer-bottom-bar"
           style={{
             display: 'flex',
             justifyContent: 'space-between',

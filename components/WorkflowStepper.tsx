@@ -84,7 +84,10 @@ export default function WorkflowStepper({
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', position: 'relative' }}>
+        <div
+          className="workflow-stepper-compact-grid"
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', position: 'relative' }}
+        >
           {steps.map((step, idx) => {
             const status = getStepStatus(step.id);
             const Icon = step.icon;
@@ -170,13 +173,16 @@ export default function WorkflowStepper({
   }
 
   return (
-    <div style={{
-      background: 'var(--bg-card)',
-      border: '1px solid var(--border-hairline)',
-      borderRadius: '16px',
-      padding: '1.25rem',
-      position: 'relative',
-    }}>
+    <div
+      className="workflow-stepper-wrap"
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-hairline)',
+        borderRadius: '16px',
+        padding: '1.25rem',
+        position: 'relative',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
         <h4 style={{ fontSize: '0.92rem', color: 'var(--text-primary)', fontWeight: 540 }}>
           Status Penanganan
@@ -188,12 +194,15 @@ export default function WorkflowStepper({
         )}
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '1rem',
-        position: 'relative',
-      }}>
+      <div
+        className="workflow-stepper-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1rem',
+          position: 'relative',
+        }}
+      >
         {steps.map((step) => {
           const status = getStepStatus(step.id);
           const Icon = step.icon;
